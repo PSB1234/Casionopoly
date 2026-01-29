@@ -53,7 +53,7 @@ export default function Game() {
 				<Trade roomKey={game_id} />
 				<Chat />
 			</div>
-			<div className="relative my-4 max-h-fit">
+			<div className="relative aspect-square h-full max-h-screen w-full max-w-screen p-5">
 				<Board game_id={game_id} />
 				<div className="pointer-events-none absolute inset-0">
 					<GhostBoard PlayerList={players} />

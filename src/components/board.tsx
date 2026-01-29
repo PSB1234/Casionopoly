@@ -2,7 +2,6 @@ import Tile from "@/components/tile";
 import TileDataJson from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
 import PlayButton from "./play_button";
-import { Card, CardContent } from "./ui/8bit/card";
 
 // Helper function to get grid position for each tile
 const getTilePosition = (index: number) => {
@@ -47,9 +46,9 @@ const getTilePosition = (index: number) => {
 
 export default function Board({ game_id }: { game_id: string }) {
 	return (
-		<Card className="flex h-full max-h-screen w-full">
-			<CardContent
-				className="relative grid aspect-square h-full max-h-screen grid-cols-11 grid-rows-11 gap-4 gap-y-2"
+		<div className="relative m-0 flex h-full max-h-screen w-full border-foreground border-y-6 bg-card p-5 font-jaro">
+			<div
+				className="grid h-full max-h-screen grid-cols-11 grid-rows-11 gap-4 gap-y-2"
 				style={{
 					gridTemplateAreas: `
           									"start start city1 city2 city3 special1 city4 city5 city6 corner1 corner1"
@@ -80,7 +79,11 @@ export default function Board({ game_id }: { game_id: string }) {
 					{/* Play button */}
 					<PlayButton game_id={game_id} />
 				</div>
-			</CardContent>
-		</Card>
+			</div>
+			<div
+				aria-hidden="true"
+				className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+			/>
+		</div>
 	);
 }

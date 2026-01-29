@@ -16,7 +16,13 @@ import { useGameStore } from "@/store/game_store";
 import Upgrade from "./upgrade";
 
 export default function Properties({ roomKey }: { roomKey: string }) {
-	const { getProperty, userId, players, turn } = useGameStore();
+	const {
+		getProperty,
+		userId,
+		players,
+		turn,
+		checkIfPropertyGroupIsOwnedByPlayer,
+	} = useGameStore();
 	const properties = getProperty(userId);
 	const myPlayer = players.find((p) => p.id === userId);
 	const myRank = myPlayer?.rank || -1;
@@ -47,7 +53,13 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 									<ItemContent className="flex w-full flex-row justify-between">
 										<ItemTitle>{getNameOfPropertyById(property.id)}</ItemTitle>
 										<Upgrade
-											disabled={!isMyTurn}
+											disabled={
+												!isMyTurn ||
+												!checkIfPropertyGroupIsOwnedByPlayer(
+													userId,
+													property.id,
+												)
+											}
 											playerId={userId}
 											propertyIndex={property.id}
 											roomKey={roomKey}

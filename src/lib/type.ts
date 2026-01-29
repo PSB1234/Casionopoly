@@ -138,6 +138,7 @@ export type Player = {
 export type PropertySchema = {
 	id: number;
 	rank: number;
+	group: number;
 };
 export interface Room {
 	roomKey: string;
@@ -149,6 +150,7 @@ export type TileDataSchema = {
 	id: number;
 	name: string;
 	flagName: string;
+	group: number;
 	type:
 	| "property"
 	| "Vacation"
@@ -167,6 +169,7 @@ export type TileDataSchema = {
 	reward?: number;
 	upgrade?: number[];
 };
+
 export type TileOwnership = {
 	tileId: number;
 	ownerId: string;

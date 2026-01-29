@@ -45,9 +45,9 @@ const getTilePosition = (index: number) => {
 
 export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 	return (
-		<div className="pointer-events-none absolute inset-1 h-full w-full">
+		<div className="pointer-events-none absolute inset-1 h-full w-full p-5">
 			<div
-				className="relative grid aspect-square h-full max-h-screen w-full grid-cols-11 grid-rows-11 gap-4 gap-y-2 px-6 py-8"
+				className="relative grid aspect-square h-full max-h-screen w-full grid-cols-11 grid-rows-11 gap-4 gap-y-2 px-4 py-6"
 				style={{
 					gridTemplateAreas: `
                 "start start city1 city2 city3 special1 city4 city5 city6 corner1 corner1"

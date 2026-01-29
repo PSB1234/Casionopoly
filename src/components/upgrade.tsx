@@ -15,25 +15,22 @@ export default function Upgrade({
 	disabled: boolean;
 }) {
 	const { socket } = useSocketStore();
-	const { upgradeProperty } = useGameStore();
+	const { upgradeProperty, getRankOfProperty } = useGameStore();
 
 	const handleUpgrade = () => {
 		const tileData = TileDataJson[propertyIndex];
 		if (!tileData) return;
 
-		const rentCostArray = tileData.rent;
+		const currentRank = getRankOfProperty(propertyIndex);
 		const upgradeCostArray = tileData.upgrade;
-		if (
-			!socket ||
-			rentCostArray === undefined ||
-			upgradeCostArray === undefined
-		)
-			return;
-		const rentCost = rentCostArray[0];
-		const upgradeCost = upgradeCostArray[0];
-		if (rentCost === undefined || upgradeCost === undefined) return;
-		const totalCost = -1 * (rentCost + upgradeCost);
-		upgradeProperty(playerId, socket, propertyIndex, roomKey, totalCost);
+
+		if (!socket || upgradeCostArray === undefined || currentRank >= 5) return;
+
+		const upgradeCost = upgradeCostArray[currentRank];
+		if (upgradeCost === undefined) return;
+
+		// Send positive cost, backend handles deduction
+		upgradeProperty(playerId, socket, propertyIndex, roomKey, upgradeCost);
 	};
 	return (
 		<Button disabled={disabled} onClick={handleUpgrade}>

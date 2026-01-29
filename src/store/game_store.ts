@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 import type { TradeData } from "@/components/tradeList";
 import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
+import TileDataJson from "@/lib/tiledata";
 import type {
 	ClientToServerEvents,
 	Player,
@@ -36,6 +37,11 @@ export interface GameStoreActions {
 	getColorByPropertyIndex: (propertyIndex: number) => string | undefined;
 	setVotedPlayers: (playerIds: string[]) => void;
 	addProperty: (playerId: string, propertyIndex: number) => void;
+	totalPropertyInGroup: (propertyGroup: number) => number;
+	checkIfPropertyGroupIsOwnedByPlayer: (
+		playerId: string,
+		propertyIndex: number,
+	) => boolean;
 	checkPropertyIsOwned: (propertyIndex: number) => boolean;
 	checkPropertyOwnedByPlayer: (
 		playerId: string,
@@ -44,6 +50,7 @@ export interface GameStoreActions {
 	getPropertyCount: (playerId: string) => number;
 	getProperty: (playerId: string) => PropertySchema[];
 	getRankOfProperty: (propertyIndex: number) => number;
+	getPropertyGroupById: (tileId: number) => number;
 	removeProperty: (playerId: string, propertyIndex: number) => void;
 	upgradeProperty: (
 		playerId: string,
@@ -256,7 +263,6 @@ export const useGameStore = create<GameStore>()(
 				socket.off(SOCKET_EVENTS.RECEIVE_TRADE_OFFER);
 				socket.off(SOCKET_EVENTS.RECEIVE_CONFIRM_TRADE_OFFER);
 				socket.off("reconnect");
-
 				socket.on(SOCKET_EVENTS.GAME_LOOP, handleGameLoop);
 				socket.on(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
 				socket.on(SOCKET_EVENTS.RECEIVE_MONEY, handleReceiveMoney);
@@ -339,7 +345,7 @@ export const useGameStore = create<GameStore>()(
 					const updatedPlayers = state.players.map((p) => {
 						// Ensure the property is removed from any previous owner (e.g., during trade)
 						const existingProperties = (p.properties ?? []).filter(
-							(prop) => prop.id !== propertyIndex,
+							(prop) => Number(prop.id) !== Number(propertyIndex),
 						);
 
 						if (p.id === playerId) {
@@ -347,7 +353,11 @@ export const useGameStore = create<GameStore>()(
 								...p,
 								properties: [
 									...existingProperties,
-									{ id: propertyIndex, rank: 0 },
+									{
+										id: Number(propertyIndex),
+										rank: 0,
+										group: get().getPropertyGroupById(propertyIndex),
+									},
 								],
 							};
 						}
@@ -396,6 +406,42 @@ export const useGameStore = create<GameStore>()(
 				return (
 					foundPlayer.properties?.some((prop) => prop.id === propertyIndex) ??
 					false
+				);
+			},
+			getPropertyGroupById: (tileId: number) => {
+				for (const property of TileDataJson) {
+					if (property.id === Number(tileId)) {
+						return property.group;
+					}
+				}
+				return -1;
+			},
+			totalPropertyInGroup: (propertyGroup: number) => {
+				return TileDataJson.filter(
+					(property) => property.group === propertyGroup,
+				).length;
+			},
+			checkIfPropertyGroupIsOwnedByPlayer: (
+				playerId: string,
+				propertyIndex: number,
+			) => {
+				const state = get();
+				const foundPlayer = state.players.find((p) => p.id === playerId);
+				if (!foundPlayer) return false;
+
+				const propertyGroup = state.getPropertyGroupById(propertyIndex);
+				if (propertyGroup === -1) return false;
+
+				const propertiesInGroup = TileDataJson.filter(
+					(p) => p.group === propertyGroup,
+				);
+
+				const playerPropertyIds = new Set(
+					foundPlayer.properties.map((prop) => Number(prop.id)),
+				);
+
+				return propertiesInGroup.every((prop) =>
+					playerPropertyIds.has(Number(prop.id)),
 				);
 			},
 			upgradeProperty: (

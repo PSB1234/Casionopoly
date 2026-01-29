@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/correctness/useUniqueElementIds: <> */
-/** biome-ignore-all lint/complexity/noUselessLoneBlockStatements: <> */
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -26,11 +24,11 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { env } from "@/env";
+import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { OptionSchema, roomKeyDataSchema } from "@/lib/zod";
-import useSocketStore from "@/store/socket_store";
 import { useGameStore } from "@/store/game_store";
-import { generateColorPair } from "@/lib/random_color";
+import useSocketStore from "@/store/socket_store";
 
 const defaultValues: z.infer<typeof OptionSchema> = {
 	allowChat: true,
@@ -91,19 +89,24 @@ export default function Options() {
 				finalColor = original;
 				setColor(finalColor);
 			}
-			emitEvent(SOCKET_EVENTS.CREATE_ROOM, true, finalColor, (roomkey, player) => {
-				const { success, data, error } = roomKeyDataSchema.safeParse(roomkey);
-				if (error) {
-					toast("Failed to create room. Please try again.", {
-						description: undefined,
-					});
-					return;
-				}
-				if (success) {
-					router.push(`/room/${data}`);
-					router.refresh();
-				}
-			});
+			emitEvent(
+				SOCKET_EVENTS.CREATE_ROOM,
+				true,
+				finalColor,
+				(roomkey, player) => {
+					const { success, data, error } = roomKeyDataSchema.safeParse(roomkey);
+					if (error) {
+						toast("Failed to create room. Please try again.", {
+							description: undefined,
+						});
+						return;
+					}
+					if (success) {
+						router.push(`/room/${data}`);
+						router.refresh();
+					}
+				},
+			);
 			console.log("Form submission response:", response);
 		} catch (error) {
 			console.error("Form submission error", error);
