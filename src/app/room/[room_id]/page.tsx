@@ -1,19 +1,19 @@
 "use client";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/8bit/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
+import { toast } from "@/components/ui/8bit/toast";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
-
 export default function Room() {
 	const router = useRouter();
 	const { room_id } = useParams<{ room_id: string }>();
 	const { isThisPlayerLeader, players, initializeSocket } = useGameStore();
-	const [isLoading, setIsLoading] = useState(true);
-	const { socket, emitEvent } = useSocketStore();
-
+	const { socket, emitEvent, rooms } = useSocketStore();
+	const roomData = rooms.find((room) => room.roomKey === room_id);
 	useEffect(() => {
 		if (!socket || !room_id) return;
 		initializeSocket(room_id, socket);
@@ -26,12 +26,49 @@ export default function Room() {
 			socket.off(SOCKET_EVENTS.AFTER_CHANGE_ROOM_STATUS, RoomStatus);
 		};
 	}, [room_id, socket, initializeSocket, router]);
-
+	const copyCodeAction = () => {
+		return () => {
+			navigator.clipboard.writeText(room_id);
+			toast("Copied to clipboard", {
+				description: `Room code ${room_id} copied to clipboard`,
+			});
+		};
+	};
 	const onSubmit = () => {
 		emitEvent(SOCKET_EVENTS.CHANGE_ROOM_STATUS, room_id, "playing");
 	};
 	return (
 		<div className="flex w-full flex-col gap-5 p-10">
+			<div className="relative flex h-full w-full flex-row justify-between border-foreground border-y-6 bg-card px-5 py-4 font-jaro">
+				<h1 className="my-2 font-bold text-3xl">{roomData?.name}</h1>
+				<h3 className="relative flex w-fit flex-row items-center justify-center gap-4 border-foreground border-y-6 bg-background p-2 text-muted-foreground text-xl">
+					{roomData?.roomKey}
+					<button
+						className="group relative h-full w-full hover:cursor-pointer"
+						onClick={copyCodeAction()}
+						type="button"
+					>
+						<Image
+							alt="copy icon"
+							height={30}
+							src={"/icons/copy.svg"}
+							width={30}
+						/>
+						<div
+							aria-hidden="true"
+							className="pointer-events-none absolute inset-0 z-5 bg-black/0 transition-colors group-hover:bg-black/50"
+						/>
+					</button>
+					<div
+						aria-hidden="true"
+						className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+					/>
+				</h3>
+				<div
+					aria-hidden="true"
+					className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+				/>
+			</div>
 			<Card className="w-full p-5 md:col-span-3 md:row-span-6 md:h-full">
 				<CardTitle>Players:</CardTitle>
 				<CardContent>
@@ -51,7 +88,10 @@ export default function Room() {
 					</ul>
 				</CardContent>
 			</Card>
-			<Button disabled={!isThisPlayerLeader()} onClick={onSubmit}>
+			<Button
+				disabled={!isThisPlayerLeader() || players.length < 2}
+				onClick={onSubmit}
+			>
 				Submit
 			</Button>
 		</div>

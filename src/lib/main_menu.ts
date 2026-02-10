@@ -3,11 +3,12 @@ import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.
 export const getMenuItems = (
 	router: AppRouterInstance,
 	onQuickJoin: () => void,
+	setOptionsOpen: (open: boolean) => void,
 ) => [
 		{
 			label: "START GAME",
 			action: () => {
-				router.push(`/options`);
+				setOptionsOpen(true);
 			},
 		},
 		{
@@ -20,9 +21,5 @@ export const getMenuItems = (
 			label: "Join Room",
 
 			action: () => router.push("/searchRoom"),
-		},
-		{
-			label: "OPTIONS",
-			action: () => router.push("/options"),
 		},
 	];

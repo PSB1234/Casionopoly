@@ -1,4 +1,4 @@
-import { lightenColor } from "@/lib/random_color";
+import { useId } from "react";
 
 interface PlayerSpriteProps {
 	color: string;
@@ -6,21 +6,7 @@ interface PlayerSpriteProps {
 }
 
 export default function PlayerSprite({ color, className }: PlayerSpriteProps) {
-	// Parse hex color to rgb for lightening
-	// Assuming color is hex string like "#RRGGBB"
-	const r = parseInt(color.slice(1, 3), 16);
-	const g = parseInt(color.slice(3, 5), 16);
-	const b = parseInt(color.slice(5, 7), 16);
-
-	const lighterColorRgb = lightenColor(r, g, b, 0.4);
-
-	// Convert back to hex for CSS
-	const toHex = (n: number) => {
-		const hex = n.toString(16);
-		return hex.length === 1 ? "0" + hex : hex;
-	};
-
-	const lighterColorHex = `#${toHex(lighterColorRgb.r)}${toHex(lighterColorRgb.g)}${toHex(lighterColorRgb.b)}`;
+	const clipId = useId();
 
 	return (
 		<svg
@@ -29,7 +15,6 @@ export default function PlayerSprite({ color, className }: PlayerSpriteProps) {
 			style={
 				{
 					"--color": color,
-					"--light-color": lighterColorHex,
 				} as React.CSSProperties
 			}
 			version="1.1"
@@ -38,25 +23,53 @@ export default function PlayerSprite({ color, className }: PlayerSpriteProps) {
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<title>player</title>
-			{/* Outer square */}
-			<rect
-				fill="var(--color, #2563eb)"
-				height="24"
-				stroke="black"
-				strokeWidth="1"
-				width="24"
-				x="4"
-				y="4"
-			/>
+			<defs>
+				<clipPath id={clipId}>
+					<rect height="2" width="12" x="10" y="0" />
+					<rect height="2" width="20" x="6" y="2" />
+					<rect height="2" width="24" x="4" y="4" />
+					<rect height="4" width="28" x="2" y="6" />
+					<rect height="12" width="32" x="0" y="10" />
+					<rect height="4" width="28" x="2" y="22" />
+					<rect height="2" width="24" x="4" y="26" />
+					<rect height="2" width="20" x="6" y="28" />
+					<rect height="2" width="12" x="10" y="30" />
+				</clipPath>
+			</defs>
 
-			{/* Inner square */}
-			<rect
-				fill="var(--light-color, #93c5fd)"
-				height="10"
-				width="10"
-				x="11"
-				y="11"
-			/>
+			{/* Background Layer with Clip */}
+			<g clipPath={`url(#${clipId})`}>
+				<rect fill="var(--color)" height="32" width="32" x="0" y="0" />
+				{/* Highlight */}
+				<g fill="var(--color)" fillOpacity="0.2">
+					<rect height="2" width="8" x="12" y="4" />
+					<rect height="2" width="2" x="8" y="6" />
+					<rect height="12" width="2" x="6" y="8" />
+				</g>
+			</g>
+
+			{/* Black Outline */}
+			<g fill="black" strokeWidth={2}>
+				{/* Top Area */}
+				<rect height="4" width="12" x="10" y="0" />
+				<rect height="2" width="20" x="6" y="2" />
+				<rect height="2" width="4" x="4" y="4" />
+				<rect height="2" width="4" x="24" y="4" />
+
+				{/* Sides */}
+				<rect height="4" width="4" x="2" y="6" />
+				<rect height="4" width="4" x="26" y="6" />
+				<rect height="12" width="4" x="0" y="10" />
+				<rect height="12" width="4" x="28" y="10" />
+				<rect height="4" width="4" x="2" y="22" />
+				<rect height="4" width="4" x="26" y="22" />
+
+				{/* Bottom Area */}
+				<rect height="2" width="4" x="4" y="26" />
+				<rect height="2" width="4" x="24" y="26" />
+				<rect height="2" width="20" x="6" y="28" />
+				<rect height="2" width="12" x="10" y="30" />
+			</g>
 		</svg>
 	);
 }

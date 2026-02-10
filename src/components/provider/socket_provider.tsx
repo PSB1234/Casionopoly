@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
+import { toast } from "../ui/8bit/toast";
 
 export default function SocketInit({
 	url = process.env.NEXT_PUBLIC_SOCKET_URL ?? "ws://localhost:8080",
@@ -16,7 +18,7 @@ export default function SocketInit({
 	const username = useGameStore((state) => state.username);
 
 	useEffect(() => {
-		if (userId) {
+		if (userId ) {
 			connectSocket(url, { auth: { userId, username } });
 		}
 		return () => disconnectSocket();

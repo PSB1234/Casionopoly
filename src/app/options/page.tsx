@@ -31,6 +31,7 @@ import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 
 const defaultValues: z.infer<typeof OptionSchema> = {
+	name: "Monopoly Game",
 	allowChat: true,
 	allowMortgagingProperties: true,
 	allowPlayersToJoinMidGame: false,
@@ -67,20 +68,8 @@ export default function Options() {
 				});
 				return;
 			}
-			const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/options`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(formattedValues.data),
-			});
-			if (!response.ok) {
-				toast("Network response was not ok", { description: undefined });
-				setIsLoading(false);
-				return;
-			}
-			toast("Form submitted successfully!", { description: undefined });
-			toast("Form submitted successfully!", { description: undefined });
+
+			toast("Creating room...", { description: undefined });
 			setIsLoading(false);
 			const { color, setColor } = useGameStore.getState();
 			let finalColor = color;
@@ -91,7 +80,7 @@ export default function Options() {
 			}
 			emitEvent(
 				SOCKET_EVENTS.CREATE_ROOM,
-				true,
+				formattedValues.data,
 				finalColor,
 				(roomkey, player) => {
 					const { success, data, error } = roomKeyDataSchema.safeParse(roomkey);
@@ -107,7 +96,6 @@ export default function Options() {
 					}
 				},
 			);
-			console.log("Form submission response:", response);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast("Failed to submit the form. Please try again.", {
@@ -131,6 +119,28 @@ export default function Options() {
 							Game Rules
 						</h3>
 						<FieldGroup>
+							<Controller
+								control={form.control}
+								name="name"
+								render={({ field, fieldState }) => (
+									<Field className="p-4" data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor={field.name}>Game Name</FieldLabel>
+										<Input
+											{...field}
+											aria-invalid={fieldState.invalid}
+											id={field.name}
+											onChange={(e) => field.onChange(e.target.value)}
+											placeholder="Monopoly Game"
+										/>
+										<FieldDescription>
+											Write a name for your game session.
+										</FieldDescription>
+										{fieldState.invalid && (
+											<FieldError>{fieldState.error?.message}</FieldError>
+										)}
+									</Field>
+								)}
+							/>
 							<Controller
 								control={form.control}
 								name="passGoMoneyAmount"

@@ -20,6 +20,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 		userId,
 		checkPropertyIsOwned,
 		addProperty,
+		getRankOfProperty,
 		checkPropertyOwnedByPlayer,
 		turn,
 		players,
@@ -106,9 +107,10 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 						if (propertyOwner) {
 							// Property is owned by another player, charge rent
 							const rent = tile.rent!;
+							const propertyRank = getRankOfProperty(tile.id);
 							emitEvent(
 								SOCKET_EVENTS.SEND_MONEY,
-								-1 * rent[0]!,
+								-1 * rent[propertyRank]!,
 								userId,
 								game_id,
 							);
@@ -141,6 +143,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 		emitEvent,
 		game_id,
 		checkPropertyOwnedByPlayer,
+		getRankOfProperty,
 	]);
 
 	return (

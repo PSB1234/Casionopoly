@@ -1,11 +1,13 @@
+import type z from "zod";
 import type { TradeData } from "@/components/tradeList";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
+import type { createRoomSchema, OptionSchema } from "@/lib/zod";
 
 export interface ServerToClientEvents {
 	[SOCKET_EVENTS.USER_CONNECTED]: (username: string) => void;
 	[SOCKET_EVENTS.USER_DISCONNECTED]: (userId: string) => void;
 	[SOCKET_EVENTS.USERNAME_ASSIGNED]: (username: string) => void;
-	[SOCKET_EVENTS.GET_ALL_ROOMS]: (roomsData: string[]) => void;
+	[SOCKET_EVENTS.GET_ALL_ROOMS]: (roomsData: RoomData[]) => void;
 	[SOCKET_EVENTS.PLAYER_LEFT]: (socket_id: string) => void;
 	[SOCKET_EVENTS.GAME_LOOP]: (receivedRoomKey: string, player: Player) => void;
 	[SOCKET_EVENTS.ERROR]: (message: string) => void;
@@ -57,7 +59,7 @@ export interface ServerToClientEvents {
 // Events that the client emits to the server
 export interface ClientToServerEvents {
 	[SOCKET_EVENTS.CREATE_ROOM]: (
-		isPrivate: boolean,
+		options: z.infer<typeof createRoomSchema>,
 		color: string,
 		callback: (roomkey: string, playerList: Player[]) => void,
 	) => void;
@@ -180,4 +182,8 @@ export interface tradeDisplaySchema {
 	offeredProperties: TradeData;
 	requestedProperties: TradeData;
 	status: "pending" | "accepted" | "rejected";
+}
+export interface RoomData {
+	roomKey: string;
+	name: string;
 }

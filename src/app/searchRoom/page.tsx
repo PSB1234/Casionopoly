@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/8bit/input";
 import { Separator } from "@/components/ui/8bit/separator";
 import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
-import type { Player } from "@/lib/type";
+import type { Player, RoomData } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 export default function SearchPage() {
@@ -38,6 +38,7 @@ export default function SearchPage() {
 			},
 		);
 	};
+	
 	return (
 		<span className="flex h-screen w-screen flex-col p-10 backdrop-blur-md">
 			<div className="flex flex-row items-center gap-10 pb-6">
@@ -57,10 +58,16 @@ export default function SearchPage() {
 						<Separator className="my-4" />
 						<CardContent>
 							<ul>
-								{rooms.map((roomID: string) => (
-									<li className="m-5 flex w-full justify-between" key={roomID}>
-										<h3>{roomID}</h3>
-										<Button onClick={() => onSubmit(roomID)}>Join</Button>
+								{rooms.map((roomData: RoomData) => (
+									<li
+										className="m-5 flex w-full justify-between"
+										key={roomData.roomKey}
+									>
+										<h3>{roomData.name}</h3>
+										<Button onClick={() => onSubmit(roomData.roomKey)}>
+											Join
+										</Button>
+										
 									</li>
 								))}
 							</ul>

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
-import "./styles/retro.css";
+import "@/components/ui/8bit/styles/retro.css";
 
 export const alertDialogVariants = cva("", {
 	variants: {

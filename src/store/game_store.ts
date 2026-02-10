@@ -2,6 +2,7 @@ import type { Socket } from "socket.io-client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { TradeData } from "@/components/tradeList";
+import { toast } from "@/components/ui/8bit/toast";
 import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
@@ -37,6 +38,7 @@ export interface GameStoreActions {
 	getColorByPropertyIndex: (propertyIndex: number) => string | undefined;
 	setVotedPlayers: (playerIds: string[]) => void;
 	addProperty: (playerId: string, propertyIndex: number) => void;
+	getPlayersMoney: (playerId: string) => number;
 	totalPropertyInGroup: (propertyGroup: number) => number;
 	checkIfPropertyGroupIsOwnedByPlayer: (
 		playerId: string,
@@ -126,8 +128,15 @@ export const useGameStore = create<GameStore>()(
 				const handleGameLoop = (receivedRoomKey: string, player: Player) => {
 					if (receivedRoomKey !== roomKey) return;
 					set((state) => {
-						const exists = state.players.some((p) => p.id === player.id);
-						if (exists) return {}; // No change if player already exists
+						const playerIndex = state.players.findIndex(
+							(p) => p.id === player.id,
+						);
+						if (playerIndex !== -1) {
+							// Update existing player with latest data from server
+							const updatedPlayers = [...state.players];
+							updatedPlayers[playerIndex] = player;
+							return { players: updatedPlayers };
+						}
 						return { players: [...state.players, player] };
 					});
 				};
@@ -329,6 +338,11 @@ export const useGameStore = create<GameStore>()(
 				}));
 			},
 			getPlayerCount: () => get().players.length,
+			getPlayersMoney: (playerId: string) => {
+				const state = get();
+				const player = state.players.find((p) => p.id === playerId);
+				return player ? player.money : 0;
+			},
 			isThisPlayerLeader: () => {
 				const state = get();
 				const players = state.players;

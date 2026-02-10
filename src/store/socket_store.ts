@@ -1,17 +1,22 @@
 import { io, type Socket } from "socket.io-client";
 import { create } from "zustand";
+import { toast } from "@/components/ui/8bit/toast";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
-import type { ClientToServerEvents, ServerToClientEvents } from "@/lib/type";
+import type {
+	ClientToServerEvents,
+	RoomData,
+	ServerToClientEvents,
+} from "@/lib/type";
 // Store state
 export interface SocketStoreState {
 	socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;
 	isConnected: boolean;
-	rooms: string[];
+	rooms: RoomData[];
 }
 // Store actions
 export interface SocketStoreActions {
-	setRooms: (rooms: string[]) => void;
-	getRooms: () => string[];
+	setRooms: (rooms: RoomData[]) => void;
+	getRooms: () => RoomData[];
 	getSocket: () => Socket<ServerToClientEvents, ClientToServerEvents> | null;
 	connectSocket: (url: string, opts?: Parameters<typeof io>[1]) => void;
 	emitEvent: <E extends keyof ClientToServerEvents>(
@@ -48,13 +53,18 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 			console.log("Socket disconnected!");
 		});
 		// Listen for room updates
-		socket.on(SOCKET_EVENTS.GET_ALL_ROOMS, (roomsData: string[]) => {
+		socket.on(SOCKET_EVENTS.GET_ALL_ROOMS, (roomsData: RoomData[]) => {
 			set({ rooms: roomsData });
 			console.log("Rooms updated:", roomsData);
 		});
 		//handle errors
 		socket.on("connect_error", (error) => {
 			console.error("Connection error:", error);
+		});
+
+		socket.on(SOCKET_EVENTS.ERROR, (message: string) => {
+			console.warn("Socket error:", message);
+			toast(`${message}`, { description: message });
 		});
 	},
 	getSocket: () => {
@@ -68,7 +78,6 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 	emitEvent: (eventName, ...args) => {
 		const { socket } = get();
 		if (socket?.connected) {
-			// args are typed via ClientToServerEvents; cast for emit variadic
 			(
 				socket.emit as unknown as (
 					ev: keyof ClientToServerEvents | string,
@@ -79,7 +88,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 			console.warn(`Socket not connected, cannot emit event : ${eventName}`);
 		}
 	},
-	setRooms: (rooms: string[]) => {
+	setRooms: (rooms: RoomData[]) => {
 		set({ rooms });
 	},
 	getRooms: () => {
