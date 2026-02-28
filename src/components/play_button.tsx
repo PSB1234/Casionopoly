@@ -15,16 +15,14 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	const [endTurnFree, setEndTurnFree] = useState<boolean>(false);
 	const [position, setPosition] = useState<number>(0);
 	const { socket, emitEvent } = useSocketStore();
-	const {
-		updatePlayer,
-		userId,
-		checkPropertyIsOwned,
-		addProperty,
-		getRankOfProperty,
-		checkPropertyOwnedByPlayer,
-		turn,
-		players,
-	} = useGameStore();
+	const updatePlayer = useGameStore((state) => state.updatePlayer);
+	const userId = useGameStore((state) => state.userId);
+	const checkPropertyIsOwned = useGameStore((state) => state.checkPropertyIsOwned);
+	const addProperty = useGameStore((state) => state.addProperty);
+	const getRankOfProperty = useGameStore((state) => state.getRankOfProperty);
+	const checkPropertyOwnedByPlayer = useGameStore((state) => state.checkPropertyOwnedByPlayer);
+	const turn = useGameStore((state) => state.turn);
+	const players = useGameStore((state) => state.players);
 
 	const myPlayer = players.find((p) => p.id === userId);
 	const myRank = myPlayer?.rank || -1;
@@ -106,11 +104,24 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 						if (propertyOwner) {
 							// Property is owned by another player, charge rent
-							const rent = tile.rent!;
-							const propertyRank = getRankOfProperty(tile.id);
+							let amountToDeduct: number;
+							if (tile.type === "railroad") {
+								// Check if owner owns all 3 railroads (IDs: 4, 14, 26)
+								const railroadIds = [4, 14, 26];
+								const ownsAllRailroads =
+									userId &&
+									railroadIds.every((id) =>
+										checkPropertyOwnedByPlayer(userId, id),
+									);
+								amountToDeduct = ownsAllRailroads ? 500 : 200;
+							} else {
+								const rent = tile.rent!;
+								const propertyRank = getRankOfProperty(tile.id);
+								amountToDeduct = rent[propertyRank]!;
+							}
 							emitEvent(
 								SOCKET_EVENTS.SEND_MONEY,
-								-1 * rent[propertyRank]!,
+								-1 * amountToDeduct,
 								userId,
 								game_id,
 							);
@@ -124,7 +135,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 		socket.on(SOCKET_EVENTS.GET_DICE_ROLL, handleDiceRoll);
 		socket.on(SOCKET_EVENTS.RECEIVE_POSITION, playerMoveListener);
-		socket.on(SOCKET_EVENTS.RECEIVE_TURN, (turn) => {
+		socket.on(SOCKET_EVENTS.RECEIVE_TURN, (_turn) => {
 			setEndTurnBtn(false);
 			setHasRolled(false);
 		});

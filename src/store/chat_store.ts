@@ -8,15 +8,13 @@ export type ChatStoreState = {
 // Store actions
 export type ChatStoreActions = {
 	setMessages: (messageObject: { messages: string; name: string }) => void;
-	setHistory: (
-		history: Array<{ message: string; username: string }>,
-	) => void;
+	setHistory: (history: Array<{ message: string; username: string }>) => void;
 };
 
 export type ChatStore = ChatStoreState & ChatStoreActions;
 
 // Frontend store
-export const useChatStore = create<ChatStore>()((set, get) => ({
+export const useChatStore = create<ChatStore>()((set, _get) => ({
 	messagesList: [],
 	setMessages: (message) =>
 		set((state) => {

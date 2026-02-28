@@ -9,8 +9,10 @@ export default function Tile({
 	className: string;
 	TileData: TileDataSchema;
 }) {
-	const { checkPropertyIsOwned, getColorByPropertyIndex, getRankOfProperty } =
-		useGameStore();
+	const checkPropertyIsOwned = useGameStore((state) => state.checkPropertyIsOwned);
+	const getColorByPropertyIndex = useGameStore((state) => state.getColorByPropertyIndex);
+	const getRankOfProperty = useGameStore((state) => state.getRankOfProperty);
+	
 	const isOwned = checkPropertyIsOwned(TileData.id);
 	const ownerColor = isOwned ? getColorByPropertyIndex(TileData.id) : undefined;
 	const rank = getRankOfProperty(TileData.id);
@@ -69,6 +71,36 @@ export default function Tile({
 							className="pixelated w-full"
 							height={50}
 							src={`/Images/prison.svg`}
+							width={50}
+						/>
+					</div>
+				</div>
+			) : TileData.type === "Vacation" ? (
+				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
+					<p className="flex w-full justify-center py-1 text-center text-md">
+						{TileData.name.toLowerCase()}
+					</p>
+					<div className="flex h-2/3 p-0">
+						<Images
+							alt={`vacation-${TileData.id}`}
+							className="pixelated w-full"
+							height={50}
+							src={`/Images/vacation.png`}
+							width={50}
+						/>
+					</div>
+				</div>
+			) : TileData.type === "tax" ? (
+				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
+					<p className="flex w-full justify-center py-1 text-center text-md">
+						{TileData.name.toLowerCase()}
+					</p>
+					<div className="flex h-2/3 p-0">
+						<Images
+							alt={`tax-${TileData.id}`}
+							className="pixelated w-full"
+							height={50}
+							src={`/Images/tax.png`}
 							width={50}
 						/>
 					</div>

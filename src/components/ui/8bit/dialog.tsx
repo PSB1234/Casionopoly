@@ -1,17 +1,15 @@
-import { type VariantProps, cva } from "class-variance-authority";
-
-import { cn } from "@/lib/utils";
-
+import { cva, type VariantProps } from "class-variance-authority";
 import {
-  Dialog as ShadcnDialog,
-  DialogClose as ShadcnDialogClose,
-  DialogContent as ShadcnDialogContent,
-  DialogDescription as ShadcnDialogDescription,
-  DialogFooter as ShadcnDialogFooter,
-  DialogHeader as ShadcnDialogHeader,
-  DialogTitle as ShadcnDialogTitle,
-  DialogTrigger as ShadcnDialogTrigger,
+	Dialog as ShadcnDialog,
+	DialogClose as ShadcnDialogClose,
+	DialogContent as ShadcnDialogContent,
+	DialogDescription as ShadcnDialogDescription,
+	DialogFooter as ShadcnDialogFooter,
+	DialogHeader as ShadcnDialogHeader,
+	DialogTitle as ShadcnDialogTitle,
+	DialogTrigger as ShadcnDialogTrigger,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 import "./styles/retro.css";
 
@@ -28,67 +26,67 @@ const DialogClose = ShadcnDialogClose;
 const DialogFooter = ShadcnDialogFooter;
 
 export interface BitDialogProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof dialogContentVariants> {}
+	extends React.ComponentProps<"div">,
+		VariantProps<typeof dialogContentVariants> {}
 
 function DialogTitle({ ...props }: BitDialogProps) {
-  const { className, font } = props;
-  return (
-    <ShadcnDialogTitle
-      className={cn(font !== "normal" && "retro", className)}
-      {...props}
-    />
-  );
+	const { className, font } = props;
+	return (
+		<ShadcnDialogTitle
+			className={cn(font !== "normal" && "retro", className)}
+			{...props}
+		/>
+	);
 }
 
 export const dialogContentVariants = cva("", {
-  variants: {
-    font: {
-      normal: "",
-      retro: "retro",
-    },
-  },
-  defaultVariants: {
-    font: "retro",
-  },
+	variants: {
+		font: {
+			normal: "",
+			retro: "retro",
+		},
+	},
+	defaultVariants: {
+		font: "retro",
+	},
 });
 
 function DialogContent({
-  className,
-  children,
-  font,
-  ...props
+	className,
+	children,
+	font,
+	...props
 }: BitDialogProps) {
-  return (
-    <ShadcnDialogContent
-      className={cn(
-        "bg-card rounded-none border-none",
-        font !== "normal" && "retro",
-        className
-      )}
-      {...props}
-    >
-      {children}
+	return (
+		<ShadcnDialogContent
+			className={cn(
+				"rounded-none border-none bg-card",
+				font !== "normal" && "retro",
+				className,
+			)}
+			{...props}
+		>
+			{children}
 
-      <div
-        className="absolute inset-0 border-x-6 -mx-1.5 border-foreground dark:border-ring pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 border-y-6 -my-1.5 border-foreground dark:border-ring pointer-events-none"
-        aria-hidden="true"
-      />
-    </ShadcnDialogContent>
-  );
+			<div
+				aria-hidden="true"
+				className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6 dark:border-ring"
+			/>
+			<div
+				aria-hidden="true"
+				className="-my-1.5 pointer-events-none absolute inset-0 border-foreground border-y-6 dark:border-ring"
+			/>
+		</ShadcnDialogContent>
+	);
 }
 
 export {
-  Dialog,
-  DialogTrigger,
-  DialogHeader,
-  DialogFooter,
-  DialogDescription,
-  DialogTitle,
-  DialogContent,
-  DialogClose,
+	Dialog,
+	DialogTrigger,
+	DialogHeader,
+	DialogFooter,
+	DialogDescription,
+	DialogTitle,
+	DialogContent,
+	DialogClose,
 };

@@ -25,7 +25,7 @@ export default function Bankruptcy({ roomKey }: { roomKey: string }) {
 			router.replace("/");
 		} else {
 			toast("Error", {
-				description: " Socket not connected",
+				description: "Socket not connected",
 			});
 			return;
 		}

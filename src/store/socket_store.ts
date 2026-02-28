@@ -33,7 +33,21 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 	connectSocket: (url: string, opts) => {
 		console.log("Attempting to connect to socket URL:", url);
 		const existing = get().socket;
-		if (existing?.connected) return; // prevent duplicate connections
+		if (existing?.connected) {
+			console.log("Socket already connected, skipping");
+			return; // prevent duplicate connections
+		}
+
+		// If socket exists but not connected, clean it up first
+		if (existing) {
+			existing.off("connect");
+			existing.off("disconnect");
+			existing.off("connect_error");
+			existing.off(SOCKET_EVENTS.GET_ALL_ROOMS);
+			existing.off(SOCKET_EVENTS.ERROR);
+			existing.disconnect();
+		}
+
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
 			// safe defaults; user opts override
 			transports: ["websocket"],
@@ -41,16 +55,26 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 			reconnection: true,
 			reconnectionAttempts: 5,
 			reconnectionDelay: 1000,
+			reconnectionDelayMax: 5000,
 			...opts,
 		});
 		set({ socket, isConnected: false });
+
+		// Remove any existing listeners before adding new ones (safety)
+		socket.off("connect");
+		socket.off("disconnect");
+		socket.off("connect_error");
+		socket.off(SOCKET_EVENTS.GET_ALL_ROOMS);
+		socket.off(SOCKET_EVENTS.ERROR);
+
+		// Now register listeners
 		socket.on("connect", () => {
 			set({ isConnected: true });
 			console.log("Socket connected!");
 		});
-		socket.on("disconnect", () => {
+		socket.on("disconnect", (reason) => {
 			set({ isConnected: false });
-			console.log("Socket disconnected!");
+			console.log("Socket disconnected:", reason);
 		});
 		// Listen for room updates
 		socket.on(SOCKET_EVENTS.GET_ALL_ROOMS, (roomsData: RoomData[]) => {
@@ -60,11 +84,14 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 		//handle errors
 		socket.on("connect_error", (error) => {
 			console.error("Connection error:", error);
+			toast("Connection Error", {
+				description: "Failed to connect to server. Retrying...",
+			});
 		});
 
 		socket.on(SOCKET_EVENTS.ERROR, (message: string) => {
 			console.warn("Socket error:", message);
-			toast(`${message}`, { description: message });
+			toast("Error", { description: message });
 		});
 	},
 	getSocket: () => {
@@ -98,8 +125,12 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 	disconnectSocket: () => {
 		const { socket } = get();
 		if (socket) {
-			// remove listeners to avoid leaks
-			socket.removeAllListeners();
+			// Remove only the listeners we registered in connectSocket
+			socket.off("connect");
+			socket.off("disconnect");
+			socket.off("connect_error");
+			socket.off(SOCKET_EVENTS.GET_ALL_ROOMS);
+			socket.off(SOCKET_EVENTS.ERROR);
 			socket.disconnect();
 			set({ socket: null, isConnected: false });
 		}

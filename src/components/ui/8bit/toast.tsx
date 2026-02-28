@@ -1,12 +1,10 @@
 "use client";
 
-import React from "react";
-
 import { toast as sonnerToast } from "sonner";
 
 import "./styles/retro.css";
 
-export function toast(toast: string, p0: { description: string | undefined }) {
+export function toast(toast: string, _p0: { description: string | undefined }) {
 	return sonnerToast.custom((id) => <Toast id={id} title={toast} />);
 }
 

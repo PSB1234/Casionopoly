@@ -1,7 +1,7 @@
 import type z from "zod";
 import type { TradeData } from "@/components/tradeList";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
-import type { createRoomSchema, OptionSchema } from "@/lib/zod";
+import type { createRoomSchema } from "@/lib/zod";
 
 export interface ServerToClientEvents {
 	[SOCKET_EVENTS.USER_CONNECTED]: (username: string) => void;
@@ -48,6 +48,9 @@ export interface ServerToClientEvents {
 	) => void;
 
 	[SOCKET_EVENTS.YOUR_VOTES]: (votedPlayerIds: string[]) => void;
+	[SOCKET_EVENTS.TIMER_TICK]: (remainingSeconds: number) => void;
+	[SOCKET_EVENTS.TIMER_EXPIRED]: () => void;
+	[SOCKET_EVENTS.ROOM_AUTO_DELETED]: (roomKey: string) => void;
 	connect: () => void;
 	disconnect: (reason: string) => void;
 	reconnect: () => void;
@@ -111,7 +114,10 @@ export interface ClientToServerEvents {
 		roomKey: string,
 		upgradeCost: number,
 	) => void;
-	[SOCKET_EVENTS.JOIN_RANDOM_ROOM]: (color: string) => void;
+	[SOCKET_EVENTS.JOIN_RANDOM_ROOM]: (
+		color: string,
+		callback: (roomKey: string, playerList: Player[]) => void,
+	) => void;
 	[SOCKET_EVENTS.LEAVE_ROOM]: (roomKey: string) => void;
 	[SOCKET_EVENTS.LEAVE_GAME]: (userId: string, roomKey: string) => void;
 	[SOCKET_EVENTS.REMOVE_PLAYER]: (roomKey: string) => void;
@@ -154,16 +160,16 @@ export type TileDataSchema = {
 	flagName: string;
 	group: number;
 	type:
-	| "property"
-	| "Vacation"
-	| "go-to-jail"
-	| "jail"
-	| "freeParking"
-	| "start"
-	| "tax"
-	| "community-chest"
-	| "chance"
-	| "railroad";
+		| "property"
+		| "Vacation"
+		| "go-to-jail"
+		| "jail"
+		| "freeParking"
+		| "start"
+		| "tax"
+		| "community-chest"
+		| "chance"
+		| "railroad";
 	buyable?: boolean;
 	price?: number;
 	rent?: number[];

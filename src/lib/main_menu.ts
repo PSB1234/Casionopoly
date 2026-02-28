@@ -5,21 +5,21 @@ export const getMenuItems = (
 	onQuickJoin: () => void,
 	setOptionsOpen: (open: boolean) => void,
 ) => [
-		{
-			label: "START GAME",
-			action: () => {
-				setOptionsOpen(true);
-			},
+	{
+		label: "START GAME",
+		action: () => {
+			setOptionsOpen(true);
 		},
-		{
-			label: "Quick join",
-			action: () => {
-				onQuickJoin();
-			},
+	},
+	{
+		label: "Quick join",
+		action: () => {
+			onQuickJoin();
 		},
-		{
-			label: "Join Room",
+	},
+	{
+		label: "Join Room",
 
-			action: () => router.push("/searchRoom"),
-		},
-	];
+		action: () => router.push("/searchRoom"),
+	},
+];

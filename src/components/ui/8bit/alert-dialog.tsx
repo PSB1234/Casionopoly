@@ -80,23 +80,21 @@ function AlertDialogContent({
 	return (
 		<AlertDialogPortal>
 			<AlertDialogOverlay />
-			<>
-				<ShadcnAlertDialogContent
-					className={cn(
-						"rounded-none border-foreground border-y-6 dark:border-ring",
-						font !== "normal" && "retro",
-						className,
-					)}
-					{...props}
-				>
-					{children}
+			<ShadcnAlertDialogContent
+				className={cn(
+					"rounded-none border-foreground border-y-6 dark:border-ring",
+					font !== "normal" && "retro",
+					className,
+				)}
+				{...props}
+			>
+				{children}
 
-					<div
-						aria-hidden="true"
-						className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6 dark:border-ring"
-					/>
-				</ShadcnAlertDialogContent>
-			</>
+				<div
+					aria-hidden="true"
+					className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6 dark:border-ring"
+				/>
+			</ShadcnAlertDialogContent>
 		</AlertDialogPortal>
 	);
 }

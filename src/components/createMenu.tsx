@@ -97,7 +97,7 @@ export default function CreateMenu({
 				SOCKET_EVENTS.CREATE_ROOM,
 				formattedValues.data,
 				finalColor,
-				(roomkey, player) => {
+				(roomkey, _player) => {
 					setIsLoading(false);
 					const { success, data, error } = roomKeyDataSchema.safeParse(roomkey);
 					if (error) {

@@ -38,4 +38,7 @@ export const SOCKET_EVENTS = {
 	CHAT_HISTORY: "chat history",
 	ERROR: "error",
 	YOUR_VOTES: "your votes",
+	TIMER_TICK: "timer tick",
+	TIMER_EXPIRED: "timer expired",
+	ROOM_AUTO_DELETED: "room auto deleted",
 } as const;

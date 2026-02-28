@@ -6,10 +6,12 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
-
-    images: {
-    qualities: [25, 50, 75,100],
-  },
+	experimental: {
+		useCache: true,
+	},
+	images: {
+		qualities: [25, 50, 75, 100],
+	},
 };
 
 export default config;

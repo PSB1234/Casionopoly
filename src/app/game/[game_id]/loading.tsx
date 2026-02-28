@@ -10,8 +10,6 @@ export default function Loading() {
 					<Skeleton className="h-10 w-48" />
 					<Skeleton className="h-10 w-10" />
 				</div>
-				{/* Option */}
-				<Skeleton className="h-32 w-full" />
 				{/* Trade */}
 				<Skeleton className="h-20 w-full" />
 				{/* Chat */}

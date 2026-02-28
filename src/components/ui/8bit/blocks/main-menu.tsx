@@ -12,6 +12,7 @@ import {
 import { getMenuItems } from "@/lib/main_menu";
 import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
+import type { Player } from "@/lib/type";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
@@ -22,7 +23,8 @@ export default function MainMenu({
 }: React.ComponentProps<"div">) {
 	const router = useRouter();
 	const { emitEvent } = useSocketStore();
-	const { color, setColor } = useGameStore();
+	const color = useGameStore((state) => state.color);
+	const setColor = useGameStore((state) => state.setColor);
 	const [optionsOpen, setOptionsOpen] = useState(false);
 	const handleQuickJoin = () => {
 		let finalColor = color;
@@ -31,7 +33,14 @@ export default function MainMenu({
 			finalColor = original;
 			setColor(finalColor);
 		}
-		emitEvent(SOCKET_EVENTS.JOIN_RANDOM_ROOM, finalColor);
+		emitEvent(
+			SOCKET_EVENTS.JOIN_RANDOM_ROOM,
+			finalColor,
+			(roomKey: string, playerList: Player[]) => {
+				useGameStore.setState({ players: playerList });
+				router.push(`/room/${roomKey}`);
+			},
+		);
 	};
 	const menuItems = getMenuItems(router, handleQuickJoin, setOptionsOpen);
 	return (

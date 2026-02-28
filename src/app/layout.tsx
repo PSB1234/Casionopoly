@@ -1,4 +1,5 @@
 import Background from "@/components/background";
+import QueryProvider from "@/components/provider/query_provider";
 import SocketInit from "@/components/provider/socket_provider";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
@@ -9,7 +10,7 @@ import { Geist, Jaro } from "next/font/google";
 export const metadata: Metadata = {
 	title: "Industrial.io",
 	description: "Monopoly like game",
-	icons: [{ rel: "icon", url: "/favicon.ico" }],
+	icons: [{ rel: "icon", url: "/app_icons/favicon.ico" }],
 };
 
 const geist = Geist({
@@ -26,11 +27,13 @@ export default function RootLayout({
 	return (
 		<html className={`${geist.variable}${jaro.variable} `} lang="en">
 			<body>
-				<SocketInit>
-					<Background />
-					{children}
-					<Toaster />
-				</SocketInit>
+				<QueryProvider>
+					<SocketInit>
+						<Background />
+						{children}
+						<Toaster />
+					</SocketInit>
+				</QueryProvider>
 			</body>
 		</html>
 	);

@@ -13,18 +13,16 @@ import {
 } from "@/components/ui/8bit/item";
 import { ScrollArea } from "@/components/ui/8bit/scroll-area";
 import Upgrade from "@/components/upgrade";
-import { getNameOfPropertyById } from "@/lib/tiledata";
+import TileDataJson, { getNameOfPropertyById } from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";
 
 export default function Properties({ roomKey }: { roomKey: string }) {
-	const {
-		getProperty,
-		userId,
-		players,
-		turn,
-		checkIfPropertyGroupIsOwnedByPlayer,
-	} = useGameStore();
+	const getProperty = useGameStore((state) => state.getProperty);
+	const userId = useGameStore((state) => state.userId);
+	const players = useGameStore((state) => state.players);
+	const turn = useGameStore((state) => state.turn);
+	const checkIfPropertyGroupIsOwnedByPlayer = useGameStore((state) => state.checkIfPropertyGroupIsOwnedByPlayer);
 	const properties = getProperty(userId);
 	const myPlayer = players.find((p) => p.id === userId);
 	const myRank = myPlayer?.rank || -1;
@@ -63,18 +61,20 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 											<ItemTitle>
 												{getNameOfPropertyById(property.id)}
 											</ItemTitle>
-											<Upgrade
-												disabled={
-													!isMyTurn ||
-													!checkIfPropertyGroupIsOwnedByPlayer(
-														userId,
-														property.id,
-													)
-												}
-												playerId={userId}
-												propertyIndex={property.id}
-												roomKey={roomKey}
-											/>
+											{TileDataJson[property.id]?.type === "property" && (
+												<Upgrade
+													disabled={
+														!isMyTurn ||
+														!checkIfPropertyGroupIsOwnedByPlayer(
+															userId,
+															property.id,
+														)
+													}
+													playerId={userId}
+													propertyIndex={property.id}
+													roomKey={roomKey}
+												/>
+											)}
 										</ItemContent>
 									</Item>
 									{index < properties.length - 1 && <ItemSeparator />}

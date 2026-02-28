@@ -12,7 +12,7 @@ export default function PlayerList({ PlayerList }: { PlayerList: Player[] }) {
 						return a.rank - b.rank; // Higher rank first
 					}
 					return a.username.localeCompare(b.username);
-				}).map((player, index) => (
+				}).map((player, _index) => (
 					<div
 						className="flex flex-row items-center justify-between gap-4"
 						key={player.id}

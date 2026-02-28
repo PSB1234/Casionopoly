@@ -6,7 +6,6 @@ import Board from "@/components/board";
 import Chat from "@/components/chat";
 import GhostBoard from "@/components/ghost-board";
 import Kick from "@/components/kick";
-import Option from "@/components/option";
 import Playerlist from "@/components/playerlist";
 import Properties from "@/components/properties";
 import Sounds from "@/components/sounds";
@@ -53,7 +52,7 @@ export default function Game() {
 		}
 
 		initializeSocket(game_id, socket);
-		return () => { };
+		return () => {};
 	}, [socket, game_id, initializeSocket, connectSocket, userId]);
 	const currentMoney = getPlayersMoney(userId);
 
@@ -65,7 +64,9 @@ export default function Game() {
 	}, [socket, game_id, userId, emitEvent, router]);
 
 	// Auto-quit when player runs out of money
+	// Guard: skip when players haven't loaded yet (e.g. during page refresh)
 	useEffect(() => {
+		if (players.length === 0) return;
 		if (currentMoney <= 0) {
 			if (players.length <= 1) {
 				handleSurrender();
@@ -80,17 +81,6 @@ export default function Game() {
 			setHasSeenBrokeAlert(false);
 		}
 	}, [currentMoney, hasSeenBrokeAlert, players.length, handleSurrender]);
-
-	// Auto-quit when only one player remains (handles bankruptcy edge case)
-	useEffect(() => {
-		if (players.length === 1 && players[0]?.id === userId) {
-			// Only one player left and it's the current user
-			const timer = setTimeout(() => {
-				handleSurrender();
-			}, 2000); // Wait 2 seconds before auto-quitting
-			return () => clearTimeout(timer);
-		}
-	}, [players, userId, handleSurrender]);
 
 	return (
 		<div className="flex h-screen max-h-screen max-w-screen items-center justify-center gap-6 px-5">
@@ -126,7 +116,6 @@ export default function Game() {
 					</div>
 					<Sounds />
 				</div>
-				<Option room_id={game_id}/>
 				<Trade roomKey={game_id} />
 				<Chat />
 			</div>

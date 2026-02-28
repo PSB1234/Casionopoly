@@ -12,14 +12,13 @@ import {
 	CardTitle,
 } from "@/components/ui/8bit/card";
 import { Input } from "@/components/ui/8bit/input";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { ChatSchema } from "@/lib/zod";
 import { useChatStore } from "@/store/chat_store";
 import useSocketStore from "@/store/socket_store";
 import Message from "./message";
 import { ScrollArea } from "./ui/8bit/scroll-area";
-import { toast } from "./ui/8bit/toast";
 
 export default function Chat() {
 	const { socket, emitEvent } = useSocketStore();
@@ -74,7 +73,7 @@ export default function Chat() {
 						<ScrollArea className="h-full">
 							{messages.map((msg, index) => (
 								<Message
-									key={msg + `${index}`}
+									key={`${msg}${index}`}
 									message={msg.messages}
 									name={msg.name}
 								/>

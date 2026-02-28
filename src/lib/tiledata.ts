@@ -18,7 +18,7 @@ const createProperty = (
 	buyable,
 	reward: 0,
 	isCornerTile,
-	upgrade: [50, 100, 200, 300, 400, 500]
+	upgrade: [50, 100, 200, 300, 400, 500],
 });
 
 const createTile = (
@@ -39,21 +39,49 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 		...createTile("Start", "start", true, 200),
 	},
 	{
-		...createProperty("Paris", "France", 1, 120, true, false, [100, 140, 230, 390, 460, 500]),
-	},
-	{
-		...createProperty("Lyon", "France", 1, 100, true, false, [80, 120, 200, 300, 350, 400]),
-	},
-	{
-		...createProperty("Marseille", "France", 1, 100, true, false, [80, 120, 200, 300, 350, 400]),
-	},
-	{
-		...createTile("Port", "railroad", false),
+		...createProperty(
+			"Paris",
+			"France",
+			1,
+			120,
+			true,
+			false,
+			[100, 140, 230, 390, 460, 500],
+		),
 	},
 	{
 		...createProperty(
-			"Cairo", "Egypt",
-			2, 140,
+			"Lyon",
+			"France",
+			1,
+			100,
+			true,
+			false,
+			[80, 120, 200, 300, 350, 400],
+		),
+	},
+	{
+		...createProperty(
+			"Marseille",
+			"France",
+			1,
+			100,
+			true,
+			false,
+			[80, 120, 200, 300, 350, 400],
+		),
+	},
+	{
+		...createTile("Port", "railroad", false),
+		buyable: true,
+		price: 150,
+	},
+	{
+		...createProperty(
+			"Cairo",
+			"Egypt",
+			2,
+			140,
 			true,
 			false,
 			[110, 160, 240, 410, 450, 500],
@@ -61,15 +89,25 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	},
 	{
 		...createProperty(
-			"Giza", "Egypt",
-			2, 160,
+			"Giza",
+			"Egypt",
+			2,
+			160,
 			true,
 			false,
 			[120, 180, 260, 430, 480, 550],
 		),
 	},
 	{
-		...createProperty("Shanghai", "china-v", 3, 160, true, false, [120, 180, 260, 430, 480, 550]),
+		...createProperty(
+			"Shanghai",
+			"china-v",
+			3,
+			160,
+			true,
+			false,
+			[120, 180, 260, 430, 480, 550],
+		),
 	},
 	{
 		...createTile("Jail", "jail", true),
@@ -77,7 +115,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Beijing",
-			"China-r", 3,
+			"China-r",
+			3,
 			180,
 			true,
 			false,
@@ -87,7 +126,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Osaka",
-			"Japan", 4,
+			"Japan",
+			4,
 			180,
 			true,
 			false,
@@ -100,7 +140,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Tokyo",
-			"Japan", 4,
+			"Japan",
+			4,
 			200,
 			true,
 			false,
@@ -110,7 +151,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"brisbane",
-			"aus", 5,
+			"aus",
+			5,
 			200,
 			true,
 			false,
@@ -119,11 +161,14 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	},
 	{
 		...createTile("Railway", "railroad", false),
+		buyable: true,
+		price: 150,
 	},
 	{
 		...createProperty(
 			"Sydney",
-			"aus", 5,
+			"aus",
+			5,
 			220,
 			true,
 			false,
@@ -136,7 +181,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"banglore",
-			"india", 6,
+			"india",
+			6,
 			240,
 			true,
 			false,
@@ -146,7 +192,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Delhi",
-			"india", 6,
+			"india",
+			6,
 			240,
 			true,
 			false,
@@ -162,7 +209,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"mumbai",
-			"india", 6,
+			"india",
+			6,
 			260,
 			true,
 			false,
@@ -172,7 +220,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Dubai",
-			"uae", 7,
+			"uae",
+			7,
 			280,
 			true,
 			false,
@@ -182,7 +231,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Sharjah",
-			"uae", 7,
+			"uae",
+			7,
 			280,
 			true,
 			false,
@@ -195,7 +245,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Hamburg",
-			"germany", 8,
+			"germany",
+			8,
 			300,
 			true,
 			false,
@@ -205,7 +256,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Berlin",
-			"germany", 8,
+			"germany",
+			8,
 			300,
 			true,
 			false,
@@ -214,11 +266,14 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	},
 	{
 		...createTile("airport", "railroad", false),
+		buyable: true,
+		price: 150,
 	},
 	{
 		...createProperty(
 			"Ceara",
-			"Brazil", 9,
+			"Brazil",
+			9,
 			320,
 			true,
 			false,
@@ -228,7 +283,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"Sao Paulo",
-			"Brazil", 9,
+			"Brazil",
+			9,
 			320,
 			true,
 			false,
@@ -238,7 +294,8 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 	{
 		...createProperty(
 			"New York",
-			"usa", 10,
+			"usa",
+			10,
 			350,
 			true,
 			false,
@@ -246,7 +303,15 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 		),
 	},
 	{
-		...createProperty("Los Angeles", "usa", 10, 350, true, false, [300, 360, 440, 610, 660, 1000]),
+		...createProperty(
+			"Los Angeles",
+			"usa",
+			10,
+			350,
+			true,
+			false,
+			[300, 360, 440, 610, 660, 1000],
+		),
 	},
 ] as const;
 const TileDataJson: TileDataSchema[] = TileDataJsonPartial.map((data, id) => {

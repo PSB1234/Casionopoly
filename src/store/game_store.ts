@@ -22,6 +22,7 @@ export interface GameStoreState {
 	color: string;
 	votedPlayers: string[];
 	trade: tradeDisplaySchema[];
+	timerSeconds: number;
 }
 
 export interface GameStoreActions {
@@ -99,6 +100,7 @@ export const useGameStore = create<GameStore>()(
 			turn: 1,
 			votedPlayers: [],
 			trade: [],
+			timerSeconds: 0,
 			initializeSocket: (
 				roomKey: string,
 				socket: Socket<ServerToClientEvents, ClientToServerEvents> | null,
@@ -141,9 +143,13 @@ export const useGameStore = create<GameStore>()(
 					});
 				};
 				const handlePlayerLeft = (playerId: string) => {
-					set((state) => ({
-						players: state.players.filter((p) => p.id !== playerId),
-					}));
+					if (get().userId === playerId) {
+						window.location.href = "/";
+					} else {
+						set((state) => ({
+							players: state.players.filter((p) => p.id !== playerId),
+						}));
+					}
 				};
 				const handleReceiveMoney = (money: number, userId: string) => {
 					console.log("DEBUG: RECEIVE_MONEY event triggered", {
@@ -261,6 +267,22 @@ export const useGameStore = create<GameStore>()(
 						),
 					});
 				};
+				const handleTimerTick = (remainingSeconds: number) => {
+					set({ timerSeconds: remainingSeconds });
+				};
+				const handleTimerExpired = () => {
+					set({ timerSeconds: 0 });
+					toast("Time's up!", {
+						description: "The waiting room has been closed due to inactivity.",
+					});
+				};
+				const handleRoomAutoDeleted = (deletedRoomKey: string) => {
+					// Room deletion will be handled in the page component
+					// This handler is here for completeness
+					if (deletedRoomKey === roomKey) {
+						set({ timerSeconds: 0 });
+					}
+				};
 				// Remove any existing listeners to prevent duplicates
 				socket.off(SOCKET_EVENTS.GAME_LOOP);
 				socket.off(SOCKET_EVENTS.PLAYER_LEFT);
@@ -271,6 +293,9 @@ export const useGameStore = create<GameStore>()(
 				socket.off(SOCKET_EVENTS.YOUR_VOTES);
 				socket.off(SOCKET_EVENTS.RECEIVE_TRADE_OFFER);
 				socket.off(SOCKET_EVENTS.RECEIVE_CONFIRM_TRADE_OFFER);
+				socket.off(SOCKET_EVENTS.TIMER_TICK);
+				socket.off(SOCKET_EVENTS.TIMER_EXPIRED);
+				socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED);
 				socket.off("reconnect");
 				socket.on(SOCKET_EVENTS.GAME_LOOP, handleGameLoop);
 				socket.on(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
@@ -285,6 +310,9 @@ export const useGameStore = create<GameStore>()(
 					handleReceiveConfirmTradeOffer,
 				);
 				socket.on(SOCKET_EVENTS.PROPERTY_UPGRADED, handleUpgradeProperty);
+				socket.on(SOCKET_EVENTS.TIMER_TICK, handleTimerTick);
+				socket.on(SOCKET_EVENTS.TIMER_EXPIRED, handleTimerExpired);
+				socket.on(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleRoomAutoDeleted);
 				// Join on initial connection
 				joinRoom();
 				// Rejoin on reconnect
@@ -307,6 +335,9 @@ export const useGameStore = create<GameStore>()(
 						handleReceiveConfirmTradeOffer,
 					);
 					socket.off(SOCKET_EVENTS.PROPERTY_UPGRADED, handleUpgradeProperty);
+					socket.off(SOCKET_EVENTS.TIMER_TICK, handleTimerTick);
+					socket.off(SOCKET_EVENTS.TIMER_EXPIRED, handleTimerExpired);
+					socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleRoomAutoDeleted);
 				});
 			},
 			setUsername: (username: string) => set({ username }),
