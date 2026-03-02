@@ -62,6 +62,7 @@ export default function TradeList({
 					<p>Amount:</p>
 					<div className="mb-3">
 						<Input
+							disabled={player.money <= 0}
 							onChange={(e) => handleAmountChange(e.target.value, player.money)}
 							placeholder="Select the Amount"
 							type="number"
@@ -70,6 +71,7 @@ export default function TradeList({
 					</div>
 					<Slider
 						className="mb-3"
+						disabled={player.money <= 0}
 						max={player.money}
 						min={0}
 						onValueChange={handleSliderChange}

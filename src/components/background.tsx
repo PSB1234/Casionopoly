@@ -3,7 +3,7 @@ import pc from "public/Images/back.webp";
 import mobile from "public/Images/back_mobile.webp";
 export default function Background() {
 	return (
-		<span className="-z-50 fixed inset-0">
+		<span className="fixed inset-0 -z-50">
 			<Image
 				alt="Night City"
 				className="hidden md:block"

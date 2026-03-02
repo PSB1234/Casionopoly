@@ -9,10 +9,14 @@ export default function Tile({
 	className: string;
 	TileData: TileDataSchema;
 }) {
-	const checkPropertyIsOwned = useGameStore((state) => state.checkPropertyIsOwned);
-	const getColorByPropertyIndex = useGameStore((state) => state.getColorByPropertyIndex);
+	const checkPropertyIsOwned = useGameStore(
+		(state) => state.checkPropertyIsOwned,
+	);
+	const getColorByPropertyIndex = useGameStore(
+		(state) => state.getColorByPropertyIndex,
+	);
 	const getRankOfProperty = useGameStore((state) => state.getRankOfProperty);
-	
+
 	const isOwned = checkPropertyIsOwned(TileData.id);
 	const ownerColor = isOwned ? getColorByPropertyIndex(TileData.id) : undefined;
 	const rank = getRankOfProperty(TileData.id);
@@ -28,24 +32,24 @@ export default function Tile({
 	let textDirectionClass = "";
 	let textIconClass = "";
 	if (isTop) {
-		positionClass = " max-h-1/3 border-t-4";
+		positionClass = " max-h-[35%] border-t-2";
 		directionClass = "flex-col-reverse ";
 		textDirectionClass = "items-center justify-center";
 		textIconClass = "flex-col-reverse";
 	} else if (isBottom) {
-		positionClass = " max-h-1/3  border-b-4";
+		positionClass = " max-h-[35%]  border-b-2";
 		directionClass = "flex-col ";
 		textDirectionClass = "items-center justify-center";
 		textIconClass = "flex-col ";
 	} else if (isLeft) {
-		positionClass = "max-w-1/3 border-l-4";
+		positionClass = "max-w-[35%] border-l-2";
 		directionClass = "flex-row-reverse  ";
-		textDirectionClass = "items-end justify-start";
+		textDirectionClass = "items-center justify-center";
 		textIconClass = "flex-col";
 	} else if (isRight) {
-		positionClass = " max-w-1/3 border-r-4";
+		positionClass = " max-w-[35%] border-r-2";
 		directionClass = "flex-row";
-		textDirectionClass = "items-end justify-end";
+		textDirectionClass = "items-center justify-center";
 		textIconClass = "flex-col";
 	} else {
 		positionClass = "border-0";
@@ -55,53 +59,50 @@ export default function Tile({
 	return (
 		<div
 			className={cn(
-				"relative flex h-full w-full min-w-10 flex-row justify-between border-foreground border-y-4", //change min-w for responsiveness
+				"relative flex h-full w-full min-w-0 min-h-0 flex-row justify-between border-foreground border-y-2 [container-type:size]",
 				className,
 			)}
 			style={{ borderColor: ownerColor }}
 		>
 			{TileData.type === "jail" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
-					<p className="flex w-full justify-center py-1 text-center text-md">
+					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
 						{TileData.name.toLowerCase()}
 					</p>
-					<div className="flex h-2/3 p-0">
+					<div className="flex h-2/3 p-0 relative">
 						<Images
 							alt={`jail-${TileData.id}`}
-							className="pixelated w-full"
-							height={50}
+							className="pixelated object-contain"
+							fill
 							src={`/Images/prison.svg`}
-							width={50}
 						/>
 					</div>
 				</div>
 			) : TileData.type === "Vacation" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
-					<p className="flex w-full justify-center py-1 text-center text-md">
+					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
 						{TileData.name.toLowerCase()}
 					</p>
-					<div className="flex h-2/3 p-0">
+					<div className="flex h-2/3 p-0 relative">
 						<Images
 							alt={`vacation-${TileData.id}`}
-							className="pixelated w-full"
-							height={50}
+							className="pixelated object-contain"
+							fill
 							src={`/Images/vacation.png`}
-							width={50}
 						/>
 					</div>
 				</div>
 			) : TileData.type === "tax" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
-					<p className="flex w-full justify-center py-1 text-center text-md">
+					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
 						{TileData.name.toLowerCase()}
 					</p>
-					<div className="flex h-2/3 p-0">
+					<div className="flex h-2/3 p-0 relative">
 						<Images
 							alt={`tax-${TileData.id}`}
-							className="pixelated w-full"
-							height={50}
+							className="pixelated object-contain"
+							fill
 							src={`/Images/tax.png`}
-							width={50}
 						/>
 					</div>
 				</div>
@@ -109,7 +110,7 @@ export default function Tile({
 				<>
 					<div
 						className={cn(
-							"flex h-full w-full justify-between overflow-clip text-clip p-1",
+							"flex h-full w-full justify-between overflow-clip text-clip p-[1cqw]",
 							textDirectionClass,
 						)}
 					>
@@ -121,24 +122,36 @@ export default function Tile({
 									"items-center gap-0",
 								)}
 							>
-								<div className={cn("flex h-full w-full justify-center")}>
+								<div className={cn("flex h-full w-full justify-center relative")}>
 									{rank > 0 && rank <= 5 && (
 										<Images
 											alt={`house-${rank}`}
-											height={isTop || isBottom ? 30 : 20}
+											className="object-contain"
+											fill
 											src={`/upgrade-icons/house-${rank - 1}.svg`}
-											width={isTop || isBottom ? 30 : 20}
 										/>
 									)}
 								</div>
-								<p className="break-all text-center text-sm leading-tight">
+								<p className="break-all text-center text-[25cqmin] lg:text-sm font-medium leading-tight">
 									{TileData.name.toLowerCase()}
 								</p>
+								{TileData.price && (
+									<p className="mt-[2cqh] text-center text-[25cqmin] lg:text-sm font-bold text-yellow-400">
+										${TileData.price}
+									</p>
+								)}
 							</div>
 						) : (
-							<p className="h-full w-full break-all text-center font-extralight text-sm leading-tight">
-								{TileData.name.toLowerCase()}
-							</p>
+							<div className={cn(isTop ? "justify-start":"justify-center",isBottom?"justify-end":"justify-center","flex h-full w-full flex-col items-center  gap-[2cqh]")}>
+								<p className="break-all text-center font-extralight text-[25cqmin] lg:text-sm leading-tight">
+									{TileData.name.toLowerCase()}
+								</p>
+								{TileData.price && (
+									<p className="text-center text-[25cqmin] lg:text-sm font-bold text-yellow-400">
+										${TileData.price}
+									</p>
+								)}
+							</div>
 						)}
 					</div>
 					{TileData.flagName && TileData.type === "property" && (
@@ -160,7 +173,7 @@ export default function Tile({
 									{/** biome-ignore lint/performance/noImgElement: <explanation> */}
 									<img
 										alt={`${TileData.id}`}
-										className={cn("h-full w-full")}
+										className={cn("h-full w-full object-cover")}
 										rel="preload"
 										src={`/tiles/${TileData.flagName.toLowerCase()}.png`}
 									/>
@@ -177,66 +190,54 @@ export default function Tile({
 							</div>
 						</div>
 					)}
-					{TileData.type === "railroad" &&
-						TileData.name.toLowerCase() === "railway" && (
-							// biome-ignore lint/performance/noImgElement: <explanation>
-							<Images
-								alt={`train-${TileData.id}`}
-								className="pixelated h-full w-1/3"
-								height={20}
-								src={`/Images/train.svg`}
-								width={20}
-							/>
-						)}
-					{TileData.type === "railroad" &&
-						TileData.name.toLowerCase() === "port" && (
-							// biome-ignore lint/performance/noImgElement: <explanation>
-							<Images
-								alt={`ship-${TileData.id}`}
-								className="pixelated w-full p-2"
-								height={20}
-								src={`/Images/ship.png`}
-								width={20}
-							/>
-						)}
-					{TileData.type === "railroad" &&
-						TileData.name.toLowerCase() === "airport" && (
-							// biome-ignore lint/performance/noImgElement: <explanation>
-							<Images
-								alt={`plane-${TileData.id}`}
-								className="pixelated h-full w-full p-0 py-2"
-								height={10}
-								src={`/Images/plane.svg`}
-								width={10}
-							/>
-						)}
-					{TileData.type === "chance" &&
-						TileData.name.toLowerCase() === "chest" && (
-							// biome-ignore lint/performance/noImgElement: <explanation>
-							<Images
-								alt={`plane-${TileData.id}`}
-								className="pixelated h-full w-full p-2"
-								height={20}
-								src={`/Images/chest.svg`}
-								width={20}
-							/>
-						)}
+					{TileData.type === "railroad" && (
+						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
+							<div className="relative h-full w-full">
+								<Images
+									alt={`${TileData.name.toLowerCase()}-${TileData.id}`}
+									className="pixelated object-contain"
+									fill
+									src={
+										TileData.name.toLowerCase() === "railway"
+											? "/Images/train.svg"
+											: TileData.name.toLowerCase() === "port"
+												? "/Images/ship.png"
+												: "/Images/plane.svg"
+									}
+								/>
+							</div>
+						</div>
+					)}
+					{TileData.type === "chance" && (
+						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
+							<div className="relative h-full w-full">
+								<Images
+									alt={`chest-${TileData.id}`}
+									className="pixelated object-contain"
+									fill
+									src={`/Images/chest.svg`}
+								/>
+							</div>
+						</div>
+					)}
 					{TileData.type === "go-to-jail" && (
-						// biome-ignore lint/performance/noImgElement: <explanation>
-						<Images
-							alt={`police-${TileData.id}`}
-							className="pixelated w-full p-3"
-							height={10}
-							src={`/Images/police.png`}
-							width={10}
-						/>
+						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
+							<div className="relative h-full w-full">
+								<Images
+									alt={`police-${TileData.id}`}
+									className="pixelated object-contain"
+									fill
+									src={`/Images/police.png`}
+								/>
+							</div>
+						</div>
 					)}
 				</>
 			)}
 
 			<div
 				aria-hidden="true"
-				className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-4"
+				className="pointer-events-none absolute inset-0 -mx-[2px] border-foreground border-x-2"
 				style={{ borderColor: ownerColor }}
 			/>
 		</div>

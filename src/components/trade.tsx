@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/8bit/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
 import {
@@ -16,9 +15,14 @@ import { TradeInteraction } from "./tradeInteraction";
 import type { TradeData } from "./tradeList";
 
 export default function Trade({ roomKey }: { roomKey: string }) {
-	const [open, setOpen] = useState(false);
 	const { socket } = useSocketStore();
-	const { userId, players, sendTrade } = useGameStore();
+	const {
+		userId,
+		players,
+		sendTrade,
+		isTradeDialogOpen: open,
+		setTradeDialogOpen: setOpen,
+	} = useGameStore();
 
 	const onSubmit = (playerId: string, offer: TradeData, request: TradeData) => {
 		console.log("Submitting Trade:", { playerId, offer, request });
@@ -35,7 +39,7 @@ export default function Trade({ roomKey }: { roomKey: string }) {
 			<CardContent>
 				<Dialog onOpenChange={setOpen} open={open}>
 					<DialogTrigger asChild>
-						<Button>Open</Button>
+						<Button size="sm">Open</Button>
 					</DialogTrigger>
 					<DialogContent>
 						<DialogHeader>

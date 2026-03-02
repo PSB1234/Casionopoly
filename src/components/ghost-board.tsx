@@ -45,10 +45,12 @@ const getTilePosition = (index: number) => {
 
 export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 	return (
-		<div className="pointer-events-none absolute inset-1 h-full w-full p-5">
+		<div className="pointer-events-none absolute inset-0 h-full w-full p-2">
 			<div
-				className="relative grid aspect-square h-full max-h-screen w-full grid-cols-11 grid-rows-11 gap-4 gap-y-2 px-4 py-6"
+				className="relative grid h-full w-full gap-2"
 				style={{
+					gridTemplateColumns: "repeat(11, minmax(0, 1fr))",
+					gridTemplateRows: "repeat(11, minmax(0, 1fr))",
 					gridTemplateAreas: `
                 "start start city1 city2 city3 special1 city4 city5 city6 corner1 corner1"
                 "start start city1 city2 city3 special1 city4 city5 city6 corner1 corner1"
@@ -68,22 +70,24 @@ export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 				{TileDataJson.map((tileData) => (
 					<div
 						className={cn(
-							"flex h-full w-full items-center justify-start p-2",
+							"flex h-full w-full items-center justify-center p-[0.5cqmin]",
 							getTilePosition(tileData.id),
 						)}
 						key={tileData.id}
 					>
-						{PlayerList.filter((player) => player.position === tileData.id).map(
-							(player) => {
-								return (
-									<PlayerSprite
-										className="h-5 w-5"
-										color={player.color || "#000000"} // Fallback color
-										key={player.id}
-									/>
-								);
-							},
-						)}
+						<div className="flex flex-wrap items-center justify-center gap-[0.2cqmin]">
+							{PlayerList.filter((player) => player.position === tileData.id).map(
+								(player) => {
+									return (
+										<PlayerSprite
+											className="h-[4cqmin] w-[4cqmin]"
+											color={player.color || "#000000"} // Fallback color
+											key={player.id}
+										/>
+									);
+								},
+							)}
+						</div>
 					</div>
 				))}
 				{/* Center area for logs and controls */}

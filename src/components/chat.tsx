@@ -63,18 +63,20 @@ export default function Chat() {
 		form.reset(); // Reset form after submission
 	}
 	return (
-		<Card className="flex h-full flex-col">
+		<Card className="flex min-h-0 flex-col lg:flex-1">
 			<CardHeader>
 				<CardTitle>Chat</CardTitle>
 			</CardHeader>
-			<CardContent className="min-h-0 flex-1">
-				<Card className="h-full">
-					<CardContent className="h-full p-2">
-						<ScrollArea className="h-full">
+			<CardContent className="min-h-0 lg:flex-1">
+				<Card className="lg:h-full">
+					<CardContent className="p-2 lg:h-full">
+						<ScrollArea className="h-48 lg:h-full">
 							{messages.map((msg, index) => (
 								<Message
-									key={`${msg}${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-index}`}
+									key={`${msg}${
+										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+										index
+									}`}
 									message={msg.messages}
 									name={msg.name}
 								/>
@@ -85,7 +87,7 @@ index}`}
 			</CardContent>
 			<CardFooter>
 				<form
-					className="flex w-full gap-10 md:w-auto"
+					className="flex w-full flex-col gap-3 "
 					onSubmit={form.handleSubmit(onSubmit)}
 				>
 					<Controller
@@ -102,7 +104,9 @@ index}`}
 							</Field>
 						)}
 					/>
-					<Button type="submit">Submit</Button>
+					<Button size="sm" type="submit">
+						Submit
+					</Button>
 				</form>
 			</CardFooter>
 		</Card>

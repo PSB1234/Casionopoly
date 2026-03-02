@@ -33,7 +33,9 @@ export default function Bankruptcy({ roomKey }: { roomKey: string }) {
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger>
-				<Button variant={"outline"}>Bankruptcy</Button>
+				<Button size="sm" variant={"outline"}>
+					Bankruptcy
+				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>

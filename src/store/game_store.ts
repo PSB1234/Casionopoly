@@ -23,6 +23,10 @@ export interface GameStoreState {
 	votedPlayers: string[];
 	trade: tradeDisplaySchema[];
 	timerSeconds: number;
+	showInactivityWarning: boolean;
+	inactivityCountdown: number;
+	isTradeDialogOpen: boolean;
+	isNavigating: boolean;
 }
 
 export interface GameStoreActions {
@@ -86,6 +90,8 @@ export interface GameStoreActions {
 	) => void;
 	displayTrade: () => tradeDisplaySchema[];
 	getUsernameById: (playerId: string) => string | undefined;
+	setTradeDialogOpen: (isOpen: boolean) => void;
+	setIsNavigating: (isNavigating: boolean) => void;
 }
 
 export type GameStore = GameStoreState & GameStoreActions;
@@ -101,6 +107,10 @@ export const useGameStore = create<GameStore>()(
 			votedPlayers: [],
 			trade: [],
 			timerSeconds: 0,
+			showInactivityWarning: false,
+			inactivityCountdown: 0,
+			isTradeDialogOpen: false,
+			isNavigating: false,
 			initializeSocket: (
 				roomKey: string,
 				socket: Socket<ServerToClientEvents, ClientToServerEvents> | null,
@@ -283,6 +293,15 @@ export const useGameStore = create<GameStore>()(
 						set({ timerSeconds: 0 });
 					}
 				};
+				const handleInactivityWarning = (countdown: number) => {
+					set({ showInactivityWarning: true, inactivityCountdown: countdown });
+				};
+				const handleInactivityTick = (remainingSeconds: number) => {
+					set({ inactivityCountdown: remainingSeconds });
+				};
+				const handleInactivityReset = () => {
+					set({ showInactivityWarning: false, inactivityCountdown: 0 });
+				};
 				// Remove any existing listeners to prevent duplicates
 				socket.off(SOCKET_EVENTS.GAME_LOOP);
 				socket.off(SOCKET_EVENTS.PLAYER_LEFT);
@@ -296,6 +315,9 @@ export const useGameStore = create<GameStore>()(
 				socket.off(SOCKET_EVENTS.TIMER_TICK);
 				socket.off(SOCKET_EVENTS.TIMER_EXPIRED);
 				socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED);
+				socket.off(SOCKET_EVENTS.INACTIVITY_WARNING);
+				socket.off(SOCKET_EVENTS.INACTIVITY_TICK);
+				socket.off(SOCKET_EVENTS.INACTIVITY_RESET);
 				socket.off("reconnect");
 				socket.on(SOCKET_EVENTS.GAME_LOOP, handleGameLoop);
 				socket.on(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
@@ -313,6 +335,9 @@ export const useGameStore = create<GameStore>()(
 				socket.on(SOCKET_EVENTS.TIMER_TICK, handleTimerTick);
 				socket.on(SOCKET_EVENTS.TIMER_EXPIRED, handleTimerExpired);
 				socket.on(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleRoomAutoDeleted);
+				socket.on(SOCKET_EVENTS.INACTIVITY_WARNING, handleInactivityWarning);
+				socket.on(SOCKET_EVENTS.INACTIVITY_TICK, handleInactivityTick);
+				socket.on(SOCKET_EVENTS.INACTIVITY_RESET, handleInactivityReset);
 				// Join on initial connection
 				joinRoom();
 				// Rejoin on reconnect
@@ -338,6 +363,9 @@ export const useGameStore = create<GameStore>()(
 					socket.off(SOCKET_EVENTS.TIMER_TICK, handleTimerTick);
 					socket.off(SOCKET_EVENTS.TIMER_EXPIRED, handleTimerExpired);
 					socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleRoomAutoDeleted);
+					socket.off(SOCKET_EVENTS.INACTIVITY_WARNING, handleInactivityWarning);
+					socket.off(SOCKET_EVENTS.INACTIVITY_TICK, handleInactivityTick);
+					socket.off(SOCKET_EVENTS.INACTIVITY_RESET, handleInactivityReset);
 				});
 			},
 			setUsername: (username: string) => set({ username }),
@@ -572,6 +600,8 @@ export const useGameStore = create<GameStore>()(
 					status,
 				);
 			},
+			setTradeDialogOpen: (isOpen) => set({ isTradeDialogOpen: isOpen }),
+			setIsNavigating: (isNavigating) => set({ isNavigating }),
 			setState: (state) => set(state),
 		}),
 		{

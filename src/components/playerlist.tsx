@@ -22,11 +22,11 @@ export default function PlayerList({ PlayerList }: { PlayerList: Player[] }) {
 								{player.username.slice(0, 2).toUpperCase()}
 							</AvatarFallback>
 						</Avatar>
-						<div className="flex w-full justify-between gap-2">
-							<p className="wrap-break-word text-xs">
+						<div className="flex w-full min-w-0 justify-between gap-2">
+							<p className="truncate text-xs">
 								{player.rank}.{player.username}
 							</p>
-							<p className="text-xs opacity-75">${player.money}</p>
+							<p className="shrink-0 text-xs opacity-75">${player.money}</p>
 						</div>
 					</div>
 				))}

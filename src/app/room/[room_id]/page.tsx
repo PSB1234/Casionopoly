@@ -12,14 +12,18 @@ import useSocketStore from "@/store/socket_store";
 export default function Room() {
 	const router = useRouter();
 	const { room_id } = useParams<{ room_id: string }>();
-	const { isThisPlayerLeader, players, initializeSocket, timerSeconds } =
+	const { isThisPlayerLeader, players, initializeSocket, timerSeconds, setIsNavigating } =
 		useGameStore();
 	const { socket, emitEvent, rooms } = useSocketStore();
 	const roomData = rooms.find((room) => room.roomKey === room_id);
 	useEffect(() => {
+		setIsNavigating(false);
+	}, [setIsNavigating]);
+	useEffect(() => {
 		if (!socket || !room_id) return;
 		initializeSocket(room_id, socket);
 		function RoomStatus() {
+			setIsNavigating(true);
 			router.push(`/game/${room_id}`);
 			router.refresh();
 		}
@@ -91,13 +95,13 @@ export default function Room() {
 						</button>
 						<div
 							aria-hidden="true"
-							className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+							className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6"
 						/>
 					</h3>
 				</div>
 				<div
 					aria-hidden="true"
-					className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+					className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6"
 				/>
 				<Timer seconds={timerSeconds} />
 			</div>

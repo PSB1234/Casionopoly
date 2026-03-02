@@ -41,4 +41,8 @@ export const SOCKET_EVENTS = {
 	TIMER_TICK: "timer tick",
 	TIMER_EXPIRED: "timer expired",
 	ROOM_AUTO_DELETED: "room auto deleted",
+	INACTIVITY_WARNING: "inactivity warning",
+	INACTIVITY_TICK: "inactivity tick",
+	CONFIRM_ACTIVITY: "confirm activity",
+	INACTIVITY_RESET: "inactivity reset",
 } as const;

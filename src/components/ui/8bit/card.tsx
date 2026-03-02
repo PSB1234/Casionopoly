@@ -51,7 +51,7 @@ function Card({ ...props }: BitCardProps) {
 
 			<div
 				aria-hidden="true"
-				className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6 dark:border-ring"
+				className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6 dark:border-ring"
 			/>
 		</div>
 	);
@@ -73,7 +73,11 @@ function CardTitle({ ...props }: BitCardProps) {
 
 	return (
 		<ShadcnCardTitle
-			className={cn(font !== "normal" && "retro", className)}
+			className={cn(
+				"text-sm sm:text-base md:text-lg lg:text-xl",
+				font !== "normal" && "retro",
+				className,
+			)}
 			{...props}
 		/>
 	);

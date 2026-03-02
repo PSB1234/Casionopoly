@@ -108,6 +108,7 @@ export default function CreateMenu({
 					}
 					if (success) {
 						setOptionsOpenAction(false);
+						useGameStore.getState().setIsNavigating(true);
 						router.push(`/room/${data}`);
 						router.refresh();
 					}
@@ -170,22 +171,22 @@ export default function CreateMenu({
 										id={field.name}
 									>
 										<button
-											disabled={isLoading}
 											className={cn(
 												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
 												roomType === "public" && "bg-primary text-white",
 											)}
+											disabled={isLoading}
 											onClick={() => field.onChange("public")}
 											type="button"
 										>
 											Public
 										</button>
 										<button
-											disabled={isLoading}
 											className={cn(
 												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
 												roomType === "private" && "bg-primary text-white",
 											)}
+											disabled={isLoading}
 											onClick={() => field.onChange("private")}
 											type="button"
 										>
@@ -193,7 +194,7 @@ export default function CreateMenu({
 										</button>
 										<div
 											aria-hidden="true"
-											className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+											className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6"
 										/>
 									</div>
 									{fieldState.invalid && (
@@ -206,7 +207,6 @@ export default function CreateMenu({
 							<Field
 								className="p-4"
 								data-invalid={!!form.formState.errors.password}
-								
 							>
 								<FieldLabel htmlFor="password">Password</FieldLabel>
 								<div className="flex w-full flex-row items-center justify-between gap-2">

@@ -39,7 +39,9 @@ export default function TradeReview({
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger>
-				<Button variant={"destructive"}>Review</Button>
+				<Button size="sm" variant={"destructive"}>
+					Review
+				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>

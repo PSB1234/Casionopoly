@@ -51,6 +51,9 @@ export interface ServerToClientEvents {
 	[SOCKET_EVENTS.TIMER_TICK]: (remainingSeconds: number) => void;
 	[SOCKET_EVENTS.TIMER_EXPIRED]: () => void;
 	[SOCKET_EVENTS.ROOM_AUTO_DELETED]: (roomKey: string) => void;
+	[SOCKET_EVENTS.INACTIVITY_WARNING]: (countdown: number) => void;
+	[SOCKET_EVENTS.INACTIVITY_TICK]: (remainingSeconds: number) => void;
+	[SOCKET_EVENTS.INACTIVITY_RESET]: () => void;
 	connect: () => void;
 	disconnect: (reason: string) => void;
 	reconnect: () => void;
@@ -121,6 +124,7 @@ export interface ClientToServerEvents {
 	[SOCKET_EVENTS.LEAVE_ROOM]: (roomKey: string) => void;
 	[SOCKET_EVENTS.LEAVE_GAME]: (userId: string, roomKey: string) => void;
 	[SOCKET_EVENTS.REMOVE_PLAYER]: (roomKey: string) => void;
+	[SOCKET_EVENTS.CONFIRM_ACTIVITY]: (roomKey: string) => void;
 }
 
 export interface InterServerEvents {

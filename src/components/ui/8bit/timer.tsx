@@ -52,7 +52,7 @@ export function Timer({ seconds, className }: TimerProps) {
 			{/* Pixelated borders on sides */}
 			<div
 				aria-hidden="true"
-				className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6 dark:border-ring"
+				className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6 dark:border-ring"
 			/>
 		</div>
 	);

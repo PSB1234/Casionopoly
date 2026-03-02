@@ -21,7 +21,9 @@ export default function Kick({ roomKey }: { roomKey: string }) {
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger>
-				<Button variant={"destructive"}>kick</Button>
+				<Button size="sm" variant={"destructive"}>
+					kick
+				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>

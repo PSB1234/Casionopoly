@@ -1,4 +1,5 @@
 import Background from "@/components/background";
+import LoadingProvider from "@/components/provider/loading_provider";
 import QueryProvider from "@/components/provider/query_provider";
 import SocketInit from "@/components/provider/socket_provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -29,9 +30,11 @@ export default function RootLayout({
 			<body>
 				<QueryProvider>
 					<SocketInit>
-						<Background />
-						{children}
-						<Toaster />
+						<LoadingProvider>
+							<Background />
+							{children}
+							<Toaster />
+						</LoadingProvider>
 					</SocketInit>
 				</QueryProvider>
 			</body>

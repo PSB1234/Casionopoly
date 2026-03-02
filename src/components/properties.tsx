@@ -26,23 +26,26 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 	const checkIfPropertyGroupIsOwnedByPlayer = useGameStore(
 		(state) => state.checkIfPropertyGroupIsOwnedByPlayer,
 	);
+	const getPlayersMoney = useGameStore((state) => state.getPlayersMoney);
+
 	const properties = getProperty(userId);
 	const myPlayer = players.find((p) => p.id === userId);
 	const myRank = myPlayer?.rank || -1;
 	const isMyTurn = turn === myRank;
+	const isBankrupt = getPlayersMoney(userId) <= 0;
 
 	return (
-		<Card className="flex min-h-0 flex-1 flex-col">
+		<Card className="flex min-h-0 flex-col">
 			<CardTitle className="px-5">Properties</CardTitle>
 			<Activity mode={properties.length > 0 ? "visible" : "hidden"}>
 				<CardDescription className="px-5">
 					List of your properties
 				</CardDescription>
 			</Activity>
-			<CardContent className="min-h-0 flex-1">
+			<CardContent className="min-h-0">
 				<ScrollArea
 					className={cn(
-						"relative h-full w-full border-foreground pr-2",
+						"relative h-60 lg:h-full w-full border-foreground pr-2",
 						!(properties.length === 0 || properties === undefined) &&
 							"border-y-6",
 					)}
@@ -65,10 +68,17 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 											<ItemTitle>
 												{getNameOfPropertyById(property.id)}
 											</ItemTitle>
-											<Activity mode={TileDataJson[property.id]?.type === "property" ? "visible" : "hidden"}>
+											<Activity
+												mode={
+													TileDataJson[property.id]?.type === "property"
+														? "visible"
+														: "hidden"
+												}
+											>
 												<Upgrade
 													disabled={
 														!isMyTurn ||
+														isBankrupt ||
 														!checkIfPropertyGroupIsOwnedByPlayer(
 															userId,
 															property.id,
@@ -81,7 +91,9 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 											</Activity>
 										</ItemContent>
 									</Item>
-									<Activity mode={index < properties.length - 1 ? "visible" : "hidden"}>
+									<Activity
+										mode={index < properties.length - 1 ? "visible" : "hidden"}
+									>
 										<ItemSeparator />
 									</Activity>
 								</div>
@@ -91,7 +103,7 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 					<Activity mode={properties.length > 0 ? "visible" : "hidden"}>
 						<div
 							aria-hidden="true"
-							className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-4"
+							className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-4"
 						/>
 					</Activity>
 				</ScrollArea>

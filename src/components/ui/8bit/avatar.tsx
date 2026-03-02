@@ -115,10 +115,10 @@ const Avatar = forwardRef<
 				<>
 					<div className="pointer-events-none absolute top-0 left-0 h-1.5 w-full bg-foreground dark:bg-ring" />
 					<div className="pointer-events-none absolute bottom-0 h-1.5 w-full bg-foreground dark:bg-ring" />
-					<div className="-left-1.5 pointer-events-none absolute top-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
-					<div className="-left-1.5 pointer-events-none absolute bottom-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
-					<div className="-right-1.5 pointer-events-none absolute top-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
-					<div className="-right-1.5 pointer-events-none absolute bottom-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
+					<div className="pointer-events-none absolute top-1.5 -left-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
+					<div className="pointer-events-none absolute bottom-1.5 -left-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
+					<div className="pointer-events-none absolute top-1.5 -right-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
+					<div className="pointer-events-none absolute -right-1.5 bottom-1.5 h-1/2 w-1.5 bg-foreground dark:bg-ring" />
 				</>
 			)}
 		</div>

@@ -46,10 +46,12 @@ const getTilePosition = (index: number) => {
 
 export default function Board({ game_id }: { game_id: string }) {
 	return (
-		<div className="relative m-0 flex h-full max-h-screen w-full border-foreground border-y-6 bg-card p-5 font-jaro">
+		<div className="relative m-0 flex h-full w-full border-foreground border-y-6 bg-card p-2 font-jaro [container-type:size]">
 			<div
-				className="grid h-full max-h-screen grid-cols-11 grid-rows-11 gap-4 gap-y-2"
+				className="grid h-full w-full gap-2"
 				style={{
+					gridTemplateColumns: "repeat(11, minmax(0, 1fr))",
+					gridTemplateRows: "repeat(11, minmax(0, 1fr))",
 					gridTemplateAreas: `
           									"start start city1 city2 city3 special1 city4 city5 city6 corner1 corner1"
           									"start start city1 city2 city3 special1 city4 city5 city6 corner1 corner1"
@@ -82,7 +84,7 @@ export default function Board({ game_id }: { game_id: string }) {
 			</div>
 			<div
 				aria-hidden="true"
-				className="-mx-1.5 pointer-events-none absolute inset-0 border-foreground border-x-6"
+				className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6"
 			/>
 		</div>
 	);

@@ -26,12 +26,12 @@ const Slider = React.forwardRef<
 
 		<div
 			aria-hidden="true"
-			className="-my-1 pointer-events-none absolute inset-0 border-foreground border-y-4 dark:border-ring"
+			className="pointer-events-none absolute inset-0 -my-1 border-foreground border-y-4 dark:border-ring"
 		/>
 
 		<div
 			aria-hidden="true"
-			className="-mx-1 pointer-events-none absolute inset-0 border-foreground border-x-4 dark:border-ring"
+			className="pointer-events-none absolute inset-0 -mx-1 border-foreground border-x-4 dark:border-ring"
 		/>
 	</div>
 ));

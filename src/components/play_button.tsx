@@ -5,7 +5,6 @@ import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
-// TODO:FIX DICE BUG WHERE ROLLING IS SHOWN TO EVERYONE RATHER THAN JUST THE PLAYER WHO ROLLED IT
 export default function PlayButton({ game_id }: { game_id: string }) {
 	const [diceValue, setDiceValue] = useState<number>(1);
 	const [isRolling, setIsRolling] = useState<boolean>(false);
@@ -14,21 +13,30 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	const [hasRolled, setHasRolled] = useState<boolean>(false);
 	const [endTurnFree, setEndTurnFree] = useState<boolean>(false);
 	const [position, setPosition] = useState<number>(0);
+	const [isEndingTurn, setIsEndingTurn] = useState<boolean>(false);
 	const { socket, emitEvent } = useSocketStore();
 	const updatePlayer = useGameStore((state) => state.updatePlayer);
 	const userId = useGameStore((state) => state.userId);
-	const checkPropertyIsOwned = useGameStore((state) => state.checkPropertyIsOwned);
+	const checkPropertyIsOwned = useGameStore(
+		(state) => state.checkPropertyIsOwned,
+	);
 	const addProperty = useGameStore((state) => state.addProperty);
 	const getRankOfProperty = useGameStore((state) => state.getRankOfProperty);
-	const checkPropertyOwnedByPlayer = useGameStore((state) => state.checkPropertyOwnedByPlayer);
+	const checkPropertyOwnedByPlayer = useGameStore(
+		(state) => state.checkPropertyOwnedByPlayer,
+	);
 	const turn = useGameStore((state) => state.turn);
 	const players = useGameStore((state) => state.players);
+	const getPlayersMoney = useGameStore((state) => state.getPlayersMoney);
 
 	const myPlayer = players.find((p) => p.id === userId);
 	const myRank = myPlayer?.rank || -1;
 	const isMyTurn = turn === myRank;
+	const myMoney = getPlayersMoney(userId);
+	const isBankrupt = myMoney <= 0;
 
 	function onPlayClick() {
+		if (isBankrupt) return;
 		setEndTurnBtn(true);
 		setHasRolled(true);
 		setEndTurnFree(false);
@@ -50,11 +58,20 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 		emitEvent(SOCKET_EVENTS.SEND_MONEY, -price, userId, game_id);
 	};
 	const onEndTurnClick = () => {
-		setEndTurnBtn(false);
-		setHasRolled(false);
+		setIsEndingTurn(true);
+		setEndTurnBtn(false); // Hide immediately for feedback
 		setDiceValue(1);
 		emitEvent(SOCKET_EVENTS.SEND_TURN, turn, game_id);
 	};
+	// Reset local state whenever the turn changes globally
+	useEffect(() => {
+		setEndTurnBtn(false);
+		setHasRolled(false);
+		setEndTurnFree(false);
+		setBuyProperty(false);
+		setIsEndingTurn(false);
+	}, [turn]);
+
 	useEffect(() => {
 		if (!socket) return;
 		let interval: NodeJS.Timeout | null = null;
@@ -135,10 +152,6 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 		socket.on(SOCKET_EVENTS.GET_DICE_ROLL, handleDiceRoll);
 		socket.on(SOCKET_EVENTS.RECEIVE_POSITION, playerMoveListener);
-		socket.on(SOCKET_EVENTS.RECEIVE_TURN, (_turn) => {
-			setEndTurnBtn(false);
-			setHasRolled(false);
-		});
 		return () => {
 			if (interval) clearInterval(interval);
 			if (timeout) clearTimeout(timeout);
@@ -160,7 +173,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	return (
 		<>
 			<div
-				className="h-20 w-20"
+				className="h-[12cqmin] w-[12cqmin]"
 				style={{
 					backgroundImage: "url('/Images/six_sided_die.png')",
 					backgroundPosition: `${(diceValue - 1) * 20}% ${isRolling ? 100 : 0}%`, // Adjust for different sprites 0 20 40 60 80 100
@@ -168,37 +181,43 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					imageRendering: "pixelated",
 				}}
 			/>
-			<div className="flex flex-row gap-4">
-				<Activity mode={isMyTurn && !hasRolled ? "visible" :"hidden"}>			
-					<Button disabled={isRolling || buyProperty} onClick={onPlayClick}>
+			<div className="flex flex-row gap-[4cqmin]">
+				<Activity mode={isMyTurn && !hasRolled ? "visible" : "hidden"}>
+					<Button
+						className="px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] h-auto"
+						disabled={isRolling || buyProperty || isEndingTurn || isBankrupt}
+						onClick={onPlayClick}
+					>
 						Play
 					</Button>
 				</Activity>
-		
-				<Activity mode={endTurnBtn ? "visible" :"hidden"}>				
+
+				<Activity mode={endTurnBtn ? "visible" : "hidden"}>
 					<Button
-						disabled={!endTurnFree}
+						className="px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] h-auto"
+						disabled={!endTurnFree || isEndingTurn || isBankrupt}
 						onClick={onEndTurnClick}
 						variant={"destructive"}
 					>
 						End Turn
 					</Button>
-			</Activity>
-				<Activity mode={buyProperty ? "visible":"hidden"}>	
-					<Button onClick={onBuyClick} variant="secondary">
+				</Activity>
+				<Activity mode={buyProperty ? "visible" : "hidden"}>
+					<Button
+						className="px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] h-auto"
+						disabled={isBankrupt}
+						onClick={onBuyClick}
+						variant="secondary"
+					>
 						Buy
 					</Button>
 				</Activity>
-				
-			
 			</div>
-			<Activity mode={!isMyTurn ?"visible":"hidden"}>	
-				<div className="text-center text-neutral-500 text-sm">
+			<Activity mode={!isMyTurn ? "visible" : "hidden"}>
+				<div className="text-center text-neutral-500 text-[3cqmin]">
 					{players.find((p) => p.rank === turn)?.username}'s is playing
 				</div>
-			</Activity> 
-			
-
+			</Activity>
 		</>
 	);
 }

@@ -24,6 +24,11 @@ export function SearchRoomClient({
 	const username = useGameStore((state) => state.username);
 	const color = useGameStore((state) => state.color);
 	const setColor = useGameStore((state) => state.setColor);
+	const setIsNavigating = useGameStore((state) => state.setIsNavigating);
+
+	useEffect(() => {
+		setIsNavigating(false);
+	}, [setIsNavigating]);
 
 	// Hydrate the store with server-fetched rooms on mount
 	useEffect(() => {
@@ -47,6 +52,7 @@ export function SearchRoomClient({
 			(username: string, playerList: Player[]) => {
 				useGameStore.setState({
 					players: playerList,
+					isNavigating: true,
 				});
 				console.log(`${username} joined room ${roomId}`);
 				router.push(`/room/${roomId}`);

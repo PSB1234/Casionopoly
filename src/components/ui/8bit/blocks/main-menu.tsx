@@ -37,7 +37,7 @@ export default function MainMenu({
 			SOCKET_EVENTS.JOIN_RANDOM_ROOM,
 			finalColor,
 			(roomKey: string, playerList: Player[]) => {
-				useGameStore.setState({ players: playerList });
+				useGameStore.setState({ players: playerList, isNavigating: true });
 				router.push(`/room/${roomKey}`);
 			},
 		);
@@ -50,7 +50,7 @@ export default function MainMenu({
 				setOptionsOpenAction={setOptionsOpen}
 			/>
 			<Card className={cn(className)} {...props}>
-				<CardHeader className="flex flex-col items-center justify-center gap-2">
+				<CardHeader className="flex flex-col items-center text-center justify-center gap-2">
 					<CardTitle>Main Menu</CardTitle>
 				</CardHeader>
 				<CardContent>
