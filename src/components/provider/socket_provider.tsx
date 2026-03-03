@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import { env } from "@/env";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 
 export default function SocketInit({
-	url = process.env.NEXT_PUBLIC_SOCKET_URL ?? "ws://localhost:8080",
+	url = env.NEXT_PUBLIC_SOCKET_URL,
 	children,
 }: {
 	url?: string;
