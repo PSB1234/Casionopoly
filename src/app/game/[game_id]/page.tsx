@@ -48,7 +48,7 @@ export default function Game() {
 		if (!game_id) return;
 		if (!userId) return;
 		if (!socket) {
-			connectSocket(env.NEXT_PUBLIC_SOCKET_URL, {
+			connectSocket(env.NEXT_PUBLIC_API_URL, {
 				auth: {
 					userId: userId,
 				},

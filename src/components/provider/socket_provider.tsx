@@ -6,7 +6,7 @@ import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 
 export default function SocketInit({
-	url = env.NEXT_PUBLIC_SOCKET_URL,
+	url = env.NEXT_PUBLIC_API_URL,
 	children,
 }: {
 	url?: string;
