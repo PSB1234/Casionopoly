@@ -26,8 +26,8 @@ export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html className={`${geist.variable}${jaro.variable} `} lang="en">
-			<body>
+		<html className={`${geist.variable}${jaro.variable} bg-[#281E50]`} lang="en">
+			<body >
 				<QueryProvider>
 					<SocketInit>
 						<LoadingProvider>
