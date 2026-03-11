@@ -36,5 +36,3 @@ Industrial.io is a modern web-based board game inspired by Monopoly.
   - **Linter/Formatter**: [Biome](https://biomejs.dev/)
   - **Package Manager**: pnpm (recommended)
 
-## Todo
-  make the private rooms work.
