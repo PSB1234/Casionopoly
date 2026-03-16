@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/8bit/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
 import { Input } from "@/components/ui/8bit/input";
@@ -11,6 +11,7 @@ import { SOCKET_EVENTS } from "@/lib/socket_events";
 import type { Player, RoomData } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
+import { RoomPasswordDialog } from "./room-password-dialog";
 
 export function SearchRoomClient({
 	initialRooms,
@@ -26,6 +27,10 @@ export function SearchRoomClient({
 	const setColor = useGameStore((state) => state.setColor);
 	const setIsNavigating = useGameStore((state) => state.setIsNavigating);
 
+	const [pendingRoom, setPendingRoom] = useState<string | null>(null);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [passwordError, setPasswordError] = useState<string | null>(null);
+
 	useEffect(() => {
 		setIsNavigating(false);
 	}, [setIsNavigating]);
@@ -37,7 +42,7 @@ export function SearchRoomClient({
 		}
 	}, [initialRooms, rooms.length, setRooms]);
 
-	const onSubmit = (roomId: string) => {
+	const joinRoom = (roomId: string, password: string | undefined) => {
 		let finalColor = color;
 		if (!finalColor) {
 			const { original } = generateColorPair();
@@ -49,6 +54,7 @@ export function SearchRoomClient({
 			username,
 			roomId,
 			finalColor,
+			password,
 			(username: string, playerList: Player[]) => {
 				useGameStore.setState({
 					players: playerList,
@@ -60,6 +66,43 @@ export function SearchRoomClient({
 			},
 		);
 	};
+
+	const onSubmit = (roomData: RoomData) => {
+		if (roomData.isPrivate) {
+			setPendingRoom(roomData.roomKey);
+			joinRoom(roomData.roomKey, undefined);
+			return;
+		}
+		joinRoom(roomData.roomKey, undefined);
+	};
+
+	const handlePasswordSubmit = (password: string) => {
+		if (!pendingRoom) return;
+		joinRoom(pendingRoom, password);
+		// Keep dialog open — it will close on successful navigation or show error
+		// The ERROR socket event (handled in socket_store) will show a toast,
+		// but we also surface it inline via setPasswordError below.
+	};
+
+	// Listen for socket ERROR events while attempting to join a private room
+	useEffect(() => {
+		const socket = useSocketStore.getState().socket;
+		if (!socket || !pendingRoom) return;
+
+		const handler = (message: string) => {
+			if (message === "Password required") {
+				setPasswordError(null);
+				setDialogOpen(true);
+			} else if (message === "Incorrect password") {
+				setPasswordError(message);
+			}
+		};
+
+		socket.on(SOCKET_EVENTS.ERROR, handler);
+		return () => {
+			socket.off(SOCKET_EVENTS.ERROR, handler);
+		};
+	}, [pendingRoom]);
 
 	// We display 'rooms' from the socket store (which will include live updates
 	// but is hydrated initially with `initialRooms`).
@@ -90,7 +133,7 @@ export function SearchRoomClient({
 										key={roomData.roomKey}
 									>
 										<h3>{roomData.name}</h3>
-										<Button onClick={() => onSubmit(roomData.roomKey)}>
+										<Button onClick={() => onSubmit(roomData)}>
 											Join
 										</Button>
 									</li>
@@ -100,6 +143,17 @@ export function SearchRoomClient({
 					</Card>
 				</span>
 			)}
+
+			<RoomPasswordDialog
+				open={dialogOpen}
+				error={passwordError}
+				onClose={() => {
+					setDialogOpen(false);
+					setPendingRoom(null);
+					setPasswordError(null);
+				}}
+				onSubmit={handlePasswordSubmit}
+			/>
 		</span>
 	);
 }

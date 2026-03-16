@@ -45,6 +45,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 			existing.off("connect_error");
 			existing.off(SOCKET_EVENTS.GET_ALL_ROOMS);
 			existing.off(SOCKET_EVENTS.ERROR);
+			existing.off(SOCKET_EVENTS.ROOM_AUTO_DELETED);
 			existing.disconnect();
 		}
 
@@ -66,6 +67,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 		socket.off("connect_error");
 		socket.off(SOCKET_EVENTS.GET_ALL_ROOMS);
 		socket.off(SOCKET_EVENTS.ERROR);
+		socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED);
 
 		// Now register listeners
 		socket.on("connect", () => {
@@ -80,6 +82,10 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 		socket.on(SOCKET_EVENTS.GET_ALL_ROOMS, (roomsData: RoomData[]) => {
 			set({ rooms: roomsData });
 			console.log("Rooms updated:", roomsData);
+		});
+		socket.on(SOCKET_EVENTS.ROOM_AUTO_DELETED, (roomKey: string) => {
+			set({ rooms: get().rooms.filter((r) => r.roomKey !== roomKey) });
+			console.log("Room auto-deleted, removed from list:", roomKey);
 		});
 		//handle errors
 		socket.on("connect_error", (error) => {
@@ -131,6 +137,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 			socket.off("connect_error");
 			socket.off(SOCKET_EVENTS.GET_ALL_ROOMS);
 			socket.off(SOCKET_EVENTS.ERROR);
+			socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED);
 			socket.disconnect();
 			set({ socket: null, isConnected: false });
 		}

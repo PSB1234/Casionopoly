@@ -73,6 +73,7 @@ export interface ClientToServerEvents {
 		username: string,
 		roomKey: string,
 		color: string,
+		password: string | undefined,
 		callback: (username: string, playerList: Player[]) => void,
 	) => void;
 	[SOCKET_EVENTS.CHANGE_ROOM_STATUS]: (
@@ -196,4 +197,5 @@ export interface tradeDisplaySchema {
 export interface RoomData {
 	roomKey: string;
 	name: string;
+	isPrivate: boolean;
 }

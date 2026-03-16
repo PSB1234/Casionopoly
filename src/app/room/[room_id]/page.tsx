@@ -72,7 +72,7 @@ export default function Room() {
 	};
 	return (
 		<div className="flex w-full flex-col gap-5 p-10">
-			<div className="relative flex h-full w-full flex-row justify-between border-foreground border-y-6 bg-card px-5 py-4 font-jaro">
+			<div className="relative flex h-full w-full flex-col gap-4 sm:flex-row sm:justify-between border-foreground border-y-6 bg-card px-5 py-4 font-jaro">
 				<div>
 					<h1 className="my-2 font-bold text-3xl">{roomData?.name}</h1>
 					<h3 className="relative flex w-fit flex-row items-center justify-center gap-4 border-foreground border-y-6 bg-background p-2 text-muted-foreground text-xl">

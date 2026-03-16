@@ -4,17 +4,18 @@ import { toast as sonnerToast } from "sonner";
 
 import "./styles/retro.css";
 
-export function toast(toast: string, _p0: { description: string | undefined }) {
-	return sonnerToast.custom((id) => <Toast id={id} title={toast} />);
+export function toast(title: string, { description }: { description?: string } = {}) {
+	return sonnerToast.custom((id) => <Toast id={id} title={title} description={description} />);
 }
 
 interface ToastProps {
 	id: string | number;
 	title: string;
+	description?: string;
 }
 
 function Toast(props: ToastProps) {
-	const { title } = props;
+	const { title, description } = props;
 
 	return (
 		<div className={`relative ${"retro"}`}>
@@ -22,6 +23,7 @@ function Toast(props: ToastProps) {
 				<div className="flex flex-1 items-center">
 					<div className="w-full">
 						<p className="font-medium text-sm">{title}</p>
+						{description && <p className="mt-1 text-muted-foreground text-sm">{description}</p>}
 					</div>
 				</div>
 			</div>

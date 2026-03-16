@@ -130,6 +130,7 @@ export const useGameStore = create<GameStore>()(
 						username,
 						roomKey,
 						finalColor,
+						undefined,
 						(username: string, playerList: Player[]) => {
 							// Server sends back the confirmed username and player list
 							set({ username, players: playerList });
