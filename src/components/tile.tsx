@@ -59,17 +59,15 @@ export default function Tile({
 	return (
 		<div
 			className={cn(
-				"relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2 [container-type:size]",
+				"@container-[size] relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2",
 				className,
 			)}
 			style={{ borderColor: ownerColor }}
 		>
 			{TileData.type === "jail" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
-					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
-						{TileData.name.toLowerCase()}
-					</p>
-					<div className="relative flex h-2/3 p-0">
+					<p className="px-4">Bypass</p>
+					<div className="relative flex h-[65%] w-[65%] border-foreground border-t-2 border-r-2 p-0">
 						<Images
 							alt={`jail-${TileData.id}`}
 							className="pixelated object-contain"
