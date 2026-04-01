@@ -59,7 +59,7 @@ export default function Tile({
 	return (
 		<div
 			className={cn(
-				"relative flex h-full w-full min-w-0 min-h-0 flex-row justify-between border-foreground border-y-2 [container-type:size]",
+				"relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2 [container-type:size]",
 				className,
 			)}
 			style={{ borderColor: ownerColor }}
@@ -69,7 +69,7 @@ export default function Tile({
 					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
 						{TileData.name.toLowerCase()}
 					</p>
-					<div className="flex h-2/3 p-0 relative">
+					<div className="relative flex h-2/3 p-0">
 						<Images
 							alt={`jail-${TileData.id}`}
 							className="pixelated object-contain"
@@ -83,7 +83,7 @@ export default function Tile({
 					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
 						{TileData.name.toLowerCase()}
 					</p>
-					<div className="flex h-2/3 p-0 relative">
+					<div className="relative flex h-2/3 p-0">
 						<Images
 							alt={`vacation-${TileData.id}`}
 							className="pixelated object-contain"
@@ -97,7 +97,7 @@ export default function Tile({
 					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
 						{TileData.name.toLowerCase()}
 					</p>
-					<div className="flex h-2/3 p-0 relative">
+					<div className="relative flex h-2/3 p-0">
 						<Images
 							alt={`tax-${TileData.id}`}
 							className="pixelated object-contain"
@@ -122,7 +122,9 @@ export default function Tile({
 									"items-center gap-0",
 								)}
 							>
-								<div className={cn("flex h-full w-full justify-center relative")}>
+								<div
+									className={cn("relative flex h-full w-full justify-center")}
+								>
 									{rank > 0 && rank <= 5 && (
 										<Images
 											alt={`house-${rank}`}
@@ -132,22 +134,28 @@ export default function Tile({
 										/>
 									)}
 								</div>
-								<p className="break-all text-center text-[25cqmin] lg:text-sm font-medium leading-tight">
+								<p className="break-all text-center font-medium text-[25cqmin] leading-tight lg:text-sm">
 									{TileData.name.toLowerCase()}
 								</p>
 								{TileData.price && (
-									<p className="mt-[2cqh] text-center text-[25cqmin] lg:text-sm font-bold text-yellow-400">
+									<p className="mt-[2cqh] text-center font-bold text-[25cqmin] text-yellow-400 lg:text-sm">
 										${TileData.price}
 									</p>
 								)}
 							</div>
 						) : (
-							<div className={cn(isTop ? "justify-start":"justify-center",isBottom?"justify-end":"justify-center","flex h-full w-full flex-col items-center  gap-[2cqh]")}>
-								<p className="break-all text-center font-extralight text-[25cqmin] lg:text-sm leading-tight">
+							<div
+								className={cn(
+									isTop ? "justify-start" : "justify-center",
+									isBottom ? "justify-end" : "justify-center",
+									"flex h-full w-full flex-col items-center gap-[2cqh]",
+								)}
+							>
+								<p className="break-all text-center font-extralight text-[25cqmin] leading-tight lg:text-sm">
 									{TileData.name.toLowerCase()}
 								</p>
 								{TileData.price && (
-									<p className="text-center text-[25cqmin] lg:text-sm font-bold text-yellow-400">
+									<p className="text-center font-bold text-[25cqmin] text-yellow-400 lg:text-sm">
 										${TileData.price}
 									</p>
 								)}
@@ -190,7 +198,7 @@ export default function Tile({
 							</div>
 						</div>
 					)}
-					{TileData.type === "railroad" && (
+					{TileData.type === "subProperty" && (
 						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
 							<div className="relative h-full w-full">
 								<Images

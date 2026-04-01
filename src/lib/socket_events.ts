@@ -13,6 +13,8 @@ export const SOCKET_EVENTS = {
 	PROPERTY_UPGRADED: "property upgraded",
 	SEND_MONEY: "send money",
 	SEND_TURN: "send turn",
+	COLLECT_TAX: "collect tax",
+	GO_TO_JAIL: "go to jail",
 	RECEIVE_TURN: "receive turn",
 	SEND_VOTE: "send vote",
 	RECEIVE_VOTE: "receive vote",

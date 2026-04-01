@@ -1,6 +1,6 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import Bankruptcy from "@/components/bankruptcy";
 import BankruptcyChoice from "@/components/bankruptcyChoice";
 import Board from "@/components/board";
@@ -13,16 +13,6 @@ import Properties from "@/components/properties";
 import Sounds from "@/components/sounds";
 import Trade from "@/components/trade";
 import TradeDisplay from "@/components/tradeDisplay";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/components/ui/8bit/alert-dialog";
 import { env } from "@/env";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { useGameStore } from "@/store/game_store";
@@ -73,7 +63,6 @@ export default function Game() {
 			socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleAutoDeleted);
 		};
 	}, [socket, game_id, router]);
-	
 
 	const Logo = () => (
 		<div className="relative">
@@ -87,19 +76,19 @@ export default function Game() {
 	);
 
 	return (
-		<div className="flex min-h-screen w-full flex-col lg:flex-row items-center justify-center p-5 lg:h-screen overflow-y-auto lg:overflow-hidden">
+		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto p-5 lg:h-screen lg:flex-row lg:overflow-hidden">
 			<InactivityWarning roomKey={game_id} socket={socket} />
-			<BankruptcyChoice userId={userId} game_id={game_id} socket={socket} />
+			<BankruptcyChoice game_id={game_id} socket={socket} userId={userId} />
 
 			{/* Mobile Header: Logo and Sounds */}
-			<div className="flex lg:hidden w-full flex-row items-center justify-between px-2 shrink-0 order-1">
+			<div className="order-1 flex w-full shrink-0 flex-row items-center justify-between px-2 lg:hidden">
 				<Logo />
 				<Sounds />
 			</div>
 
 			{/* Middle Column: Board (Desktop Middle, Mobile Top after Header) */}
-			<div className="flex items-center justify-center order-2 lg:order-2 w-full lg:flex-1 lg:h-full lg:max-h-screen p-0 lg:p-5">
-				<div className="relative w-full max-w-[100vw] lg:w-[100cqmin] lg:min-w-[500px] h-auto aspect-square lg:h-[100cqmin] p-2 lg:p-5">
+			<div className="order-2 flex w-full items-center justify-center p-0 lg:order-2 lg:h-full lg:max-h-screen lg:flex-1 lg:p-5">
+				<div className="relative aspect-square h-auto w-full max-w-[100vw] p-2 lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-[500px] lg:p-5">
 					<Board game_id={game_id} />
 					<div className="pointer-events-none absolute inset-0">
 						<GhostBoard PlayerList={players} />
@@ -108,12 +97,12 @@ export default function Game() {
 			</div>
 
 			{/* Desktop Left Column Container */}
-			<div className="flex flex-col gap-5 w-full lg:w-[350px] lg:flex-shrink-0 min-w-0 order-3 lg:order-1 h-auto lg:h-full lg:max-h-screen py-0 lg:py-5 text-xs md:text-sm">
-				<div className="hidden lg:flex flex-row items-center justify-between shrink-0">
+			<div className="order-3 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-1 lg:h-full lg:max-h-screen lg:w-[350px] lg:flex-shrink-0 lg:py-5">
+				<div className="hidden shrink-0 flex-row items-center justify-between lg:flex">
 					<Logo />
 					<Sounds />
 				</div>
-				
+
 				{/* Specific Mobile Order using inner flex-col */}
 				<div className="flex flex-col gap-5 lg:contents">
 					{/* 1. Player List (Mobile only here) */}
@@ -121,12 +110,12 @@ export default function Game() {
 						<Playerlist PlayerList={players} />
 					</div>
 					{/* 2. Kick/Surrender (Mobile only here) */}
-					<div className="order-2 lg:hidden flex justify-between shrink-0">
+					<div className="order-2 flex shrink-0 justify-between lg:hidden">
 						<Kick roomKey={game_id} />
 						<Bankruptcy roomKey={game_id} />
 					</div>
 					{/* 3. Chat */}
-					<div className="order-3 lg:flex-1 min-h-0">
+					<div className="order-3 min-h-0 lg:flex-1">
 						<Chat />
 					</div>
 					{/* 4. Trade */}
@@ -150,9 +139,9 @@ export default function Game() {
 			</div>
 
 			{/* Desktop Right Column: Playerlist, Kick, Bankruptcy, Properties (Hidden on Mobile) */}
-			<div className="hidden lg:flex flex-col gap-5 w-full lg:w-[350px] lg:flex-shrink-0 min-w-0 order-4 lg:order-3 h-auto lg:h-full lg:max-h-screen py-0 lg:py-5 text-xs md:text-sm">
+			<div className="order-4 hidden h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-3 lg:flex lg:h-full lg:max-h-screen lg:w-[350px] lg:flex-shrink-0 lg:py-5">
 				<Playerlist PlayerList={players} />
-				<div className="flex justify-between shrink-0">
+				<div className="flex shrink-0 justify-between">
 					<Kick roomKey={game_id} />
 					<Bankruptcy roomKey={game_id} />
 				</div>

@@ -72,7 +72,7 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 		),
 	},
 	{
-		...createTile("Port", "railroad", false),
+		...createTile("Port", "subProperty", false),
 		buyable: true,
 		price: 150,
 	},
@@ -160,7 +160,7 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 		),
 	},
 	{
-		...createTile("Railway", "railroad", false),
+		...createTile("Railway", "subProperty", false),
 		buyable: true,
 		price: 150,
 	},
@@ -265,7 +265,7 @@ const TileDataJsonPartial: Partial<TileDataSchema>[] = [
 		),
 	},
 	{
-		...createTile("airport", "railroad", false),
+		...createTile("airport", "subProperty", false),
 		buyable: true,
 		price: 150,
 	},

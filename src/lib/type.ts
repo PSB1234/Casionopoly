@@ -118,6 +118,8 @@ export interface ClientToServerEvents {
 		roomKey: string,
 		upgradeCost: number,
 	) => void;
+	[SOCKET_EVENTS.GO_TO_JAIL]: (userId: string, game_id: string) => void;
+	[SOCKET_EVENTS.COLLECT_TAX]: (userId: string, game_id: string) => void;
 	[SOCKET_EVENTS.JOIN_RANDOM_ROOM]: (
 		color: string,
 		callback: (roomKey: string, playerList: Player[]) => void,
@@ -165,16 +167,16 @@ export type TileDataSchema = {
 	flagName: string;
 	group: number;
 	type:
-		| "property"
-		| "Vacation"
-		| "go-to-jail"
-		| "jail"
-		| "freeParking"
-		| "start"
-		| "tax"
-		| "community-chest"
-		| "chance"
-		| "railroad";
+	| "property"
+	| "Vacation"
+	| "go-to-jail"
+	| "jail"
+	| "freeParking"
+	| "start"
+	| "tax"
+	| "chance"
+	| "subProperty"
+	;
 	buyable?: boolean;
 	price?: number;
 	rent?: number[];

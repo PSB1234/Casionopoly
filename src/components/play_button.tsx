@@ -14,6 +14,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	const [endTurnFree, setEndTurnFree] = useState<boolean>(false);
 	const [position, setPosition] = useState<number>(0);
 	const [isEndingTurn, setIsEndingTurn] = useState<boolean>(false);
+
 	const { socket, emitEvent } = useSocketStore();
 	const updatePlayer = useGameStore((state) => state.updatePlayer);
 	const userId = useGameStore((state) => state.userId);
@@ -64,6 +65,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 		emitEvent(SOCKET_EVENTS.SEND_TURN, turn, game_id);
 	};
 	// Reset local state whenever the turn changes globally
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <Idk I forgot>
 	useEffect(() => {
 		setEndTurnBtn(false);
 		setHasRolled(false);
@@ -104,6 +106,14 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 						return;
 					}
 					const propertyOwner = checkPropertyIsOwned(tile.id);
+					if (tile.type === "tax") {
+						emitEvent(SOCKET_EVENTS.COLLECT_TAX, userId, game_id);
+						return;
+					}
+					if (tile.type === "go-to-jail") {
+						emitEvent(SOCKET_EVENTS.GO_TO_JAIL, userId, game_id);
+						return;
+					}
 					if (tile.buyable && propertyOwner === false) {
 						// Property is not owned, show buy option
 						setBuyProperty(true);
@@ -118,11 +128,13 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 							// Owned by me, do nothing
 							return;
 						}
-
-						if (propertyOwner) {
+						if (
+							propertyOwner &&
+							(tile.type === "property" || tile.type === "subProperty")
+						) {
 							// Property is owned by another player, charge rent
 							let amountToDeduct: number;
-							if (tile.type === "railroad") {
+							if (tile.type === "subProperty") {
 								// Check if owner owns all 3 railroads (IDs: 4, 14, 26)
 								const railroadIds = [4, 14, 26];
 								const ownsAllRailroads =
@@ -184,7 +196,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 			<div className="flex flex-row gap-[4cqmin]">
 				<Activity mode={isMyTurn && !hasRolled ? "visible" : "hidden"}>
 					<Button
-						className="px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] h-auto"
+						className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
 						disabled={isRolling || buyProperty || isEndingTurn || isBankrupt}
 						onClick={onPlayClick}
 					>
@@ -194,7 +206,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 				<Activity mode={endTurnBtn ? "visible" : "hidden"}>
 					<Button
-						className="px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] h-auto"
+						className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
 						disabled={!endTurnFree || isEndingTurn || isBankrupt}
 						onClick={onEndTurnClick}
 						variant={"destructive"}
@@ -204,7 +216,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 				</Activity>
 				<Activity mode={buyProperty ? "visible" : "hidden"}>
 					<Button
-						className="px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] h-auto"
+						className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
 						disabled={isBankrupt}
 						onClick={onBuyClick}
 						variant="secondary"
@@ -214,7 +226,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 				</Activity>
 			</div>
 			<Activity mode={!isMyTurn ? "visible" : "hidden"}>
-				<div className="text-center text-neutral-500 text-[3cqmin]">
+				<div className="text-center text-[3cqmin] text-neutral-500">
 					{players.find((p) => p.rank === turn)?.username}'s is playing
 				</div>
 			</Activity>
