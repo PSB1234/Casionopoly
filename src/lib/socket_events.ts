@@ -15,6 +15,7 @@ export const SOCKET_EVENTS = {
 	SEND_TURN: "send turn",
 	COLLECT_TAX: "collect tax",
 	GO_TO_JAIL: "go to jail",
+	JAIL_STATUS_CHANGED: "jail status changed",
 	RECEIVE_TURN: "receive turn",
 	SEND_VOTE: "send vote",
 	RECEIVE_VOTE: "receive vote",

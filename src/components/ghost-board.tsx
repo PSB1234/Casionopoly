@@ -3,6 +3,39 @@ import type { Player } from "@/lib/type";
 import { cn } from "@/lib/utils";
 import PlayerSprite from "./player_sprite";
 
+const PLAYER_SLOT_POSITIONS = [
+	"top-[20%] left-[20%]",
+	"top-[20%] left-1/2",
+	"top-[20%] left-[80%]",
+	"top-1/2 left-[20%]",
+	"top-1/2 left-1/2",
+	"top-1/2 left-[80%]",
+	"top-[80%] left-[20%]",
+	"top-[80%] left-1/2",
+	"top-[80%] left-[80%]",
+];
+
+const sortPlayersForSlots = (players: Player[]) => {
+	return [...players].sort((a, b) => a.id.localeCompare(b.id));
+};
+
+const renderPlayersInSlots = (players: Player[], spriteClassName: string) => {
+	return sortPlayersForSlots(players).map((player, index) => (
+		<div
+			className={cn(
+				"absolute -translate-x-1/2 -translate-y-1/2",
+				PLAYER_SLOT_POSITIONS[index % PLAYER_SLOT_POSITIONS.length],
+			)}
+			key={player.id}
+		>
+			<PlayerSprite
+				className={spriteClassName}
+				color={player.color || "#000000"}
+			/>
+		</div>
+	));
+};
+
 // Helper function to get grid position for each tile
 const getTilePosition = (index: number) => {
 	const gridAreas = [
@@ -45,7 +78,7 @@ const getTilePosition = (index: number) => {
 
 export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 	return (
-		<div className="pointer-events-none absolute inset-0 h-full w-full p-2">
+		<div className="pointer-events-none absolute inset-0 h-full w-full px-8 py-8">
 			<div
 				className="relative grid h-full w-full gap-2"
 				style={{
@@ -67,29 +100,60 @@ export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 				}}
 			>
 				{/* Render tiles in their grid positions */}
-				{TileDataJson.map((tileData) => (
-					<div
-						className={cn(
-							"flex h-full w-full items-center justify-center p-[0.5cqmin]",
-							getTilePosition(tileData.id),
-						)}
-						key={tileData.id}
-					>
-						<div className="flex flex-wrap items-center justify-center gap-[0.2cqmin]">
-							{PlayerList.filter((player) => player.position === tileData.id).map(
-								(player) => {
-									return (
-										<PlayerSprite
-											className="h-[4cqmin] w-[4cqmin]"
-											color={player.color || "#000000"} // Fallback color
-											key={player.id}
-										/>
-									);
-								},
+				{TileDataJson.map((tileData) =>
+					tileData.type === "jail" ? (
+						<div
+							className={cn(
+								"flex h-full w-full items-center justify-center p-[0.5cqmin]",
+								getTilePosition(tileData.id),
 							)}
+							key={tileData.id}
+						>
+							<div className="flex h-full w-full flex-wrap items-center justify-center gap-[0.2cqmin]">
+								<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
+									<div className="relative h-[35%] w-full p-0">
+										{renderPlayersInSlots(
+											PlayerList.filter(
+												(player) =>
+													player.position === tileData.id &&
+														player.behindBars !== true,
+											),
+												"h-[3.2cqmin] w-[3.2cqmin]",
+										)}
+									</div>
+									<div
+										className={cn("relative mt-auto flex h-[65%] w-[65%] p-0")}
+									>
+										{renderPlayersInSlots(
+											PlayerList.filter(
+												(player) =>
+													player.position === tileData.id &&
+													player.behindBars === true,
+											),
+												"h-full max-h-[2.8cqmin] w-full max-w-[2.8cqmin]",
+										)}
+										<div className="absolute inset-0 h-full w-full" />
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
-				))}
+					) : (
+						<div
+							className={cn(
+								"flex h-full w-full items-center justify-center p-[0.5cqmin]",
+								getTilePosition(tileData.id),
+							)}
+							key={tileData.id}
+						>
+							<div className="relative h-full w-full">
+								{renderPlayersInSlots(
+									PlayerList.filter((player) => player.position === tileData.id),
+									"h-[4cqmin] w-[4cqmin]",
+								)}
+							</div>
+						</div>
+					),
+				)}
 				{/* Center area for logs and controls */}
 				<div className="flex flex-col items-center justify-center gap-5 text-white [grid-area:Center]"></div>
 			</div>

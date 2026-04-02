@@ -18,6 +18,10 @@ export interface ServerToClientEvents {
 		position: number,
 		player_id: string,
 	) => void;
+	[SOCKET_EVENTS.JAIL_STATUS_CHANGED]: (
+		player_id: string,
+		behindBars: boolean,
+	) => void;
 	[SOCKET_EVENTS.PROPERTY_BOUGHT]: (propertyId: number, userid: string) => void;
 	[SOCKET_EVENTS.RECEIVE_TRADE_OFFER]: (
 		fromPlayer: string,
@@ -149,6 +153,7 @@ export type Player = {
 	color: string;
 	properties: PropertySchema[];
 	leader: boolean;
+	behindBars: boolean;
 };
 export type PropertySchema = {
 	id: number;

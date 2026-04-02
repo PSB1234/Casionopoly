@@ -185,6 +185,17 @@ export const useGameStore = create<GameStore>()(
 					set({ turn });
 				};
 
+				const handleJailStatusChanged = (
+					playerId: string,
+					behindBars: boolean,
+				) => {
+					set((state) => ({
+						players: state.players.map((p) =>
+							p.id === playerId ? { ...p, behindBars } : p,
+						),
+					}));
+				};
+
 				const handleReceiveVote = (
 					playerId: string,
 					votes: number,
@@ -309,6 +320,7 @@ export const useGameStore = create<GameStore>()(
 				socket.off(SOCKET_EVENTS.RECEIVE_MONEY);
 				socket.off(SOCKET_EVENTS.PROPERTY_BOUGHT);
 				socket.off(SOCKET_EVENTS.RECEIVE_TURN);
+				socket.off(SOCKET_EVENTS.JAIL_STATUS_CHANGED);
 				socket.off(SOCKET_EVENTS.RECEIVE_VOTE);
 				socket.off(SOCKET_EVENTS.YOUR_VOTES);
 				socket.off(SOCKET_EVENTS.RECEIVE_TRADE_OFFER);
@@ -325,6 +337,7 @@ export const useGameStore = create<GameStore>()(
 				socket.on(SOCKET_EVENTS.RECEIVE_MONEY, handleReceiveMoney);
 				socket.on(SOCKET_EVENTS.PROPERTY_BOUGHT, handlePropertyBought);
 				socket.on(SOCKET_EVENTS.RECEIVE_TURN, handleReceiveTurn);
+				socket.on(SOCKET_EVENTS.JAIL_STATUS_CHANGED, handleJailStatusChanged);
 				socket.on(SOCKET_EVENTS.RECEIVE_VOTE, handleReceiveVote);
 				socket.on(SOCKET_EVENTS.YOUR_VOTES, handleYourVotes);
 				socket.on(SOCKET_EVENTS.RECEIVE_TRADE_OFFER, handleReceiveTradeOffer);
@@ -350,6 +363,10 @@ export const useGameStore = create<GameStore>()(
 					socket.off(SOCKET_EVENTS.RECEIVE_MONEY, handleReceiveMoney);
 					socket.off(SOCKET_EVENTS.PROPERTY_BOUGHT, handlePropertyBought);
 					socket.off(SOCKET_EVENTS.RECEIVE_TURN, handleReceiveTurn);
+					socket.off(
+						SOCKET_EVENTS.JAIL_STATUS_CHANGED,
+						handleJailStatusChanged,
+					);
 					socket.off(SOCKET_EVENTS.RECEIVE_VOTE, handleReceiveVote);
 					socket.off(SOCKET_EVENTS.YOUR_VOTES, handleYourVotes);
 					socket.off(
