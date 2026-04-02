@@ -1,6 +1,7 @@
 "use client";
 import { Activity, useEffect, useState } from "react";
 import { Button } from "@/components/ui/8bit/button";
+import { toast } from "@/components/ui/8bit/toast";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
 import { useGameStore } from "@/store/game_store";
@@ -14,6 +15,8 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	const [endTurnFree, setEndTurnFree] = useState<boolean>(false);
 	const [position, setPosition] = useState<number>(0);
 	const [isEndingTurn, setIsEndingTurn] = useState<boolean>(false);
+	const [awaitingTurnResolution, setAwaitingTurnResolution] =
+		useState<boolean>(false);
 
 	const { socket, emitEvent } = useSocketStore();
 	const updatePlayer = useGameStore((state) => state.updatePlayer);
@@ -60,7 +63,11 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	};
 	const onEndTurnClick = () => {
 		setIsEndingTurn(true);
+		setAwaitingTurnResolution(true);
 		setEndTurnBtn(false); // Hide immediately for feedback
+		setHasRolled(false);
+		setBuyProperty(false);
+		setEndTurnFree(false);
 		setDiceValue(1);
 		emitEvent(SOCKET_EVENTS.SEND_TURN, turn, game_id);
 	};
@@ -162,19 +169,33 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 			}, 1000);
 		};
 
+		const receiveTurnListener = (nextTurn: number) => {
+			if (!awaitingTurnResolution) return;
+
+			setAwaitingTurnResolution(false);
+			setIsEndingTurn(false);
+			if (nextTurn === myRank) {
+				toast("Rolled 6! Play again.");
+			}
+		};
+
 		socket.on(SOCKET_EVENTS.GET_DICE_ROLL, handleDiceRoll);
 		socket.on(SOCKET_EVENTS.RECEIVE_POSITION, playerMoveListener);
+		socket.on(SOCKET_EVENTS.RECEIVE_TURN, receiveTurnListener);
 		return () => {
 			if (interval) clearInterval(interval);
 			if (timeout) clearTimeout(timeout);
 			if (moveTimeout) clearTimeout(moveTimeout);
 			socket.off(SOCKET_EVENTS.GET_DICE_ROLL, handleDiceRoll);
 			socket.off(SOCKET_EVENTS.RECEIVE_POSITION, playerMoveListener);
+			socket.off(SOCKET_EVENTS.RECEIVE_TURN, receiveTurnListener);
 		};
 	}, [
 		socket,
 		updatePlayer,
 		userId,
+		myRank,
+		awaitingTurnResolution,
 		checkPropertyIsOwned,
 		emitEvent,
 		game_id,

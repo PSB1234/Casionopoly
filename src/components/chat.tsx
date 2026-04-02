@@ -16,6 +16,7 @@ import { Field } from "@/components/ui/field";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { ChatSchema } from "@/lib/zod";
 import { useChatStore } from "@/store/chat_store";
+import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 import Message from "./message";
 import { ScrollArea } from "./ui/8bit/scroll-area";
@@ -26,6 +27,7 @@ export default function Chat() {
 	const { game_id } = useParams<{ game_id: string }>();
 	const { setMessages, setHistory } = useChatStore();
 	const messages = useChatStore((state) => state.messagesList);
+
 
 	const form = useForm<z.infer<typeof ChatSchema>>({
 		resolver: zodResolver(ChatSchema),
@@ -63,14 +65,15 @@ export default function Chat() {
 		form.reset(); // Reset form after submission
 	}
 	return (
-		<Card className="flex min-h-0 flex-col lg:flex-1">
-			<CardHeader>
+		<Card className="flex h-full min-h-0 flex-col lg:flex-1">
+			<CardHeader className="flex flex-row items-center justify-between gap-3">
 				<CardTitle>Chat</CardTitle>
+				
 			</CardHeader>
-			<CardContent className="min-h-0 lg:flex-1">
-				<Card className="lg:h-full">
-					<CardContent className="p-2 lg:h-full">
-						<ScrollArea className="h-48 lg:h-full">
+			<CardContent className="flex min-h-0 flex-1 flex-col">
+				<Card className="flex min-h-0 flex-1 flex-col">
+					<CardContent className="flex min-h-0 flex-1 flex-col p-2">
+						<ScrollArea className="h-48 min-h-[12rem] lg:h-full lg:min-h-0">
 							{messages.map((msg, index) => (
 								<Message
 									key={`${msg}${

@@ -18,7 +18,13 @@ import TileDataJson, { getNameOfPropertyById } from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";
 
-export default function Properties({ roomKey }: { roomKey: string }) {
+export default function Properties({
+	roomKey,
+	fullHeight = false,
+}: {
+	roomKey: string;
+	fullHeight?: boolean;
+}) {
 	const getProperty = useGameStore((state) => state.getProperty);
 	const userId = useGameStore((state) => state.userId);
 	const players = useGameStore((state) => state.players);
@@ -35,17 +41,11 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 	const isBankrupt = getPlayersMoney(userId) <= 0;
 
 	return (
-		<Card className="flex min-h-0 flex-col">
-			<CardTitle className="px-5">Properties</CardTitle>
-			<Activity mode={properties.length > 0 ? "visible" : "hidden"}>
-				<CardDescription className="px-5">
-					List of your properties
-				</CardDescription>
-			</Activity>
-			<CardContent className="min-h-0">
+		<div className="flex min-h-0 flex-col">
 				<ScrollArea
 					className={cn(
-						"relative h-60 lg:h-full w-full border-foreground pr-2",
+						"relative w-full border-foreground pr-2",
+						fullHeight ? "h-full" : "h-60 lg:h-full",
 						!(properties.length === 0 || properties === undefined) &&
 							"border-y-6",
 					)}
@@ -107,7 +107,6 @@ export default function Properties({ roomKey }: { roomKey: string }) {
 						/>
 					</Activity>
 				</ScrollArea>
-			</CardContent>
-		</Card>
+		</div>
 	);
 }

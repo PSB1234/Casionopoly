@@ -1,6 +1,6 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Bankruptcy from "@/components/bankruptcy";
 import BankruptcyChoice from "@/components/bankruptcyChoice";
 import Board from "@/components/board";
@@ -17,8 +17,14 @@ import { env } from "@/env";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/8bit/dialog";
+import { Button } from "@/components/ui/8bit/button";
+
 export default function Game() {
 	const router = useRouter();
+	const [isTradeListOpen, setIsTradeListOpen] = useState<boolean>(false);
+	const [isPropertyListOpen, setIsPropertyListOpen] = useState<boolean>(false);
+
 	const { game_id } = useParams<{ game_id: string }>();
 	const { socket, connectSocket } = useSocketStore();
 	const {
@@ -110,7 +116,7 @@ export default function Game() {
 						<Playerlist PlayerList={players} />
 					</div>
 					{/* 2. Kick/Surrender (Mobile only here) */}
-					<div className="order-2 flex shrink-0 justify-between lg:hidden">
+					<div className="order-2 flex shrink-0 justify-end gap-5 lg:hidden">
 						<Kick roomKey={game_id} />
 						<Bankruptcy roomKey={game_id} />
 					</div>
@@ -123,17 +129,50 @@ export default function Game() {
 						<Trade roomKey={game_id} />
 					</div>
 					{/* 5. Trade Display (Mobile only here) */}
-					<div className="order-5 lg:hidden">
-						<TradeDisplay
-							displayTrade={displayTrade}
-							getUsernameById={getUsernameById}
-							roomKey={game_id}
-							userId={userId}
-						/>
+					<div className="order-5 lg:hidden flex flex-row justify-end">
+<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>
+<DialogTrigger asChild>
+	<Button size="sm" type="button" className="bg-orange-400 hover:bg-orange-600" >
+		Trade List
+	</Button>
+</DialogTrigger>
+<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">
+	<DialogHeader>
+		<DialogTitle>Trade Display</DialogTitle>
+		<DialogDescription>
+			View your trade list.
+		</DialogDescription>
+	</DialogHeader>
+			<TradeDisplay
+				displayTrade={displayTrade}
+				getUsernameById={getUsernameById}
+				roomKey={game_id}
+				userId={userId}
+			/>
+		
+</DialogContent>
+</Dialog>
+
 					</div>
 					{/* 6. Properties (Mobile only here) */}
-					<div className="order-6 lg:hidden">
+					<div className="order-6 lg:hidden flex flex-row justify-end">
+					<Dialog onOpenChange={setIsPropertyListOpen} open={isPropertyListOpen}>
+					<DialogTrigger asChild>
+						<Button size="sm" type="button" className="bg-blue-400 hover:bg-blue-600"  >
+						Property List
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">
+						<DialogHeader>
+							<DialogTitle>Property Display</DialogTitle>
+							<DialogDescription>
+								View your property list.
+							</DialogDescription>
+						</DialogHeader>
 						<Properties roomKey={game_id} />
+					</DialogContent>
+				</Dialog>
+
 					</div>
 				</div>
 			</div>
@@ -145,13 +184,49 @@ export default function Game() {
 					<Kick roomKey={game_id} />
 					<Bankruptcy roomKey={game_id} />
 				</div>
-				<Properties roomKey={game_id} />
-				<TradeDisplay
-					displayTrade={displayTrade}
-					getUsernameById={getUsernameById}
-					roomKey={game_id}
-					userId={userId}
-				/>
+				<div className="flex flex-row gap-10 justify-between  shrink-0">
+				<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>
+					<DialogTrigger asChild>
+						<Button size="sm" type="button" className="bg-orange-400 hover:bg-orange-600" >
+							Trade List
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">
+						<DialogHeader>
+							<DialogTitle>Trade Display</DialogTitle>
+							<DialogDescription>
+								View your trade list.
+							</DialogDescription>
+						</DialogHeader>
+								<TradeDisplay
+									displayTrade={displayTrade}
+									getUsernameById={getUsernameById}
+									roomKey={game_id}
+									userId={userId}
+								/>
+							
+					</DialogContent>
+				</Dialog>
+
+				
+				</div>
+								<Dialog onOpenChange={setIsPropertyListOpen} open={isPropertyListOpen}>
+					<DialogTrigger asChild>
+						<Button size="sm" type="button" className="bg-blue-400 hover:bg-blue-600"  >
+						Property List
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">
+						<DialogHeader>
+							<DialogTitle>Property Display</DialogTitle>
+							<DialogDescription>
+								View your property list.
+							</DialogDescription>
+						</DialogHeader>
+						<Properties roomKey={game_id} />
+					</DialogContent>
+				</Dialog>
+
 			</div>
 		</div>
 	);

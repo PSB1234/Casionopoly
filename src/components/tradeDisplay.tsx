@@ -29,7 +29,6 @@ export default function TradeDisplay({
 	if (trades.length === 0) {
 		return (
 			<Card className="flex flex-col">
-				<CardHeader>Trade Display</CardHeader>
 				<CardContent className="text-center text-neutral-500 text-sm">
 					No active trades pending.
 				</CardContent>
@@ -39,7 +38,6 @@ export default function TradeDisplay({
 
 	return (
 		<Card className="flex min-h-0 flex-col">
-			<CardHeader>Trade Display</CardHeader>
 			<CardContent className="min-h-0">
 				<ScrollArea className="h-60 lg:h-full w-full">
 					<ItemGroup>
