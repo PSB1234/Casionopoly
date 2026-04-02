@@ -197,8 +197,9 @@ export default function Tile({
 						</div>
 					)}
 					{TileData.type === "subProperty" && (
-						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
-							<div className="relative h-full w-full">
+						<div 			style={{ borderColor: ownerColor }}
+						className={cn(positionClass, "h-full w-full border-foreground p-[2cqmin]")}>
+							<div className="relative h-full w-full ">
 								<Images
 									alt={`${TileData.name.toLowerCase()}-${TileData.id}`}
 									className="pixelated object-contain"
@@ -215,7 +216,8 @@ export default function Tile({
 						</div>
 					)}
 					{TileData.type === "chance" && (
-						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
+						<div 			style={{ borderColor: ownerColor }}
+						className={cn(positionClass, "h-full border-foreground w-full p-[2cqmin]")}>
 							<div className="relative h-full w-full">
 								<Images
 									alt={`chest-${TileData.id}`}
@@ -227,7 +229,8 @@ export default function Tile({
 						</div>
 					)}
 					{TileData.type === "go-to-jail" && (
-						<div className={cn(positionClass, "h-full w-full p-[2cqmin]")}>
+						<div  			style={{ borderColor: ownerColor }}
+ 						className={cn(positionClass, "h-full border-foreground w-full p-[2cqmin]")}>
 							<div className="relative h-full w-full">
 								<Images
 									alt={`police-${TileData.id}`}
