@@ -1,7 +1,17 @@
 "use client";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/8bit/alert-dialog";
 import { Button } from "@/components/ui/8bit/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
 import { Timer } from "@/components/ui/8bit/timer";
@@ -12,6 +22,7 @@ import useSocketStore from "@/store/socket_store";
 export default function Room() {
 	const router = useRouter();
 	const { room_id } = useParams<{ room_id: string }>();
+	const [showSoloStartConfirm, setShowSoloStartConfirm] = useState(false);
 	const { isThisPlayerLeader, players, initializeSocket, timerSeconds, setIsNavigating } =
 		useGameStore();
 	const { socket, emitEvent, rooms } = useSocketStore();
@@ -67,9 +78,25 @@ export default function Room() {
 			});
 		};
 	};
-	const onSubmit = () => {
+
+	const startGame = () => {
 		emitEvent(SOCKET_EVENTS.CHANGE_ROOM_STATUS, room_id, "playing");
 	};
+
+	const onSubmit = () => {
+		if (players.length < 2) {
+			setShowSoloStartConfirm(true);
+			return;
+		}
+
+		startGame();
+	};
+
+	const onConfirmSoloStart = () => {
+		setShowSoloStartConfirm(false);
+		startGame();
+	};
+
 	return (
 		<div className="flex w-full flex-col gap-5 p-10">
 			<div className="relative flex h-full w-full flex-col gap-4 sm:flex-row sm:justify-between border-foreground border-y-6 bg-card px-5 py-4 font-jaro">
@@ -126,11 +153,28 @@ export default function Room() {
 				</CardContent>
 			</Card>
 			<Button
-				disabled={!isThisPlayerLeader() || players.length < 2}
+				disabled={!isThisPlayerLeader()}
 				onClick={onSubmit}
 			>
 				Submit
 			</Button>
+
+			<AlertDialog onOpenChange={setShowSoloStartConfirm} open={showSoloStartConfirm}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Start with only 1 player?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will start the game immediately. Continue?
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>No, wait</AlertDialogCancel>
+						<AlertDialogAction onClick={onConfirmSoloStart}>
+							Yes, start
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

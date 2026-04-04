@@ -1,6 +1,7 @@
 export default function LoadingScreen() {
 	return (
-		<div className="fixed inset-0 z-[100] flex h-screen w-screen flex-col items-center justify-center bg-background text-center blur-2xl">
+		<div className="fixed inset-0 z-100 flex h-screen w-screen flex-col items-center justify-center text-center">
+			<div className="absolute inset-0 bg-background/45 backdrop-blur-sm" />
 			<div className="relative">
 				<h1 className="relative z-10 font-bold font-jaro text-9xl text-yellow-200">
 					Industrial.io
