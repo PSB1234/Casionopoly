@@ -1,9 +1,11 @@
 "use client";
 import { Activity, useEffect, useState } from "react";
+import ChestUi from "@/components/chest-ui";
 import { Button } from "@/components/ui/8bit/button";
 import { toast } from "@/components/ui/8bit/toast";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
+import type { ChestResolutionResult } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 export default function PlayButton({ game_id }: { game_id: string }) {
@@ -17,6 +19,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	const [isEndingTurn, setIsEndingTurn] = useState<boolean>(false);
 	const [awaitingTurnResolution, setAwaitingTurnResolution] =
 		useState<boolean>(false);
+	const [isChestOpen, setIsChestOpen] = useState<boolean>(false);
 
 	const { socket, emitEvent } = useSocketStore();
 	const updatePlayer = useGameStore((state) => state.updatePlayer);
@@ -71,6 +74,27 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 		setDiceValue(1);
 		emitEvent(SOCKET_EVENTS.SEND_TURN, turn, game_id);
 	};
+
+	const handleChestResolve = ({
+		reason,
+	}: {
+		reason: "stopped" | "timeout";
+	}) => {
+		return new Promise<void>((resolve) => {
+			emitEvent(
+				SOCKET_EVENTS.RESOLVE_CHEST,
+				game_id,
+				reason,
+				(result: ChestResolutionResult) => {
+					setEndTurnFree(true);
+					toast(result.title, {
+						description: `${result.description} ${result.rewardText}`,
+					});
+					resolve();
+				},
+			);
+		});
+	};
 	// Reset local state whenever the turn changes globally
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <Idk I forgot>
 	useEffect(() => {
@@ -119,6 +143,12 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					}
 					if (tile.type === "go-to-jail") {
 						emitEvent(SOCKET_EVENTS.GO_TO_JAIL, userId, game_id);
+						return;
+					}
+					if (tile.type === "chance") {
+						setBuyProperty(false);
+						setEndTurnFree(false);
+						setIsChestOpen(true);
 						return;
 					}
 					if (tile.buyable && propertyOwner === false) {
@@ -205,6 +235,11 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 	return (
 		<>
+			<ChestUi
+				onResolve={handleChestResolve}
+				onOpenChange={setIsChestOpen}
+				open={isChestOpen}
+			/>
 			<div
 				className="h-[12cqmin] w-[12cqmin]"
 				style={{

@@ -28,7 +28,7 @@ export default function BankruptcyChoice({
 }) {
 	const router = useRouter();
 
-	const [isBroke, setIsBroke] = useState(false);
+	const [dialogMode, setDialogMode] = useState<"bankrupt" | "game-over" | null>(null);
 	const [hasSeenBrokeAlert, setHasSeenBrokeAlert] = useState(false);
 	const { emitEvent } = useSocketStore();
 	const { players, getPlayersMoney, setTradeDialogOpen } = useGameStore();
@@ -47,40 +47,71 @@ export default function BankruptcyChoice({
 		if (players.length === 0) return;
 		if (currentMoney <= 0) {
 			if (players.length <= 1) {
-				handleSurrender();
+				setDialogMode("game-over");
 				return;
 			}
 			if (!hasSeenBrokeAlert) {
-				setIsBroke(true);
+				setDialogMode("bankrupt");
 				setHasSeenBrokeAlert(true);
 			}
 		} else {
-			setIsBroke(false);
+			setDialogMode(null);
 			setHasSeenBrokeAlert(false);
 		}
 	}, [currentMoney, hasSeenBrokeAlert, players.length, handleSurrender]);
+
+	const onGameOverOk = useCallback(() => {
+		handleSurrender();
+	}, [handleSurrender]);
+
+	const onDialogOpenChange = useCallback(
+		(isOpen: boolean) => {
+			if (!isOpen && dialogMode === "game-over") {
+				return;
+			}
+			if (!isOpen) {
+				setDialogMode(null);
+			}
+		},
+		[dialogMode],
+	);
+
 	return (
-    <AlertDialog onOpenChange={setIsBroke} open={isBroke}>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>You are Bankrupt!</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                You have run out of money. You can trade with other players to get
-                                back in the game, or surrender?
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogAction onClick={() => setTradeDialogOpen(true)}>
-                                Trade
-                            </AlertDialogAction>
-                            <AlertDialogCancel
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                onClick={handleSurrender}
-                            >
-                                Surrender
-                            </AlertDialogCancel>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-    </AlertDialog>
-  )
+		<AlertDialog onOpenChange={onDialogOpenChange} open={dialogMode !== null}>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>
+						{dialogMode === "game-over" ? "Game Over" : "You are Bankrupt!"}
+					</AlertDialogTitle>
+					<AlertDialogDescription>
+						{dialogMode === "game-over"
+							? "You are bankrupt and no players remain. The game is over."
+							: "You have run out of money. You can trade with other players to get back in the game, or surrender."}
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					{dialogMode === "game-over" ? (
+						<AlertDialogAction onClick={onGameOverOk}>OK</AlertDialogAction>
+					) : (
+						<>
+							<AlertDialogAction
+								onClick={() => {
+									setTradeDialogOpen(true);
+									setDialogMode(null);
+								}}
+							>
+								Trade
+							</AlertDialogAction>
+							<AlertDialogCancel
+								className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+								onClick={handleSurrender}
+							>
+								Surrender
+							</AlertDialogCancel>
+						</>
+					)}
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
+	);
 }

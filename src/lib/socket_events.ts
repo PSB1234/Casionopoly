@@ -9,6 +9,7 @@ export const SOCKET_EVENTS = {
 	AFTER_CHANGE_ROOM_STATUS: "after change room status",
 	SEND_POSITION: "send position",
 	RECEIVE_POSITION: "receive position",
+	RESOLVE_CHEST: "resolve chest",
 	UPGRADE_PROPERTY: "upgrade property",
 	PROPERTY_UPGRADED: "property upgraded",
 	SEND_MONEY: "send money",
