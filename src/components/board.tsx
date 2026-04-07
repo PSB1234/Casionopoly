@@ -1,6 +1,7 @@
 import Tile from "@/components/tile";
 import TileDataJson from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
+import Log from "./log";
 import PlayButton from "./play_button";
 
 // Helper function to get grid position for each tile
@@ -77,9 +78,13 @@ export default function Board({ game_id }: { game_id: string }) {
 					/>
 				))}
 				{/* Center area for logs and controls */}
-				<div className="flex flex-col items-center justify-center gap-5 text-white [grid-area:Center]">
-					{/* Play button */}
-					<PlayButton game_id={game_id} />
+				<div className="flex h-full w-full flex-col items-center justify-center gap-4 p-[1.8cqmin] text-white [grid-area:Center]">
+					<div className="flex w-full max-w-[58cqmin] flex-col items-center justify-center gap-4">
+						<PlayButton game_id={game_id} />
+					</div>
+					<div className="w-full max-w-[58cqmin]">
+						<Log />
+					</div>
 				</div>
 			</div>
 			<div

@@ -62,7 +62,13 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 		addProperty(userId, tile.id);
 		emitEvent(SOCKET_EVENTS.BUY_PROPERTY, tile.id, userId, game_id);
 		const price = tile.price || 0;
-		emitEvent(SOCKET_EVENTS.SEND_MONEY, -price, userId, game_id);
+		emitEvent(
+			SOCKET_EVENTS.SEND_MONEY,
+			-price,
+			userId,
+			game_id,
+			"buy-property",
+		);
 	};
 	const onEndTurnClick = () => {
 		setIsEndingTurn(true);
@@ -139,6 +145,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					const propertyOwner = checkPropertyIsOwned(tile.id);
 					if (tile.type === "tax") {
 						emitEvent(SOCKET_EVENTS.COLLECT_TAX, userId, game_id);
+						setEndTurnFree(true);
 						return;
 					}
 					if (tile.type === "go-to-jail") {
@@ -190,6 +197,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 								-1 * amountToDeduct,
 								userId,
 								game_id,
+								"pay-rent",
 							);
 						}
 					}

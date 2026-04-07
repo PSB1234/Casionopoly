@@ -3,6 +3,16 @@ import type { TradeData } from "@/components/tradeList";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import type { createRoomSchema } from "@/lib/zod";
 
+export type MoneyUpdateSource =
+	| "buy-property"
+	| "pay-rent"
+	| "tax"
+	| "chest"
+	| "upgrade"
+	| "trade"
+	| "pass-start"
+	| "manual";
+
 export interface ServerToClientEvents {
 	[SOCKET_EVENTS.USER_CONNECTED]: (username: string) => void;
 	[SOCKET_EVENTS.USER_DISCONNECTED]: (userId: string) => void;
@@ -14,6 +24,7 @@ export interface ServerToClientEvents {
 	[SOCKET_EVENTS.GET_DICE_ROLL]: (diceRoll: number) => void;
 	[SOCKET_EVENTS.RECEIVE_MESSAGE]: (message: string, username: string) => void;
 	[SOCKET_EVENTS.RECEIVE_MONEY]: (money: number, userid: string) => void;
+	[SOCKET_EVENTS.RECEIVE_MONEY_UPDATE]: (payload: MoneyUpdatePayload) => void;
 	[SOCKET_EVENTS.RECEIVE_POSITION]: (
 		position: number,
 		player_id: string,
@@ -96,6 +107,8 @@ export interface ClientToServerEvents {
 		amount: number,
 		userid: string,
 		roomKey: string,
+		source?: MoneyUpdateSource,
+		targetUserId?: string,
 	) => void;
 	[SOCKET_EVENTS.BUY_PROPERTY]: (
 		propertyId: number,
@@ -245,4 +258,14 @@ export type ChestResolutionResult = {
 	behindBars?: boolean;
 	skipTurn?: boolean;
 	usedFallback?: boolean;
+};
+
+export type MoneyUpdatePayload = {
+	userId: string;
+	newBalance: number;
+	delta: number;
+	source: MoneyUpdateSource;
+	targetUserId?: string;
+	eventId?: ChestEventId;
+	eventTitle?: string;
 };

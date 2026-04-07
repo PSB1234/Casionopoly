@@ -12,6 +12,7 @@ import type { Player, RoomData } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 import { RoomPasswordDialog } from "./room-password-dialog";
+import { env } from "@/env";
 
 export function SearchRoomClient({
 	initialRooms,
@@ -41,6 +42,22 @@ export function SearchRoomClient({
 			setRooms(initialRooms);
 		}
 	}, [initialRooms, rooms.length, setRooms]);
+	// Poll room list every 60 seconds
+	useEffect(() => {
+		const pollRooms = async () => {
+			try {
+				const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/rooms`);
+				if (res.ok) {
+					const json = await res.json();
+					setRooms(json.data || []);
+				}
+			} catch (error) {
+				console.error("Failed to poll rooms:", error);
+			}
+		};
+		const interval = setInterval(pollRooms, 60000);
+		return () => clearInterval(interval);
+	}, [setRooms]);
 
 	const joinRoom = (roomId: string, password: string | undefined) => {
 		let finalColor = color;
@@ -70,7 +87,8 @@ export function SearchRoomClient({
 	const onSubmit = (roomData: RoomData) => {
 		if (roomData.isPrivate) {
 			setPendingRoom(roomData.roomKey);
-			joinRoom(roomData.roomKey, undefined);
+			setPasswordError(null);
+			setDialogOpen(true);
 			return;
 		}
 		joinRoom(roomData.roomKey, undefined);

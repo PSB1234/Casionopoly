@@ -178,7 +178,7 @@ export default function ChestUi(props: ChestUiProps) {
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent>
+      <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Chest Reward Machine</DialogTitle>
           <DialogDescription>

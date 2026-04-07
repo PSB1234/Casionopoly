@@ -8,17 +8,65 @@ import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
 import type {
 	ClientToServerEvents,
+	MoneyUpdatePayload,
 	Player,
 	PropertySchema,
 	ServerToClientEvents,
 	tradeDisplaySchema,
 } from "@/lib/type";
 
+const MAX_GAME_LOGS = 80;
+const inrFormatter = new Intl.NumberFormat("en-IN");
+
+const formatSignedRupees = (amount: number) => {
+	const absAmount = Math.abs(amount);
+	const sign = amount >= 0 ? "+" : "-";
+	return `${sign}Rs.${inrFormatter.format(absAmount)}`;
+};
+
+const formatMoneySource = (
+	payload: MoneyUpdatePayload,
+	actorName: string,
+	targetName?: string,
+) => {
+	switch (payload.source) {
+		case "buy-property":
+			return `${actorName} bought a property (${formatSignedRupees(payload.delta)}).`;
+		case "pay-rent":
+			return targetName
+				? `${actorName} paid rent to ${targetName} (${formatSignedRupees(payload.delta)}).`
+				: `${actorName} paid rent (${formatSignedRupees(payload.delta)}).`;
+		case "tax":
+			return `${actorName} paid tax (${formatSignedRupees(payload.delta)}).`;
+		case "chest":
+			return `${actorName} chest event${payload.eventTitle ? `: ${payload.eventTitle}` : ""} (${formatSignedRupees(payload.delta)}).`;
+		case "upgrade":
+			return `${actorName} upgraded a property (${formatSignedRupees(payload.delta)}).`;
+		case "trade":
+			return targetName
+				? `${actorName} trade with ${targetName} (${formatSignedRupees(payload.delta)}).`
+				: `${actorName} trade settlement (${formatSignedRupees(payload.delta)}).`;
+		case "pass-start":
+			return `${actorName} passed Start (${formatSignedRupees(payload.delta)}).`;
+		default:
+			return `${actorName} balance update (${formatSignedRupees(payload.delta)}).`;
+	}
+};
+
+export type GameLogEntry = {
+	id: string;
+	message: string;
+	timestamp: number;
+};
+
 export interface GameStoreState {
 	players: Player[];
+	logs: GameLogEntry[];
 	username: string;
 	userId: string;
+	currentRoomKey: string;
 	turn: number;
+	lastTurnLog: number | null;
 	color: string;
 	votedPlayers: string[];
 	trade: tradeDisplaySchema[];
@@ -92,6 +140,8 @@ export interface GameStoreActions {
 	getUsernameById: (playerId: string) => string | undefined;
 	setTradeDialogOpen: (isOpen: boolean) => void;
 	setIsNavigating: (isNavigating: boolean) => void;
+	addLog: (message: string) => void;
+	clearLogs: () => void;
 }
 
 export type GameStore = GameStoreState & GameStoreActions;
@@ -100,10 +150,13 @@ export const useGameStore = create<GameStore>()(
 	persist(
 		(set, get) => ({
 			players: [],
+			logs: [],
 			username: "",
 			userId: "",
+			currentRoomKey: "",
 			color: "",
 			turn: 1,
+			lastTurnLog: null,
 			votedPlayers: [],
 			trade: [],
 			timerSeconds: 0,
@@ -116,6 +169,9 @@ export const useGameStore = create<GameStore>()(
 				socket: Socket<ServerToClientEvents, ClientToServerEvents> | null,
 			) => {
 				if (!socket) return;
+				if (get().currentRoomKey !== roomKey) {
+					set({ currentRoomKey: roomKey, logs: [], lastTurnLog: null });
+				}
 				const joinRoom = () => {
 					const { username, userId, color } = get();
 					let finalColor = color;
@@ -150,25 +206,40 @@ export const useGameStore = create<GameStore>()(
 							updatedPlayers[playerIndex] = player;
 							return { players: updatedPlayers };
 						}
-						return { players: [...state.players, player] };
+						return {
+							logs: [
+								...state.logs,
+								{
+									id: crypto.randomUUID(),
+									message: `${player.username} joined the game.`,
+									timestamp: Date.now(),
+								},
+							].slice(-MAX_GAME_LOGS),
+							players: [...state.players, player],
+						};
 					});
 				};
 				const handlePlayerLeft = (playerId: string) => {
+					const leavingPlayer = get().players.find((player) => player.id === playerId);
 					if (get().userId === playerId) {
+						get().addLog("You were removed from the game.");
 						window.location.href = "/";
 					} else {
 						set((state) => ({
+							logs: [
+								...state.logs,
+								{
+									id: crypto.randomUUID(),
+									message: `${leavingPlayer?.username ?? "A player"} left the game.`,
+									timestamp: Date.now(),
+								},
+							].slice(-MAX_GAME_LOGS),
 							players: state.players.filter((p) => p.id !== playerId),
 						}));
 					}
 				};
 				const handleReceiveMoney = (money: number, userId: string) => {
-					console.log("DEBUG: RECEIVE_MONEY event triggered", {
-						money,
-						userId,
-					});
 					set((state) => {
-						console.log("DEBUG: Current players state", state.players);
 						return {
 							players: state.players.map((p) =>
 								p.id === userId ? { ...p, money } : p,
@@ -179,21 +250,59 @@ export const useGameStore = create<GameStore>()(
 
 				const handlePropertyBought = (propertyId: number, userId: string) => {
 					get().addProperty(userId, propertyId);
+					const username = get().getUsernameById(userId) ?? "A player";
+					const propertyName =
+						TileDataJson.find((tile) => tile.id === propertyId)?.name ??
+						`Property ${propertyId}`;
+					get().addLog(`${username} bought ${propertyName}.`);
 				};
 
 				const handleReceiveTurn = (turn: number) => {
+					const { lastTurnLog } = get();
+					const shouldSkipLog = lastTurnLog === turn;
+
 					set({ turn });
+
+					if (shouldSkipLog) return;
+
+					const nextPlayer = get().players.find((player) => player.rank === turn);
+					if (nextPlayer) {
+						get().addLog(`Turn: ${nextPlayer.username}.`);
+						set({ lastTurnLog: turn });
+					}
+				};
+
+				const handleReceiveMoneyUpdate = (payload: MoneyUpdatePayload) => {
+					set((state) => ({
+						players: state.players.map((p) =>
+							p.id === payload.userId ? { ...p, money: payload.newBalance } : p,
+						),
+					}));
+
+					if (payload.delta === 0) return;
+
+					const actorName = get().getUsernameById(payload.userId) ?? "A player";
+					const targetName = payload.targetUserId
+						? get().getUsernameById(payload.targetUserId)
+						: undefined;
+					get().addLog(formatMoneySource(payload, actorName, targetName));
 				};
 
 				const handleJailStatusChanged = (
 					playerId: string,
 					behindBars: boolean,
 				) => {
+					const username = get().getUsernameById(playerId) ?? "A player";
 					set((state) => ({
 						players: state.players.map((p) =>
 							p.id === playerId ? { ...p, behindBars } : p,
 						),
 					}));
+					get().addLog(
+						behindBars
+							? `${username} was sent to jail.`
+							: `${username} is out of jail.`,
+					);
 				};
 
 				const handleReceiveVote = (
@@ -288,6 +397,12 @@ export const useGameStore = create<GameStore>()(
 							prop.id === propertyId ? { ...prop, rank: newRank } : prop,
 						),
 					});
+					const propertyName =
+						TileDataJson.find((tile) => tile.id === propertyId)?.name ??
+						`Property ${propertyId}`;
+					get().addLog(
+						`${player.username} upgraded ${propertyName} to level ${newRank + 1}.`,
+					);
 				};
 				const handleTimerTick = (remainingSeconds: number) => {
 					set({ timerSeconds: remainingSeconds });
@@ -318,6 +433,7 @@ export const useGameStore = create<GameStore>()(
 				socket.off(SOCKET_EVENTS.GAME_LOOP);
 				socket.off(SOCKET_EVENTS.PLAYER_LEFT);
 				socket.off(SOCKET_EVENTS.RECEIVE_MONEY);
+				socket.off(SOCKET_EVENTS.RECEIVE_MONEY_UPDATE);
 				socket.off(SOCKET_EVENTS.PROPERTY_BOUGHT);
 				socket.off(SOCKET_EVENTS.RECEIVE_TURN);
 				socket.off(SOCKET_EVENTS.JAIL_STATUS_CHANGED);
@@ -335,6 +451,7 @@ export const useGameStore = create<GameStore>()(
 				socket.on(SOCKET_EVENTS.GAME_LOOP, handleGameLoop);
 				socket.on(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
 				socket.on(SOCKET_EVENTS.RECEIVE_MONEY, handleReceiveMoney);
+				socket.on(SOCKET_EVENTS.RECEIVE_MONEY_UPDATE, handleReceiveMoneyUpdate);
 				socket.on(SOCKET_EVENTS.PROPERTY_BOUGHT, handlePropertyBought);
 				socket.on(SOCKET_EVENTS.RECEIVE_TURN, handleReceiveTurn);
 				socket.on(SOCKET_EVENTS.JAIL_STATUS_CHANGED, handleJailStatusChanged);
@@ -361,6 +478,7 @@ export const useGameStore = create<GameStore>()(
 					socket.off(SOCKET_EVENTS.GAME_LOOP, handleGameLoop);
 					socket.off(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
 					socket.off(SOCKET_EVENTS.RECEIVE_MONEY, handleReceiveMoney);
+					socket.off(SOCKET_EVENTS.RECEIVE_MONEY_UPDATE, handleReceiveMoneyUpdate);
 					socket.off(SOCKET_EVENTS.PROPERTY_BOUGHT, handlePropertyBought);
 					socket.off(SOCKET_EVENTS.RECEIVE_TURN, handleReceiveTurn);
 					socket.off(
@@ -620,6 +738,19 @@ export const useGameStore = create<GameStore>()(
 			},
 			setTradeDialogOpen: (isOpen) => set({ isTradeDialogOpen: isOpen }),
 			setIsNavigating: (isNavigating) => set({ isNavigating }),
+			addLog: (message: string) => {
+				set((state) => ({
+					logs: [
+						...state.logs,
+						{
+							id: crypto.randomUUID(),
+							message,
+							timestamp: Date.now(),
+						},
+					].slice(-MAX_GAME_LOGS),
+				}));
+			},
+			clearLogs: () => set({ logs: [] }),
 			setState: (state) => set(state),
 		}),
 		{

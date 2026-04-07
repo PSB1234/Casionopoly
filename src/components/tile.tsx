@@ -20,6 +20,7 @@ export default function Tile({
 	const isOwned = checkPropertyIsOwned(TileData.id);
 	const ownerColor = isOwned ? getColorByPropertyIndex(TileData.id) : undefined;
 	const rank = getRankOfProperty(TileData.id);
+	const displayTileName = TileData.type === "chance" ? "Casino" : TileData.name;
 
 	// Determine side
 	const isTop = TileData.id >= 1 && TileData.id <= 7;
@@ -79,7 +80,7 @@ export default function Tile({
 			) : TileData.type === "Vacation" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
 					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
-						{TileData.name.toLowerCase()}
+						{displayTileName.toLowerCase()}
 					</p>
 					<div className="relative flex h-2/3 p-0">
 						<Images
@@ -93,7 +94,7 @@ export default function Tile({
 			) : TileData.type === "tax" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
 					<p className="flex w-full justify-center py-[2cqh] text-center text-[12cqw] lg:text-[14cqw]">
-						{TileData.name.toLowerCase()}
+						{displayTileName.toLowerCase()}
 					</p>
 					<div className="relative flex h-2/3 p-0">
 						<Images
@@ -133,7 +134,7 @@ export default function Tile({
 									)}
 								</div>
 								<p className="break-all text-center font-medium text-[25cqmin] leading-tight lg:text-sm">
-									{TileData.name.toLowerCase()}
+									{displayTileName.toLowerCase()}
 								</p>
 								{TileData.price && (
 									<p className="mt-[2cqh] text-center font-bold text-[25cqmin] text-yellow-400 lg:text-sm">
@@ -150,7 +151,7 @@ export default function Tile({
 								)}
 							>
 								<p className="break-all text-center font-extralight text-[25cqmin] leading-tight lg:text-sm">
-									{TileData.name.toLowerCase()}
+									{displayTileName.toLowerCase()}
 								</p>
 								{TileData.price && (
 									<p className="text-center font-bold text-[25cqmin] text-yellow-400 lg:text-sm">
@@ -246,7 +247,7 @@ export default function Tile({
 
 			<div
 				aria-hidden="true"
-				className="pointer-events-none absolute inset-0 -mx-[2px] border-foreground border-x-2"
+				className="pointer-events-none absolute inset-0 -mx-0.5 border-foreground border-x-2"
 				style={{ borderColor: ownerColor }}
 			/>
 		</div>
