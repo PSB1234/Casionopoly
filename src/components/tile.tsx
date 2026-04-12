@@ -67,7 +67,7 @@ export default function Tile({
 		>
 			{TileData.type === "jail" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
-					<p className="px-4">Bypass</p>
+					<p className="px-[5cqmin] pt-[2cqmin] lg:px-4 lg:pt-1 text-[12cqmin] lg:text-xs leading-tight">Bypass</p>
 					<div className="relative flex h-[65%] w-[65%] border-foreground border-t-2 border-r-2 p-0">
 						<Images
 							alt={`jail-${TileData.id}`}

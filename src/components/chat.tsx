@@ -16,7 +16,6 @@ import { Field } from "@/components/ui/field";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { ChatSchema } from "@/lib/zod";
 import { useChatStore } from "@/store/chat_store";
-import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 import Message from "./message";
 import { ScrollArea } from "./ui/8bit/scroll-area";
@@ -72,8 +71,8 @@ export default function Chat() {
 			</CardHeader>
 			<CardContent className="flex min-h-0 flex-1 flex-col">
 				<Card className="flex min-h-0 flex-1 flex-col">
-					<CardContent className="flex min-h-0 flex-1 flex-col p-2">
-						<ScrollArea className="h-48 min-h-[12rem] lg:h-full lg:min-h-0">
+					<CardContent className="flex min-h-0 flex-1 flex-col">
+						<ScrollArea className="flex-1 w-full h-full min-h-48 lg:min-h-0">
 							{messages.map((msg, index) => (
 								<Message
 									key={`${msg}${

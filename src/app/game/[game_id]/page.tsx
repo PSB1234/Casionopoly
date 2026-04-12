@@ -82,7 +82,7 @@ export default function Game() {
 	);
 
 	return (
-		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto p-5 lg:h-screen lg:flex-row lg:overflow-hidden">
+		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden overflow-y-auto p-5 lg:h-screen lg:flex-row lg:overflow-hidden">
 			<InactivityWarning roomKey={game_id} socket={socket} />
 			<BankruptcyChoice game_id={game_id} socket={socket} userId={userId} />
 
@@ -94,7 +94,7 @@ export default function Game() {
 
 			{/* Middle Column: Board (Desktop Middle, Mobile Top after Header) */}
 			<div className="order-2 flex w-full items-center justify-center p-0 lg:order-2 lg:h-full lg:max-h-screen lg:flex-1 lg:p-5">
-				<div className="relative aspect-square h-auto w-full max-w-[100vw] p-2 lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-[500px] lg:p-5">
+				<div className="relative aspect-square h-auto w-full max-w-full p-2 lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-[500px] lg:p-5">
 					<Board game_id={game_id} />
 					<div className="pointer-events-none absolute inset-0">
 						<GhostBoard PlayerList={players} />
@@ -115,64 +115,58 @@ export default function Game() {
 					<div className="order-1 lg:hidden">
 						<Playerlist PlayerList={players} />
 					</div>
-					{/* 2. Kick/Surrender (Mobile only here) */}
-					<div className="order-2 flex shrink-0 justify-end gap-5 lg:hidden">
-						<Kick roomKey={game_id} />
-						<Bankruptcy roomKey={game_id} />
+					{/* 2. Action Buttons (Mobile only here) */}
+					<div className="order-2 flex flex-wrap shrink-0 justify-center gap-5 lg:hidden">
+						<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>
+							<DialogTrigger asChild>
+								<Button size="sm" type="button" className="bg-orange-400 hover:bg-orange-600" >
+									Trade List
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Trade Display</DialogTitle>
+									<DialogDescription>
+										View your trade list.
+									</DialogDescription>
+								</DialogHeader>
+								<TradeDisplay
+									displayTrade={displayTrade}
+									getUsernameById={getUsernameById}
+									roomKey={game_id}
+									userId={userId}
+								/>
+							</DialogContent>
+						</Dialog>
+						<Dialog onOpenChange={setIsPropertyListOpen} open={isPropertyListOpen}>
+							<DialogTrigger asChild>
+								<Button size="sm" type="button" className="bg-blue-400 hover:bg-blue-600"  >
+									Property List
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Property Display</DialogTitle>
+									<DialogDescription>
+										View your property list.
+									</DialogDescription>
+								</DialogHeader>
+								<Properties roomKey={game_id} />
+							</DialogContent>
+						</Dialog>
+						<div className="w-full flex justify-center gap-5">
+							<Kick roomKey={game_id} />
+							<Bankruptcy roomKey={game_id} />
+						</div>
+						
 					</div>
 					{/* 3. Chat */}
 					<div className="order-3 min-h-0 lg:flex-1">
 						<Chat />
 					</div>
 					{/* 4. Trade */}
-					<div className="order-4">
+					<div className="order-4 pb-10 lg:pb-0">
 						<Trade roomKey={game_id} />
-					</div>
-					{/* 5. Trade Display (Mobile only here) */}
-					<div className="order-5 lg:hidden flex flex-row justify-end">
-<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>
-<DialogTrigger asChild>
-	<Button size="sm" type="button" className="bg-orange-400 hover:bg-orange-600" >
-		Trade List
-	</Button>
-</DialogTrigger>
-<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">
-	<DialogHeader>
-		<DialogTitle>Trade Display</DialogTitle>
-		<DialogDescription>
-			View your trade list.
-		</DialogDescription>
-	</DialogHeader>
-			<TradeDisplay
-				displayTrade={displayTrade}
-				getUsernameById={getUsernameById}
-				roomKey={game_id}
-				userId={userId}
-			/>
-		
-</DialogContent>
-</Dialog>
-
-					</div>
-					{/* 6. Properties (Mobile only here) */}
-					<div className="order-6 lg:hidden flex flex-row justify-end">
-					<Dialog onOpenChange={setIsPropertyListOpen} open={isPropertyListOpen}>
-					<DialogTrigger asChild>
-						<Button size="sm" type="button" className="bg-blue-400 hover:bg-blue-600"  >
-						Property List
-						</Button>
-					</DialogTrigger>
-					<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">
-						<DialogHeader>
-							<DialogTitle>Property Display</DialogTitle>
-							<DialogDescription>
-								View your property list.
-							</DialogDescription>
-						</DialogHeader>
-						<Properties roomKey={game_id} />
-					</DialogContent>
-				</Dialog>
-
 					</div>
 				</div>
 			</div>

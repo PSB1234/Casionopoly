@@ -35,7 +35,7 @@ export default function Room() {
 		initializeSocket(room_id, socket);
 		function RoomStatus() {
 			setIsNavigating(true);
-			router.push(`/game/${room_id}`);
+			router.replace(`/game/${room_id}`);
 			router.refresh();
 		}
 		function handleRoomDeleted(deletedRoomKey: string) {

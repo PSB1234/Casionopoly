@@ -41,11 +41,11 @@ export default function Properties({
 	const isBankrupt = getPlayersMoney(userId) <= 0;
 
 	return (
-		<div className="flex min-h-0 flex-col">
+		<div className="flex flex-1 min-h-0 flex-col">
 				<ScrollArea
 					className={cn(
 						"relative w-full border-foreground pr-2",
-						fullHeight ? "h-full" : "h-60 lg:h-full",
+						fullHeight ? "h-full" : "max-h-[65vh] lg:h-full",
 						!(properties.length === 0 || properties === undefined) &&
 							"border-y-6",
 					)}

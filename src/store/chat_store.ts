@@ -20,7 +20,7 @@ export const useChatStore = create<ChatStore>()((set, _get) => ({
 		set((state) => {
 			const updated = [...state.messagesList, message];
 			return {
-				messagesList: updated.slice(-8),
+				messagesList: updated.slice(-10),
 			};
 		}),
 	setHistory: (history) =>
@@ -28,6 +28,6 @@ export const useChatStore = create<ChatStore>()((set, _get) => ({
 			messagesList: history.map((h) => ({
 				messages: h.message,
 				name: h.username,
-			})),
+			})).slice(-10),
 		})),
 }));

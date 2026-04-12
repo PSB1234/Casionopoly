@@ -78,11 +78,11 @@ export default function Board({ game_id }: { game_id: string }) {
 					/>
 				))}
 				{/* Center area for logs and controls */}
-				<div className="flex h-full w-full flex-col items-center justify-center gap-4 p-[1.8cqmin] text-white [grid-area:Center]">
-					<div className="flex w-full max-w-[58cqmin] flex-col items-center justify-center gap-4">
+				<div className="flex h-full w-full flex-col items-center justify-center gap-2 md:gap-4 p-[1cqmin] md:p-[1.8cqmin] text-white [grid-area:Center] overflow-hidden">
+					<div className="flex w-full max-w-[85cqmin] md:max-w-[58cqmin] flex-col items-center justify-center gap-2 md:gap-4 shrink-0 scale-90 md:scale-100">
 						<PlayButton game_id={game_id} />
 					</div>
-					<div className="w-full max-w-[58cqmin]">
+					<div className="w-full max-w-[85cqmin] md:max-w-[58cqmin] min-h-0 flex-1 flex flex-col justify-center items-center scale-90 md:scale-100">
 						<Log />
 					</div>
 				</div>

@@ -37,9 +37,9 @@ export default function TradeDisplay({
 	}
 
 	return (
-		<Card className="flex min-h-0 flex-col">
-			<CardContent className="min-h-0">
-				<ScrollArea className="h-60 lg:h-full w-full">
+		<Card className="flex flex-1 min-h-0 flex-col">
+			<CardContent className="min-h-0 flex-1">
+				<ScrollArea className="max-h-[65vh] lg:h-full w-full">
 					<ItemGroup>
 						{trades.map((trade, index) => {
 							// Assuming tradeSchema has offer/request objects similar to TradeData

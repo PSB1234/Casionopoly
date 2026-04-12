@@ -29,7 +29,7 @@ export default function Log() {
 	}, [logs.length]);
 
 	return (
-		<div className="h-[22cqmin] min-h-36 w-full max-h-56 overflow-hidden bg-card/95 p-2">
+		<div className="h-[22cqmin] min-h-24 md:min-h-36 w-full max-h-[50cqmin] md:max-h-56 overflow-hidden bg-card/95 p-1 md:p-2 rounded-sm md:rounded-none">
 			<ScrollArea className="h-full w-full p-2" ref={scrollAreaRef}>
 				{logs.length === 0 ? (
 					<p className="text-muted-foreground text-xs sm:text-sm">
