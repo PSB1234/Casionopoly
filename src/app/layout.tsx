@@ -4,7 +4,6 @@ import QueryProvider from "@/components/provider/query_provider";
 import SocketInit from "@/components/provider/socket_provider";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
-
 import type { Metadata } from "next";
 import { Geist, Jaro } from "next/font/google";
 

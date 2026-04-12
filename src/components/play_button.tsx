@@ -2,10 +2,21 @@
 import { Activity, useEffect, useState } from "react";
 import ChestUi from "@/components/chest-ui";
 import { Button } from "@/components/ui/8bit/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogTitle,
+} from "@/components/ui/8bit/dialog";
 import { toast } from "@/components/ui/8bit/toast";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
-import type { ChestResolutionResult } from "@/lib/type";
+import type {
+	ChestResolutionResult,
+	ChestSpinOutcome,
+	ChestResolutionReason,
+} from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 export default function PlayButton({ game_id }: { game_id: string }) {
@@ -20,6 +31,19 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 	const [awaitingTurnResolution, setAwaitingTurnResolution] =
 		useState<boolean>(false);
 	const [isChestOpen, setIsChestOpen] = useState<boolean>(false);
+	const [chestResult, setChestResult] = useState<{
+		open: boolean;
+		title: string;
+		description: string;
+	}>({
+		open: false,
+		title: "",
+		description: "",
+	});
+	const [pendingChestResult, setPendingChestResult] = useState<{
+		title: string;
+		description: string;
+	} | null>(null);
 
 	const { socket, emitEvent } = useSocketStore();
 	const updatePlayer = useGameStore((state) => state.updatePlayer);
@@ -83,17 +107,21 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 	const handleChestResolve = ({
 		reason,
+		spin,
 	}: {
-		reason: "stopped" | "timeout";
+		reason: ChestResolutionReason;
+		spin?: ChestSpinOutcome;
 	}) => {
 		return new Promise<void>((resolve) => {
 			emitEvent(
 				SOCKET_EVENTS.RESOLVE_CHEST,
 				game_id,
 				reason,
+				spin,
 				(result: ChestResolutionResult) => {
 					setEndTurnFree(true);
-					toast(result.title, {
+					setPendingChestResult({
+						title: result.title,
 						description: `${result.description} ${result.rewardText}`,
 					});
 					resolve();
@@ -101,6 +129,16 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 			);
 		});
 	};
+
+	useEffect(() => {
+		if (isChestOpen || !pendingChestResult) return;
+		setChestResult({
+			open: true,
+			title: pendingChestResult.title,
+			description: pendingChestResult.description,
+		});
+		setPendingChestResult(null);
+	}, [isChestOpen, pendingChestResult]);
 	// Reset local state whenever the turn changes globally
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <Idk I forgot>
 	useEffect(() => {
@@ -243,6 +281,26 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 
 	return (
 		<>
+			<Dialog
+				onOpenChange={(open) => {
+					setChestResult((previous) => ({ ...previous, open }));
+				}}
+				open={chestResult.open}
+			>
+				<DialogContent className="w-full max-w-md" showCloseButton={false}>
+					<DialogTitle>{chestResult.title || "Chest Result"}</DialogTitle>
+					<DialogDescription>{chestResult.description}</DialogDescription>
+					<DialogFooter>
+						<Button
+							onClick={() => {
+								setChestResult((previous) => ({ ...previous, open: false }));
+							}}
+						>
+							OK
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 			<ChestUi
 				onResolve={handleChestResolve}
 				onOpenChange={setIsChestOpen}

@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { SearchRoomClient } from "./components/search-room-client";
+import { SearchRoomClient } from "@/components/search-room-client";
 
 async function getPublicRooms() {
 	"use cache";
