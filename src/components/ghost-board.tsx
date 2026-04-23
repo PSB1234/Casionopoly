@@ -78,7 +78,7 @@ const getTilePosition = (index: number) => {
 
 export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 	return (
-		<div className="pointer-events-none absolute inset-0 h-full w-full px-8 py-8">
+		<div className="pointer-events-none absolute inset-0 h-full w-full px-4 py-5 sm:px-8 sm:py-8">
 			<div
 				className="relative grid h-full w-full gap-2"
 				style={{
@@ -116,9 +116,9 @@ export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 											PlayerList.filter(
 												(player) =>
 													player.position === tileData.id &&
-														player.behindBars !== true,
+													player.behindBars !== true,
 											),
-												"h-[3.2cqmin] w-[3.2cqmin]",
+											"h-[3.2cqmin] w-[3.2cqmin]",
 										)}
 									</div>
 									<div
@@ -130,7 +130,7 @@ export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 													player.position === tileData.id &&
 													player.behindBars === true,
 											),
-												"h-full max-h-[2.8cqmin] w-full max-w-[2.8cqmin]",
+											"h-full max-h-[2.8cqmin] w-full max-w-[2.8cqmin]",
 										)}
 										<div className="absolute inset-0 h-full w-full" />
 									</div>
@@ -147,7 +147,9 @@ export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 						>
 							<div className="relative h-full w-full">
 								{renderPlayersInSlots(
-									PlayerList.filter((player) => player.position === tileData.id),
+									PlayerList.filter(
+										(player) => player.position === tileData.id,
+									),
 									"h-[4cqmin] w-[4cqmin]",
 								)}
 							</div>

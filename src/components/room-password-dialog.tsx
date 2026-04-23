@@ -40,7 +40,10 @@ export function RoomPasswordDialog({
 	}
 
 	return (
-		<AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
+		<AlertDialog
+			onOpenChange={(isOpen) => !isOpen && handleClose()}
+			open={open}
+		>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Private Room</AlertDialogTitle>
@@ -51,20 +54,18 @@ export function RoomPasswordDialog({
 
 				<div className="flex flex-col gap-2 py-2">
 					<Input
-						type="password"
-						placeholder="Password"
-						value={value}
 						onChange={(e) => setValue(e.target.value)}
 						onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+						placeholder="Password"
+						type="password"
+						value={value}
 					/>
-					{error && (
-						<p className="text-destructive text-sm">{error}</p>
-					)}
+					{error && <p className="text-destructive text-sm">{error}</p>}
 				</div>
 
 				<AlertDialogFooter>
 					<AlertDialogCancel onClick={handleClose}>Cancel</AlertDialogCancel>
-					<Button onClick={handleSubmit} disabled={!value.trim()}>
+					<Button disabled={!value.trim()} onClick={handleSubmit}>
 						Join
 					</Button>
 				</AlertDialogFooter>

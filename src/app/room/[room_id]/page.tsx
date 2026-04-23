@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import BackgroundMusic from "@/components/background-music";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -23,8 +24,13 @@ export default function Room() {
 	const router = useRouter();
 	const { room_id } = useParams<{ room_id: string }>();
 	const [showSoloStartConfirm, setShowSoloStartConfirm] = useState(false);
-	const { isThisPlayerLeader, players, initializeSocket, timerSeconds, setIsNavigating } =
-		useGameStore();
+	const {
+		isThisPlayerLeader,
+		players,
+		initializeSocket,
+		timerSeconds,
+		setIsNavigating,
+	} = useGameStore();
 	const { socket, emitEvent, rooms } = useSocketStore();
 	const roomData = rooms.find((room) => room.roomKey === room_id);
 	useEffect(() => {
@@ -69,7 +75,7 @@ export default function Room() {
 			socket.off(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
 			socket.off(SOCKET_EVENTS.USER_DISCONNECTED, handlePlayerLeft);
 		};
-	}, [room_id, socket, initializeSocket, router]);
+	}, [room_id, socket, initializeSocket, router, setIsNavigating]);
 	const copyCodeAction = () => {
 		return () => {
 			navigator.clipboard.writeText(room_id);
@@ -98,8 +104,9 @@ export default function Room() {
 	};
 
 	return (
-		<div className="flex w-full flex-col gap-5 p-10">
-			<div className="relative flex h-full w-full flex-col gap-4 sm:flex-row sm:justify-between border-foreground border-y-6 bg-card px-5 py-4 font-jaro">
+		<div className="flex h-screen w-full flex-col gap-5 p-10">
+			<BackgroundMusic trackIndex={1} />
+			<div className="relative flex h-fit w-full flex-col gap-4 border-foreground border-y-6 bg-card px-5 py-4 font-jaro sm:flex-row sm:justify-between">
 				<div>
 					<h1 className="my-2 font-bold text-3xl">{roomData?.name}</h1>
 					<h3 className="relative flex w-fit flex-row items-center justify-center gap-4 border-foreground border-y-6 bg-background p-2 text-muted-foreground text-xl">
@@ -152,14 +159,14 @@ export default function Room() {
 					</ul>
 				</CardContent>
 			</Card>
-			<Button
-				disabled={!isThisPlayerLeader()}
-				onClick={onSubmit}
-			>
+			<Button disabled={!isThisPlayerLeader()} onClick={onSubmit}>
 				Submit
 			</Button>
 
-			<AlertDialog onOpenChange={setShowSoloStartConfirm} open={showSoloStartConfirm}>
+			<AlertDialog
+				onOpenChange={setShowSoloStartConfirm}
+				open={showSoloStartConfirm}
+			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>Start with only 1 player?</AlertDialogTitle>

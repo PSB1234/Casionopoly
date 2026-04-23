@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/8bit/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
 import { Input } from "@/components/ui/8bit/input";
 import { Separator } from "@/components/ui/8bit/separator";
+import { env } from "@/env";
 import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import type { Player, RoomData } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 import { RoomPasswordDialog } from "./room-password-dialog";
-import { env } from "@/env";
 
 export function SearchRoomClient({
 	initialRooms,
@@ -97,12 +97,7 @@ export function SearchRoomClient({
 	const handlePasswordSubmit = (password: string) => {
 		if (!pendingRoom) return;
 		joinRoom(pendingRoom, password);
-		// Keep dialog open — it will close on successful navigation or show error
-		// The ERROR socket event (handled in socket_store) will show a toast,
-		// but we also surface it inline via setPasswordError below.
 	};
-
-	// Listen for socket ERROR events while attempting to join a private room
 	useEffect(() => {
 		const socket = useSocketStore.getState().socket;
 		if (!socket || !pendingRoom) return;
@@ -122,8 +117,6 @@ export function SearchRoomClient({
 		};
 	}, [pendingRoom]);
 
-	// We display 'rooms' from the socket store (which will include live updates
-	// but is hydrated initially with `initialRooms`).
 	const displayRooms = rooms.length > 0 ? rooms : initialRooms;
 
 	return (
@@ -151,9 +144,7 @@ export function SearchRoomClient({
 										key={roomData.roomKey}
 									>
 										<h3>{roomData.name}</h3>
-										<Button onClick={() => onSubmit(roomData)}>
-											Join
-										</Button>
+										<Button onClick={() => onSubmit(roomData)}>Join</Button>
 									</li>
 								))}
 							</ul>
@@ -163,7 +154,6 @@ export function SearchRoomClient({
 			)}
 
 			<RoomPasswordDialog
-				open={dialogOpen}
 				error={passwordError}
 				onClose={() => {
 					setDialogOpen(false);
@@ -171,6 +161,7 @@ export function SearchRoomClient({
 					setPasswordError(null);
 				}}
 				onSubmit={handlePasswordSubmit}
+				open={dialogOpen}
 			/>
 		</span>
 	);

@@ -1,8 +1,9 @@
+"use client"
 import { cva, type VariantProps } from "class-variance-authority";
 import { Button as ShadcnButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
 import "./styles/retro.css";
+import { useEffect, useRef } from "react";
 
 export const buttonVariants = cva("", {
 	variants: {
@@ -40,7 +41,50 @@ export interface BitButtonProps
 
 function Button({ children, asChild, ...props }: BitButtonProps) {
 	const { variant, size, className, font } = props;
+	const buttonAudioRef = useRef<HTMLAudioElement | null>(null);
 
+	useEffect(() => {
+		buttonAudioRef.current = new Audio(
+			"/music/soundeffects/button/button_click.mp3"
+		);
+	}, []);
+	const buttonfocusAudioRef = useRef<HTMLAudioElement | null>(null);
+
+	useEffect(() => {
+		buttonfocusAudioRef.current = new Audio(
+			"/music/soundeffects/button/button_select.mp3"
+		);
+	}, []);
+	const isKeyboardNav = useRef(false);
+
+	useEffect(() => {
+		  const handleKeyDown = (e: KeyboardEvent) => {
+		    if (e.key === "Tab") isKeyboardNav.current = true;
+		  };
+		  const handleMouseDown = () => {
+		    isKeyboardNav.current = false;
+		  };
+	  
+		  window.addEventListener("keydown", handleKeyDown);
+		  window.addEventListener("mousedown", handleMouseDown);
+	  
+		  return () => {
+		    window.removeEventListener("keydown", handleKeyDown);
+		    window.removeEventListener("mousedown", handleMouseDown);
+		  };
+	}, []);
+	const playSoundEffect = () => {
+		if (buttonAudioRef.current) {
+			buttonAudioRef.current.currentTime = 0;
+			buttonAudioRef.current.play();
+		}
+	};
+	const focusSoundEffect = () => {
+		if (buttonfocusAudioRef.current) {
+			buttonfocusAudioRef.current.currentTime = 0;
+			buttonfocusAudioRef.current.play();
+		}
+	}
 	return (
 		<ShadcnButton
 			{...props}
@@ -50,6 +94,18 @@ function Button({ children, asChild, ...props }: BitButtonProps) {
 				font !== "normal" && "retro",
 				className,
 			)}
+		    onClick={(e) => {
+				playSoundEffect();
+				props.onClick?.(e); 
+			  }}
+			  onFocus={
+				(e) => {
+					if (isKeyboardNav.current) {
+						focusSoundEffect();
+					  }				
+					  props.onFocus?.(e); 
+				  }
+			  }
 			size={size}
 			variant={variant}
 		>
