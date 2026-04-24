@@ -75,6 +75,7 @@ export interface GameStoreState {
 	inactivityCountdown: number;
 	isTradeDialogOpen: boolean;
 	isNavigating: boolean;
+	hasFinished: boolean;
 }
 
 export interface GameStoreActions {
@@ -140,6 +141,7 @@ export interface GameStoreActions {
 	getUsernameById: (playerId: string) => string | undefined;
 	setTradeDialogOpen: (isOpen: boolean) => void;
 	setIsNavigating: (isNavigating: boolean) => void;
+	setHasFinished: (hasFinished: boolean) => void;
 	addLog: (message: string) => void;
 	clearLogs: () => void;
 }
@@ -164,6 +166,7 @@ export const useGameStore = create<GameStore>()(
 			inactivityCountdown: 0,
 			isTradeDialogOpen: false,
 			isNavigating: false,
+			hasFinished: false,
 			initializeSocket: (
 				roomKey: string,
 				socket: Socket<ServerToClientEvents, ClientToServerEvents> | null,
@@ -738,6 +741,7 @@ export const useGameStore = create<GameStore>()(
 			},
 			setTradeDialogOpen: (isOpen) => set({ isTradeDialogOpen: isOpen }),
 			setIsNavigating: (isNavigating) => set({ isNavigating }),
+			setHasFinished: (hasFinished) => set({ hasFinished }),
 			addLog: (message: string) => {
 				set((state) => ({
 					logs: [

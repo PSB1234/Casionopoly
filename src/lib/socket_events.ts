@@ -50,4 +50,5 @@ export const SOCKET_EVENTS = {
 	INACTIVITY_TICK: "inactivity tick",
 	CONFIRM_ACTIVITY: "confirm activity",
 	INACTIVITY_RESET: "inactivity reset",
+	GAME_FINISHED: "game finished",
 } as const;

@@ -22,4 +22,9 @@ export const getMenuItems = (
 
 		action: () => router.push("/searchRoom"),
 	},
+	{
+		label: "Music",
+
+		action: () => router.push("/music"),
+	},
 ];

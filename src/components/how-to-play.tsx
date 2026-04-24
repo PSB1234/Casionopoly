@@ -80,11 +80,7 @@ export default function HowToPlay() {
 											{rule.content}
 										</p>
 									</div>
-									<div className="flex h-48 w-full items-center justify-center border-2 border-muted-foreground border-dashed bg-muted/50 md:w-1/2">
-										<span className="font-jaro text-muted-foreground tracking-wider">
-											Image Placeholder
-										</span>
-									</div>
+
 								</div>
 							</TabsContent>
 						))}

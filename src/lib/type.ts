@@ -69,6 +69,10 @@ export interface ServerToClientEvents {
     [SOCKET_EVENTS.INACTIVITY_WARNING]: (countdown: number) => void;
     [SOCKET_EVENTS.INACTIVITY_TICK]: (remainingSeconds: number) => void;
     [SOCKET_EVENTS.INACTIVITY_RESET]: () => void;
+    [SOCKET_EVENTS.GAME_FINISHED]: (
+        winnerId: string,
+        finalStandings: Player[],
+    ) => void;
     [SOCKET_EVENTS.RESOLVE_CHEST]: (
         roomKey: string,
         reason: ChestResolutionReason,

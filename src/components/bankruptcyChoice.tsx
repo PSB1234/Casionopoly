@@ -31,15 +31,16 @@ export default function BankruptcyChoice({
 	const [dialogMode, setDialogMode] = useState<"bankrupt" | "game-over" | null>(null);
 	const [hasSeenBrokeAlert, setHasSeenBrokeAlert] = useState(false);
 	const { emitEvent } = useSocketStore();
-	const { players, getPlayersMoney, setTradeDialogOpen } = useGameStore();
+	const { players, getPlayersMoney, setTradeDialogOpen, setHasFinished } = useGameStore();
 	const currentMoney = getPlayersMoney(userId);
 
 	const handleSurrender = useCallback(() => {
+		setHasFinished(true);
 		if (socket && game_id) {
 			emitEvent(SOCKET_EVENTS.LEAVE_GAME, userId, game_id);
 		}
-		router.replace("/");
-	}, [socket, game_id, userId, emitEvent, router]);
+		router.replace(`/game/${game_id}/result`);
+	}, [socket, game_id, userId, emitEvent, router, setHasFinished]);
 
 	// Auto-quit when player runs out of money
 	// Guard: skip when players haven't loaded yet (e.g. during page refresh)

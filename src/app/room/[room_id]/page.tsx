@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import BackgroundMusic from "@/components/background-music";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -105,7 +104,6 @@ export default function Room() {
 
 	return (
 		<div className="flex h-screen w-full flex-col gap-5 p-10">
-			<BackgroundMusic trackIndex={1} />
 			<div className="relative flex h-fit w-full flex-col gap-4 border-foreground border-y-6 bg-card px-5 py-4 font-jaro sm:flex-row sm:justify-between">
 				<div>
 					<h1 className="my-2 font-bold text-3xl">{roomData?.name}</h1>

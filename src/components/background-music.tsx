@@ -4,48 +4,18 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { useAudio } from "@/components/provider/audio_provider";
-import { toast } from "@/components/ui/8bit/toast";
-
-interface Track {
-	name: string;
-	artist: string;
-	srcMp3: string;
-	srcOgg?: string;
-}
-
-const TRACKS: Track[] = [
-	{
-		name: "The world of 8 bit games",
-		artist: "Music by Krzysztof Szymanski",
-		srcMp3: "/music/background/djartmusic-the-world-of-8-bit-games-301273.mp3",
-	},
-];
+import { MUSIC_TRACKS, useMusicStore } from "@/store/music_store";
 
 interface BackgroundMusicProps {
-	trackIndex?: number;
 	delayMs?: number;
 }
 
-export default function BackgroundMusic({
-	trackIndex = 0,
-	delayMs = 2000,
-}: BackgroundMusicProps) {
+export default function BackgroundMusic({ delayMs = 2000 }: BackgroundMusicProps) {
 	const { audioRef, isSoundOn, toggleSound } = useAudio();
-	const currentIndexRef = useRef<number>(trackIndex);
+	const currentIndexRef = useRef<number>(0);
 	const pendingPlayRef = useRef<boolean>(false);
 	const pathname = usePathname();
-
-	useEffect(() => {
-		const handleInteraction = () => {
-			if (pathname === "/" && pendingPlayRef.current && !isSoundOn) {
-				pendingPlayRef.current = false;
-				toggleSound();
-			}
-		};
-
-		document.addEventListener("click", handleInteraction);
-		return () => document.removeEventListener("click", handleInteraction);
-	}, [pathname, isSoundOn, toggleSound]);
+	const { selectedTrackIndex, previewingIndex } = useMusicStore();
 
 	const playTrack = useCallback(
 		(
@@ -54,11 +24,11 @@ export default function BackgroundMusic({
 			destroyed = { current: false },
 			delayMs = 0,
 		) => {
-			const track = TRACKS[index];
+			const track = MUSIC_TRACKS[index];
 			if (!track) return;
 
 			currentIndexRef.current = index;
-			audio.src = track.srcOgg || track.srcMp3;
+			audio.src = track.srcMp3;
 			audio.volume = 0.8;
 
 			const attemptPlay = () => {
@@ -66,9 +36,8 @@ export default function BackgroundMusic({
 				audio
 					.play()
 					.then(() => {
-						if (destroyed.current) return; // ← component gone, skip side effects
+						if (destroyed.current) return;
 						pendingPlayRef.current = false;
-						toast(track.name, { description: track.artist });
 					})
 					.catch((err: unknown) => {
 						if (destroyed.current) return;
@@ -90,6 +59,51 @@ export default function BackgroundMusic({
 		[isSoundOn, toggleSound],
 	);
 
+	const playPreview = useCallback(
+		(
+			audio: HTMLAudioElement,
+			index: number,
+			destroyed = { current: false },
+		) => {
+			const track = MUSIC_TRACKS[index];
+			if (!track) return;
+
+			currentIndexRef.current = index;
+			audio.src = track.srcMp3;
+			audio.volume = 0.8;
+			audio.loop = false;
+			audio.muted = !isSoundOn;
+
+			audio
+				.play()
+				.then(() => {
+					if (destroyed.current) return;
+				})
+				.catch((err: unknown) => {
+					if (destroyed.current) return;
+					console.error(err);
+				});
+		},
+		[isSoundOn],
+	);
+
+	const stopPreview = useCallback((audio: HTMLAudioElement) => {
+		audio.pause();
+		audio.currentTime = 0;
+	}, []);
+
+	useEffect(() => {
+		const handleInteraction = () => {
+			if (pathname === "/" && pendingPlayRef.current && !isSoundOn) {
+				pendingPlayRef.current = false;
+				toggleSound();
+			}
+		};
+
+		document.addEventListener("click", handleInteraction);
+		return () => document.removeEventListener("click", handleInteraction);
+	}, [pathname, isSoundOn, toggleSound]);
+
 	useEffect(() => {
 		const audio = new Audio();
 		audio.loop = false;
@@ -99,36 +113,26 @@ export default function BackgroundMusic({
 		const destroyedRef = { current: false };
 
 		const handleEnded = () => {
-			const nextIndex = (currentIndexRef.current + 1) % TRACKS.length;
+			if (previewingIndex !== null) return;
+			const nextIndex = (currentIndexRef.current + 1) % MUSIC_TRACKS.length;
 			playTrack(audio, nextIndex, destroyedRef);
 		};
 
 		audio.addEventListener("ended", handleEnded);
-		playTrack(audio, trackIndex, destroyedRef, 2000);
+
+		if (previewingIndex !== null) {
+			playPreview(audio, previewingIndex, destroyedRef);
+		} else {
+			playTrack(audio, selectedTrackIndex, destroyedRef, delayMs);
+		}
 
 		return () => {
-			destroyedRef.current = true; // ← flip on cleanup
+			destroyedRef.current = true;
 			audio.removeEventListener("ended", handleEnded);
-
-			const pauseSafely = () => {
-				audio.pause();
-				audioRef.current = null;
-			};
-
-			if (audio.readyState === 0 || audio.paused) {
-				pauseSafely();
-			} else {
-				audio
-					.play()
-					.then(() => {
-						if (destroyedRef.current) pauseSafely();
-					})
-					.catch(() => {
-						if (destroyedRef.current) pauseSafely();
-					});
-			}
+			stopPreview(audio);
+			audioRef.current = null;
 		};
-	}, [trackIndex, playTrack]);
+	}, [selectedTrackIndex, previewingIndex, playTrack, playPreview, stopPreview, delayMs]);
 
 	return null;
 }

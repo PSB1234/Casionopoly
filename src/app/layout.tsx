@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import { Geist, Jaro } from "next/font/google";
 import localFont from "next/font/local";
 import { AudioProvider } from "@/components/provider/audio_provider";
+import BackgroundMusic from "@/components/background-music";
 
 export const metadata: Metadata = {
 	title: "Industrial.io",
@@ -43,6 +44,7 @@ export default function RootLayout({
 						<SocketInit>
 							<LoadingProvider>
 								<Navbar/>
+								<BackgroundMusic delayMs={1 * 1000} />
 								<Background />
 								{children}
 								<Footer />
