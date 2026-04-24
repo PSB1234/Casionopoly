@@ -10,9 +10,6 @@ export default function Footer() {
 			<Link className="transition-colors hover:text-white" href="/credits-and-licenses">
 				Credits & Licenses
 				</Link>
-				<Link className="transition-colors hover:text-white" href="/terms-conditions">
-					Terms & Conditions
-				</Link>
 				<Link
 					className="transition-colors hover:text-white"
 					href="/privacy-policy"

@@ -70,7 +70,7 @@ export default function Game() {
 		if (!socket || !game_id) return;
 		const handleAutoDeleted = (deletedRoomKey: string) => {
 			if (deletedRoomKey === game_id) {
-				router.replace("/");
+				router.replace(`/game/${game_id}/result`);
 			}
 		};
 		socket.on(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleAutoDeleted);
@@ -94,26 +94,13 @@ export default function Game() {
 	// Check if current player won or bankrupt
 	useEffect(() => {
 		if (players.length === 0 || hasFinished) return;
-		const currentPlayer = players.find((p) => p.id === userId);
-		if (!currentPlayer) return;
-		// Win detection - player has rank 1
-		if (currentPlayer.rank === 1) {
+		if (players.length <= 1 ) {
 			setHasFinished(true);
 		}
-	}, [players, userId, hasFinished, setHasFinished]);
+	}, [players, hasFinished, setHasFinished]);
 
 	const isGameFinished = hasFinished;
 
-	const Logo = () => (
-		<div className="relative">
-			<h1 className="relative z-10 font-bold font-jaro text-3xl text-yellow-200">
-				Industrial.io
-			</h1>
-			<div className="pointer-events-none absolute top-1 left-1 select-none font-bold font-jaro text-3xl text-black">
-				Industrial.io
-			</div>
-		</div>
-	);
 
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden p-5 lg:h-screen lg:flex-row lg:overflow-hidden">

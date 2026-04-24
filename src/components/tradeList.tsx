@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/8bit/input";
 import { Separator } from "@/components/ui/8bit/separator";
 import { Slider } from "@/components/ui/8bit/slider";
 import { toast } from "@/components/ui/8bit/toast";
+import { getNameOfPropertyById } from "@/lib/tiledata";
 import type { Player } from "@/lib/type";
 
 export interface TradeData {
@@ -90,7 +91,7 @@ export default function TradeList({
 								handlePropertyChange(property.id, checked === true)
 							}
 						/>
-						<p>{property.id}</p>
+						<p>{getNameOfPropertyById(property.id)}</p>
 					</li>
 				))}
 			</ul>

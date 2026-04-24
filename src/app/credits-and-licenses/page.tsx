@@ -10,7 +10,7 @@ export default function CreditsLicensesPage() {
 	return (
 		<main className="flex min-h-screen flex-col items-center gap-12 px-4 pt-24 pb-12 text-white">
 			<div className="w-full max-w-4xl">
-				<Card className="border-4 border-foreground bg-card/90">
+				<Card className="">
 					<CardHeader className="text-center">
 						<CardTitle className="font-jaro text-3xl text-yellow-200">
 							Credits & Licenses
@@ -26,15 +26,8 @@ export default function CreditsLicensesPage() {
 						</h2>
 						<p className="text-lg text-muted-foreground leading-relaxed">
 							Most of the aesthetic designs cover open source or public domain
-							art from OpenGameArt and wonderful contributors in the retro 8-bit
-							space.
-						</p>
-						<h2 className="mt-6 font-jaro text-2xl text-yellow-200">
-							Open Source Libraries
-						</h2>
-						<p className="text-lg text-muted-foreground leading-relaxed">
-							Next.js, TailwindCSS, Socket.IO, Lucide-React, and other fantastic
-							open source software.
+							art from pixelbay,itch.io and wonderful contributors in the retro
+							8-bit space.
 						</p>
 					</CardContent>
 				</Card>

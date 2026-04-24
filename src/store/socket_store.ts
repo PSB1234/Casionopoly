@@ -31,10 +31,8 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 	isConnected: false,
 	rooms: [],
 	connectSocket: (url: string, opts) => {
-		console.log("Attempting to connect to socket URL:", url);
 		const existing = get().socket;
 		if (existing?.connected) {
-			console.log("Socket already connected, skipping");
 			return; // prevent duplicate connections
 		}
 
@@ -72,20 +70,16 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 		// Now register listeners
 		socket.on("connect", () => {
 			set({ isConnected: true });
-			console.log("Socket connected!");
 		});
 		socket.on("disconnect", (reason) => {
 			set({ isConnected: false });
-			console.log("Socket disconnected:", reason);
 		});
 		// Listen for room updates
 		socket.on(SOCKET_EVENTS.GET_ALL_ROOMS, (roomsData: RoomData[]) => {
 			set({ rooms: roomsData });
-			console.log("Rooms updated:", roomsData);
 		});
 		socket.on(SOCKET_EVENTS.ROOM_AUTO_DELETED, (roomKey: string) => {
 			set({ rooms: get().rooms.filter((r) => r.roomKey !== roomKey) });
-			console.log("Room auto-deleted, removed from list:", roomKey);
 		});
 		//handle errors
 		socket.on("connect_error", (error) => {
@@ -103,7 +97,6 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 	getSocket: () => {
 		const { socket } = get();
 		if (!socket) {
-			console.warn("Socket not initialized");
 			return null;
 		}
 		return socket;

@@ -22,13 +22,13 @@ export default function Navbar() {
 			className={cn(
 				"flex h-fit w-full flex-row items-center justify-between border-0 px-4 pt-8",
 				pathname === "/searchRoom"
-					? "border-foreground border-b-4 bg-card"
+					? "border-foreground border-b-4 bg-card pb-6"
 					: "",
 			)}
 		>
 			<Activity mode={isHomepage ? "hidden" : "visible"}>
 				<button
-					className="px-5"
+					className="cursor-pointer px-5"
 					onClick={() => router.replace("/")}
 					type="button"
 				>

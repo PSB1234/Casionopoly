@@ -10,6 +10,7 @@ import {
 	AlertDialogTrigger,
 } from "@/components/ui/8bit/alert-dialog";
 import { Button } from "@/components/ui/8bit/button";
+import { getNameOfPropertyById } from "@/lib/tiledata";
 import type { tradeDisplaySchema } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
@@ -57,7 +58,7 @@ export default function TradeReview({
 					<ul>
 						{tradeDisplay.offeredProperties.properties.length > 0 ? (
 							tradeDisplay.offeredProperties.properties.map((propId) => (
-								<li key={propId}>Property ID: {propId}</li>
+								<li key={propId}>{getNameOfPropertyById(propId)}</li>
 							))
 						) : (
 							<li>No properties offered.</li>

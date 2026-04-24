@@ -166,9 +166,8 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 				setDiceValue(diceRoll);
 
 				setIsRolling(false);
-			}, 1000);
-			console.log("Received dice roll from server", diceRoll);
-		};
+		}, 1000);
+	};
 		const playerMoveListener = (position: number, player_id: string) => {
 			moveTimeout = setTimeout(() => {
 				updatePlayer(player_id, { position });

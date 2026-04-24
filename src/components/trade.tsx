@@ -25,7 +25,6 @@ export default function Trade({ roomKey }: { roomKey: string }) {
 	} = useGameStore();
 
 	const onSubmit = (playerId: string, offer: TradeData, request: TradeData) => {
-		console.log("Submitting Trade:", { playerId, offer, request });
 		sendTrade(roomKey, userId, playerId, socket, {
 			offer,
 			request,

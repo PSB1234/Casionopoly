@@ -73,7 +73,6 @@ export default function ResultPage() {
 							: `Winner: ${winner?.username ?? "Unknown"}`}
 					</p>
 
-					<div className="rounded-lg border-2 border-yellow-400 bg-yellow-400/20 p-4">
 						<Leaderboard
 							maxPlayers={10}
 							players={leaderboardPlayers}
@@ -81,9 +80,8 @@ export default function ResultPage() {
 							showRank={true}
 							title="FINAL STANDINGS"
 						/>
-					</div>
 
-					<div className="flex flex-col gap-3">
+					<div className="flex flex-col gap-6">
 						<Button className="w-full" onClick={handlePlayAgain}>
 							Play Again
 						</Button>

@@ -77,7 +77,6 @@ export function SearchRoomClient({
 					players: playerList,
 					isNavigating: true,
 				});
-				console.log(`${username} joined room ${roomId}`);
 				router.push(`/room/${roomId}`);
 				router.refresh();
 			},
