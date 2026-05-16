@@ -108,8 +108,6 @@ export default function Game() {
 		}
 	}, [players.length, hasFinished, setHasFinished, hasGameStarted]);
 
-	const isGameFinished = hasFinished;
-
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden p-5 lg:h-screen lg:flex-row lg:overflow-hidden">
 			<InactivityWarning roomKey={game_id} socket={socket} />
