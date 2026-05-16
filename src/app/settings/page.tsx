@@ -155,7 +155,7 @@ export default function MusicPage() {
 							render={({ field, fieldState }) => (
 								<Field data-invalid={fieldState.invalid}>
 									<FieldLabel>Your Name</FieldLabel>
-									<div className="flex w-full gap-6 justify-center items-center flex-row">
+									<div className="flex w-full flex-row items-center justify-center gap-6">
 										<Input
 											{...field}
 											aria-invalid={fieldState.invalid}
