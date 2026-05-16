@@ -1,7 +1,24 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/8bit/button";
+import { Input } from "@/components/ui/8bit/input";
+import { toast } from "@/components/ui/8bit/toast";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { SOCKET_EVENTS } from "@/lib/socket_events";
+import { useGameStore } from "@/store/game_store";
+import { useSocketStore } from "@/store/socket_store";
+
+const NameSchema = z.object({
+	name: z
+		.string()
+		.min(1, "Name is required")
+		.max(20, "Name must be less than 20 characters"),
+});
+
 import {
 	Card,
 	CardContent,
@@ -19,6 +36,49 @@ export default function MusicPage() {
 		setPreviewingIndex,
 	} = useMusicStore();
 	const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+
+	const username = useGameStore((state) => state.username);
+	const setUsername = useGameStore((state) => state.setUsername);
+	const emitEvent = useSocketStore((state) => state.emitEvent);
+
+	const [isSaving, setIsSaving] = useState(false);
+
+	const form = useForm<z.infer<typeof NameSchema>>({
+		resolver: zodResolver(NameSchema),
+		defaultValues: {
+			name: username || "",
+		},
+	});
+
+	useEffect(() => {
+		if (username) {
+			form.reset({ name: username });
+		}
+	}, [username, form]);
+
+	const onSubmit = useCallback(
+		(values: z.infer<typeof NameSchema>) => {
+			if (values.name === username) return;
+			setIsSaving(true);
+
+			emitEvent(
+				SOCKET_EVENTS.CHANGE_NAME,
+				values.name,
+				(success: boolean, savedName: string) => {
+					setIsSaving(false);
+					if (success) {
+						setUsername(savedName);
+						toast("Name Updated", {
+							description: `Your name is now ${savedName}`,
+						});
+					} else {
+						toast("Error", { description: "Failed to update name" });
+					}
+				},
+			);
+		},
+		[username, emitEvent, setUsername],
+	);
 
 	const handlePreview = useCallback(
 		(index: number) => {
@@ -80,6 +140,49 @@ export default function MusicPage() {
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center gap-8 p-4">
 			<Card className="w-full max-w-4xl" font="retro">
+				{" "}
+				<CardHeader>
+					<CardTitle className="text-center">Basic</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<form
+						className="flex flex-col gap-2"
+						onSubmit={form.handleSubmit(onSubmit)}
+					>
+						<Controller
+							control={form.control}
+							name="name"
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<FieldLabel>Your Name</FieldLabel>
+									<div className="flex w-full gap-6 justify-center items-center flex-row">
+										<Input
+											{...field}
+											aria-invalid={fieldState.invalid}
+											className="flex-1"
+											id={field.name}
+											maxLength={20}
+											placeholder="Enter new name"
+										/>
+										<Button
+											disabled={
+												isSaving ||
+												!field.value.trim() ||
+												field.value.trim() === username
+											}
+											type="submit"
+										>
+											Save
+										</Button>
+									</div>
+									<FieldError errors={[fieldState.error]} />
+								</Field>
+							)}
+						/>
+					</form>
+				</CardContent>
+			</Card>
+			<Card className="w-full max-w-4xl" font="retro">
 				<CardHeader>
 					<CardTitle className="text-center">MUSIC</CardTitle>
 				</CardHeader>
@@ -88,7 +191,7 @@ export default function MusicPage() {
 						Select default music for the game
 					</p>
 
-					<div >
+					<div>
 						{MUSIC_TRACKS.map((track, index) => (
 							<div
 								className="flex items-center justify-between rounded-lg p-3"

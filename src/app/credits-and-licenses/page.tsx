@@ -17,7 +17,7 @@ export default function CreditsLicensesPage() {
 					</CardHeader>
 					<CardContent className="space-y-4 text-center">
 						<p className="text-lg text-muted-foreground leading-relaxed">
-							Industrial.io was created by Prathamesh S. and is highly inspired
+							Industrial.io was created by Prathamesh and is highly inspired
 							by the classic Monopoly&reg; board game gameplay loop.
 						</p>
 						<h2 className="mt-6 font-jaro text-2xl text-yellow-200">
@@ -25,8 +25,7 @@ export default function CreditsLicensesPage() {
 						</h2>
 						<p className="text-lg text-muted-foreground leading-relaxed">
 							Most of the aesthetic designs cover open source or public domain
-							art from pixelbay,itch.io and wonderful contributors in the retro
-							8-bit space.
+							art and music are from pixelbay and itch.io.
 						</p>
 					</CardContent>
 				</Card>
