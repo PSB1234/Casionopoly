@@ -1,5 +1,4 @@
 
-# WORK IN PROGRESS
 # Industrial.io
 
 > A retro-styled, real-time multiplayer implementation of the classic property trading board game.
