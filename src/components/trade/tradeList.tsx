@@ -1,10 +1,10 @@
 import { Checkbox } from "@/components/ui/8bit/checkbox";
 import { Input } from "@/components/ui/8bit/input";
-import { Separator } from "@/components/ui/8bit/separator";
 import { Slider } from "@/components/ui/8bit/slider";
 import { toast } from "@/components/ui/8bit/toast";
 import { getNameOfPropertyById } from "@/lib/tiledata";
 import type { Player } from "@/lib/type";
+import { Card, CardContent, CardHeader } from "../ui/8bit/card";
 
 export interface TradeData {
 	amount: number;
@@ -53,10 +53,10 @@ export default function TradeList({
 	};
 
 	return (
-		<div>
-			<h3>{player.username} Properties</h3>
-			<Separator />
-			<ul className="my-2">
+		<Card>
+			<CardHeader>{player.username} Properties</CardHeader>
+			<CardContent>
+				<ul className="my-2">
 				<li className="my-2">
 					<p>Amount:</p>
 					<div className="mb-3">
@@ -84,7 +84,6 @@ export default function TradeList({
 					>
 						<Checkbox
 							checked={data.properties.includes(property.id)}
-							className="aspect-square max-h-fit max-w-fit"
 							onCheckedChange={(checked) =>
 								handlePropertyChange(property.id, checked === true)
 							}
@@ -93,6 +92,7 @@ export default function TradeList({
 					</li>
 				))}
 			</ul>
-		</div>
+			</CardContent>
+		</Card>
 	);
 }

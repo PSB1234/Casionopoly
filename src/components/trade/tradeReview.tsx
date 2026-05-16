@@ -53,7 +53,7 @@ export default function TradeReview({
 				</AlertDialogHeader>
 
 				<div>
-					<div>Amount offered: {tradeDisplay.offeredProperties.amount}</div>
+					<div>Amount offered: ${tradeDisplay.offeredProperties.amount}</div>
 					<h3>Offered Properties:</h3>
 					<ul>
 						{tradeDisplay.offeredProperties.properties.length > 0 ? (
@@ -68,7 +68,7 @@ export default function TradeReview({
 
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={handleSubmit(false)}>
+					<AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={handleSubmit(false)}>
 						Reject
 					</AlertDialogAction>
 					<AlertDialogAction onClick={handleSubmit(true)}>

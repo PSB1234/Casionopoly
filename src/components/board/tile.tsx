@@ -67,7 +67,9 @@ export default function Tile({
 		>
 			{TileData.type === "jail" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
-					<p className="px-[5cqmin] pt-[2cqmin] lg:px-4 lg:pt-1 text-[12cqmin] lg:text-xs leading-tight">Bypass</p>
+					<p className="px-[5cqmin] pt-[2cqmin] text-[12cqmin] leading-tight lg:px-4 lg:pt-1 lg:text-xs">
+						Bypass
+					</p>
 					<div className="relative flex h-[65%] w-[65%] border-foreground border-t-2 border-r-2 p-0">
 						<Images
 							alt={`jail-${TileData.id}`}
@@ -198,9 +200,14 @@ export default function Tile({
 						</div>
 					)}
 					{TileData.type === "subProperty" && (
-						<div 			style={{ borderColor: ownerColor }}
-						className={cn(positionClass, "h-full w-full border-foreground p-[2cqmin]")}>
-							<div className="relative h-full w-full ">
+						<div
+							className={cn(
+								positionClass,
+								"h-full w-full border-foreground p-[2cqmin]",
+							)}
+							style={{ borderColor: ownerColor }}
+						>
+							<div className="relative h-full w-full">
 								<Images
 									alt={`${TileData.name.toLowerCase()}-${TileData.id}`}
 									className="pixelated object-contain"
@@ -217,8 +224,13 @@ export default function Tile({
 						</div>
 					)}
 					{TileData.type === "chance" && (
-						<div 			style={{ borderColor: ownerColor }}
-						className={cn(positionClass, "h-full border-foreground w-full p-[2cqmin]")}>
+						<div
+							className={cn(
+								positionClass,
+								"h-full w-full border-foreground p-[2cqmin]",
+							)}
+							style={{ borderColor: ownerColor }}
+						>
 							<div className="relative h-full w-full">
 								<Images
 									alt={`chest-${TileData.id}`}
@@ -230,8 +242,13 @@ export default function Tile({
 						</div>
 					)}
 					{TileData.type === "go-to-jail" && (
-						<div  			style={{ borderColor: ownerColor }}
- 						className={cn(positionClass, "h-full border-foreground w-full p-[2cqmin]")}>
+						<div
+							className={cn(
+								positionClass,
+								"h-full w-full border-foreground p-[2cqmin]",
+							)}
+							style={{ borderColor: ownerColor }}
+						>
 							<div className="relative h-full w-full">
 								<Images
 									alt={`police-${TileData.id}`}

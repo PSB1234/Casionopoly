@@ -9,8 +9,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/8bit/dialog";
-import { Separator } from "@/components/ui/8bit/separator";
-import { Field } from "@/components/ui/field";
 import type { Player } from "@/lib/type";
 
 export function TradeInteraction({
@@ -46,22 +44,18 @@ export function TradeInteraction({
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col gap-4">
-					<div className="flex flex-row gap-4">
-						<Field>
-							<TradeList
-								data={myOffer}
-								onDataChange={setMyOffer}
-								player={currentUser}
-							/>
-						</Field>
-						<Separator orientation="vertical" />
-						<Field>
-							<TradeList
-								data={theirOffer}
-								onDataChange={setTheirOffer}
-								player={targetPlayer}
-							/>
-						</Field>
+					<div className="flex flex-row items-start justify-between px-4">
+						<TradeList
+							data={myOffer}
+							onDataChange={setMyOffer}
+							player={currentUser}
+						/>
+
+						<TradeList
+							data={theirOffer}
+							onDataChange={setTheirOffer}
+							player={targetPlayer}
+						/>
 					</div>
 					<Button
 						onClick={() => onSubmit(targetPlayer.id, myOffer, theirOffer)}

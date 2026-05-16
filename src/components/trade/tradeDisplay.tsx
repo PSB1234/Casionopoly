@@ -5,7 +5,6 @@ import {
 	ItemContent,
 	ItemFooter,
 	ItemGroup,
-	ItemSeparator,
 	ItemTitle,
 } from "@/components/ui/8bit/item";
 import { ScrollArea } from "@/components/ui/8bit/scroll-area";
@@ -36,50 +35,52 @@ export default function TradeDisplay({
 
 	return (
 		<Card className="flex min-h-0 flex-1 flex-col">
-			<CardContent className="min-h-0 flex-1">
+			<CardContent>
 				<ScrollArea className="max-h-[65vh] w-full lg:h-full">
-					<ItemGroup>
-						{trades.map((trade, index) => {
+					<ItemGroup className="p-2">
+						{trades.map((trade) => {
 							// Assuming tradeSchema has offer/request objects similar to TradeData
 							const offerSummary =
 								trade.offeredProperties.amount > 0 ||
 								trade.offeredProperties.properties.length > 0
 									? `$${trade.offeredProperties.amount} + ${trade.offeredProperties.properties.length} props`
 									: "Offer";
-
 							return (
-								<div key={`${trade.fromPlayerId}-${trade.toPlayerId}`}>
-									<Item variant="default">
-										<ItemContent>
-											<ItemTitle className="flex-wrap text-sm">
-												<span className="break-all">
-													{getUsernameById(trade.fromPlayerId)}
-												</span>
-												<span className="mx-2 text-primary">&rarr;</span>
-												<span className="break-all">
-													{getUsernameById(trade.toPlayerId)}
-												</span>
-											</ItemTitle>
-											<div className="wrap-break-word mt-1 text-muted-foreground text-xs">
-												Status: {offerSummary}
-											</div>
-										</ItemContent>
+								<Card
+									className="w-full bg-black/20"
+									key={`${trade.fromPlayerId}-${trade.toPlayerId}`}
+								>
+									<CardContent>
+										<Item variant="default">
+											<ItemContent>
+												<ItemTitle className="flex-wrap text-sm">
+													<span className="break-all">
+														{getUsernameById(trade.fromPlayerId)}
+													</span>
+													<span className="mx-2 text-primary">&rarr;</span>
+													<span className="break-all">
+														{getUsernameById(trade.toPlayerId)}
+													</span>
+												</ItemTitle>
+												<div className="wrap-break-word mt-1 text-muted-foreground text-xs">
+													Status: {offerSummary}
+												</div>
+											</ItemContent>
 
-										{trade.toPlayerId === userId ? (
-											<ItemFooter className="mt-2 flex justify-end">
-												<TradeReview roomKey={roomKey} tradeDisplay={trade} />
-											</ItemFooter>
-										) : (
-											<ItemFooter className="mt-2 flex justify-end">
-												<span className="px-2 text-muted-foreground text-xs italic">
-													Pending
-												</span>
-											</ItemFooter>
-										)}
-									</Item>
-									{/* Render separator only between items */}
-									{index < trades.length - 1 && <ItemSeparator />}
-								</div>
+											{trade.toPlayerId === userId ? (
+												<ItemFooter className="mt-2 flex justify-end">
+													<TradeReview roomKey={roomKey} tradeDisplay={trade} />
+												</ItemFooter>
+											) : (
+												<ItemFooter className="mt-2 flex justify-end">
+													<span className="px-2 text-muted-foreground text-xs">
+														Pending...
+													</span>
+												</ItemFooter>
+											)}
+										</Item>
+									</CardContent>
+								</Card>
 							);
 						})}
 					</ItemGroup>
