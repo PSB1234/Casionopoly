@@ -238,7 +238,7 @@ export const useGameStore = create<GameStore>()(
 						(player) => player.id === playerId,
 					);
 					if (leavingPlayer) {
-						const status = leavingPlayer.money <= 0 ? "bankrupt" : "left";
+						const status = "bankrupt";
 						get().savePlayerSnapshot(playerId, status);
 					}
 					if (get().userId === playerId) {

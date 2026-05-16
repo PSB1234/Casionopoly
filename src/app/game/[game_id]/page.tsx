@@ -6,7 +6,7 @@ import BankruptcyChoice from "@/components/bankruptcy/bankruptcyChoice";
 import Board from "@/components/board/board";
 import GhostBoard from "@/components/board/ghost-board";
 import Chat from "@/components/chat/chat";
-import FinishButton from "@/components/finishButton";
+
 import InactivityWarning from "@/components/inactivity-warning";
 import Kick from "@/components/kick";
 import Playerlist from "@/components/playerlist";
@@ -71,6 +71,7 @@ export default function Game() {
 		if (!socket || !game_id) return;
 		const handleAutoDeleted = (deletedRoomKey: string) => {
 			if (deletedRoomKey === game_id) {
+				setHasFinished(true);
 				router.replace(`/game/${game_id}/result`);
 			}
 		};
@@ -78,19 +79,20 @@ export default function Game() {
 		return () => {
 			socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleAutoDeleted);
 		};
-	}, [socket, game_id, router]);
+	}, [socket, game_id, router, setHasFinished]);
 
 	// Redirect to result page when game finishes
 	useEffect(() => {
 		if (!socket || !game_id) return;
 		const handleGameFinished = () => {
+			setHasFinished(true);
 			router.replace(`/game/${game_id}/result`);
 		};
 		socket.on(SOCKET_EVENTS.GAME_FINISHED, handleGameFinished);
 		return () => {
 			socket.off(SOCKET_EVENTS.GAME_FINISHED, handleGameFinished);
 		};
-	}, [socket, game_id, router]);
+	}, [socket, game_id, router, setHasFinished]);
 
 	useEffect(() => {
 		if (players.length > 1) {
@@ -191,14 +193,8 @@ export default function Game() {
 							</DialogContent>
 						</Dialog>
 						<div className="flex w-full justify-center gap-5">
-							{isGameFinished ? (
-								<FinishButton game_id={game_id} />
-							) : (
-								<>
-									<Kick roomKey={game_id} />
-									<Bankruptcy roomKey={game_id} />
-								</>
-							)}
+							<Kick roomKey={game_id} />
+							<Bankruptcy roomKey={game_id} />
 						</div>
 					</div>
 					{/* 3. Chat */}
@@ -216,14 +212,8 @@ export default function Game() {
 			<div className="order-4 hidden h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-3 lg:flex lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
 				<Playerlist PlayerList={players} />
 				<div className="flex shrink-0 justify-between">
-					{isGameFinished ? (
-						<FinishButton game_id={game_id} />
-					) : (
-						<>
-							<Kick roomKey={game_id} />
-							<Bankruptcy roomKey={game_id} />
-						</>
-					)}
+					<Kick roomKey={game_id} />
+					<Bankruptcy roomKey={game_id} />
 				</div>
 				<div className="flex shrink-0 flex-row justify-between gap-10">
 					<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>

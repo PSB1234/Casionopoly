@@ -45,8 +45,9 @@ export default function ResultPage() {
 			});
 		});
 
-		// Add current active players
+		// Add current active players (skip those who already left/bankrupted)
 		players.forEach((p) => {
+			if (playerSnapshots[p.id]) return;
 			const stats = playerStats[p.id] || {
 				moneyEarned: 0,
 				moneySpent: 0,
@@ -57,7 +58,7 @@ export default function ResultPage() {
 			dataMap.set(p.id, {
 				player: p,
 				stats,
-				status: hasFinished ? "winner" : p.money <= 0 ? "bankrupt" : "playing",
+				status: p.money <= 0 ? "bankrupt" : "playing",
 			});
 		});
 
@@ -66,10 +67,15 @@ export default function ResultPage() {
 			(a, b) => b.player.money - a.player.money,
 		);
 
-		// If game is finished and someone has more money, make them the winner
+		// If game is finished and there is a unique top player (no tie), make them the winner
 		const topPlayer = list[0];
 		if (topPlayer && hasFinished) {
-			topPlayer.status = "winner";
+			const isUniqueTop =
+				list.length === 1 ||
+				list[0]?.player.money !== list[1]?.player.money;
+			if (isUniqueTop) {
+				topPlayer.status = "winner";
+			}
 		}
 
 		return list;
@@ -154,12 +160,11 @@ export default function ResultPage() {
 													<span
 														className={cn(
 															"text-xs uppercase",
-															data.status === "winner"
-																? "text-green-400"
-																: data.status === "bankrupt" ||
-																		data.status === "surrendered"
-																	? "text-red-400"
-																	: "text-gray-400",
+													data.status === "winner"
+														? "text-green-400"
+														: data.status === "bankrupt"
+															? "text-red-400"
+															: "text-gray-400",
 														)}
 													>
 														{data.status}

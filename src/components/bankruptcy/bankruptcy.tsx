@@ -19,9 +19,14 @@ import { toast } from "../ui/8bit/toast";
 export default function Bankruptcy({ roomKey }: { roomKey: string }) {
 	const router = useRouter();
 	const { socket, emitEvent } = useSocketStore();
-	const { userId, setHasFinished } = useGameStore();
+	const { userId, setHasFinished, players, savePlayerSnapshot } =
+		useGameStore();
 	const handleContinue = () => {
 		if (socket) {
+			const currentPlayer = players.find((p) => p.id === userId);
+			if (currentPlayer) {
+				savePlayerSnapshot(userId, "bankrupt");
+			}
 			setHasFinished(true);
 			emitEvent(SOCKET_EVENTS.LEAVE_GAME, userId, roomKey);
 			router.replace(`/game/${roomKey}/result`);

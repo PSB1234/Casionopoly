@@ -200,8 +200,6 @@ export type PlayerStats = {
 export type PlayerStatus =
 	| "playing"
 	| "bankrupt"
-	| "surrendered"
-	| "left"
 	| "winner";
 
 export type PlayerSnapshot = {
