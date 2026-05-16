@@ -71,8 +71,7 @@ export default function ResultPage() {
 		const topPlayer = list[0];
 		if (topPlayer && hasFinished) {
 			const isUniqueTop =
-				list.length === 1 ||
-				list[0]?.player.money !== list[1]?.player.money;
+				list.length === 1 || list[0]?.player.money !== list[1]?.player.money;
 			if (isUniqueTop) {
 				topPlayer.status = "winner";
 			}
@@ -132,9 +131,7 @@ export default function ResultPage() {
 				<Card className="w-full max-w-md" font="retro">
 					<CardContent className="space-y-6 pt-6">
 						<div className="flex flex-col gap-4">
-							<h2 className="retro text-center text-2xl text-white">
-								Result
-							</h2>
+							<h2 className="retro text-center text-2xl text-white">Result</h2>
 							{allPlayersData.map((data, index) => {
 								const isExpanded = expandedPlayers[data.player.id];
 								const isCurrent = data.player.id === userId;
@@ -160,18 +157,18 @@ export default function ResultPage() {
 													<span
 														className={cn(
 															"text-xs uppercase",
-													data.status === "winner"
-														? "text-green-400"
-														: data.status === "bankrupt"
-															? "text-red-400"
-															: "text-gray-400",
+															data.status === "winner"
+																? "text-green-400"
+																: data.status === "bankrupt"
+																	? "text-red-400"
+																	: "text-gray-400",
 														)}
 													>
 														{data.status}
 													</span>
 												</div>
 											</div>
-											<div className="flex shrink-0 flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
+											<div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-4">
 												<span className="retro text-green-400">
 													₹{data.player.money}
 												</span>
@@ -191,13 +188,13 @@ export default function ResultPage() {
 												<div className="flex justify-between">
 													<span className="text-white/50">Earned:</span>
 													<span className="text-green-400">
-														+₹{data.stats.moneyEarned}
+														₹{data.stats.moneyEarned}
 													</span>
 												</div>
 												<div className="flex justify-between">
 													<span className="text-white/50">Spent:</span>
 													<span className="text-red-400">
-														-₹{data.stats.moneySpent}
+														₹{data.stats.moneySpent}
 													</span>
 												</div>
 												<div className="flex justify-between">

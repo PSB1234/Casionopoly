@@ -82,13 +82,15 @@ function AlertDialogContent({
 			<AlertDialogOverlay />
 			<ShadcnAlertDialogContent
 				className={cn(
-					"rounded-none border-foreground border-y-6 dark:border-ring",
+					"rounded-none border-foreground border-y-6 dark:border-ring !p-0",
 					font !== "normal" && "retro",
 					className,
 				)}
 				{...props}
 			>
-				{children}
+				<div className="grid gap-4 p-6 max-h-[85vh] w-full overflow-y-auto overflow-x-hidden">
+					{children}
+				</div>
 
 				<div
 					aria-hidden="true"

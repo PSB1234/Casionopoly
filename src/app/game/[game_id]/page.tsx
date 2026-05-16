@@ -121,7 +121,7 @@ export default function Game() {
 
 			{/* Middle Column: Board (Desktop Middle, Mobile Top after Header) */}
 			<div className="order-2 flex w-full items-center justify-center p-0 lg:order-2 lg:h-full lg:max-h-screen lg:flex-1 lg:p-5">
-				<div className="relative aspect-square h-auto w-full max-w-full p-2 lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-100 lg:p-5 xl:min-w-125">
+				<div className="relative aspect-square h-auto w-full max-w-full lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-100 lg:p-5 xl:min-w-125">
 					<Board game_id={game_id} />
 					<div className="pointer-events-none absolute inset-0">
 						<GhostBoard PlayerList={players} />
@@ -130,7 +130,7 @@ export default function Game() {
 			</div>
 
 			{/* Desktop Left Column Container */}
-			<div className="order-3 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-1 lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
+			<div className="order-3 mt-2 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-1 lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
 				{/* <div className="hidden shrink-0 flex-row items-center justify-between lg:flex">
 					<Logo />
 					<Sounds />

@@ -34,10 +34,9 @@ export default function TradeDisplay({
 	}
 
 	return (
-		<Card className="flex min-h-0 flex-1 flex-col">
-			<CardContent>
+		<div>
 				<ScrollArea className="max-h-[65vh] w-full lg:h-full">
-					<ItemGroup className="p-2">
+					<ItemGroup className="p-4 pr-6 gap-5">
 						{trades.map((trade) => {
 							// Assuming tradeSchema has offer/request objects similar to TradeData
 							const offerSummary =
@@ -85,7 +84,6 @@ export default function TradeDisplay({
 						})}
 					</ItemGroup>
 				</ScrollArea>
-			</CardContent>
-		</Card>
+</div>
 	);
 }

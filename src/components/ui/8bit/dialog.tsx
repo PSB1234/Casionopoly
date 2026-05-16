@@ -67,14 +67,16 @@ function DialogContent({
 	return (
 		<ShadcnDialogContent
 			className={cn(
-				"rounded-none border-none bg-card",
+				"rounded-none border-none bg-card !p-0",
 				font !== "normal" && "retro",
 				className,
 			)}
 			showCloseButton={showCloseButton}
 			{...props}
 		>
-			{children}
+			<div className="grid gap-4 p-6 max-h-[85vh] w-full overflow-y-auto overflow-x-hidden">
+				{children}
+			</div>
 
 			<div
 				aria-hidden="true"
