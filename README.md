@@ -32,7 +32,6 @@ Industrial.io is a modern web-based board game inspired by Monopoly.
   - **UI Components**: Built on [Radix UI](https://www.radix-ui.com/) primitives
   - **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
   - **Real-time**: [Socket.io Client](https://socket.io/)
-  - **Backend**:[https://github.com/PSB1234/industrial.io-backend]
   ### Tooling
   - **Linter/Formatter**: [Biome](https://biomejs.dev/)
   - **Package Manager**: pnpm (recommended)
