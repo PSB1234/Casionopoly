@@ -144,7 +144,7 @@ export default function CreateMenu({
 								{...form.register("roomName")}
 								aria-invalid={!!form.formState.errors.roomName}
 								id="roomName"
-								placeholder="Monopoly Game"
+								placeholder="Board Game"
 							/>
 							<FieldDescription>
 								Write a name for your game session.
