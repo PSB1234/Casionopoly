@@ -60,7 +60,7 @@ export default function Tile({
 	return (
 		<div
 			className={cn(
-				"@container-[size] relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2",
+				"@container-[size] pointer-events-none relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2",
 				className,
 			)}
 			style={{ borderColor: ownerColor }}
@@ -73,7 +73,7 @@ export default function Tile({
 					<div className="relative flex h-[65%] w-[65%] border-foreground border-t-2 border-r-2 p-0">
 						<Images
 							alt={`jail-${TileData.id}`}
-							className="pixelated object-contain"
+							className="pixelated pointer-events-none object-contain"
 							fill
 							src={`/Images/prison.svg`}
 						/>
@@ -87,7 +87,7 @@ export default function Tile({
 					<div className="relative flex h-2/3 p-0">
 						<Images
 							alt={`vacation-${TileData.id}`}
-							className="pixelated object-contain"
+							className="pixelated pointer-events-none object-contain"
 							fill
 							src={`/Images/vacation.png`}
 						/>
@@ -101,7 +101,7 @@ export default function Tile({
 					<div className="relative flex h-2/3 p-0">
 						<Images
 							alt={`tax-${TileData.id}`}
-							className="pixelated object-contain"
+							className="pixelated pointer-events-none object-contain"
 							fill
 							src={`/Images/tax.png`}
 						/>
@@ -129,7 +129,7 @@ export default function Tile({
 									{rank > 0 && rank <= 5 && (
 										<Images
 											alt={`house-${rank}`}
-											className="object-contain"
+											className="pointer-events-none object-contain"
 											fill
 											src={`/upgrade-icons/house-${rank - 1}.svg`}
 										/>
@@ -182,7 +182,7 @@ export default function Tile({
 									{/** biome-ignore lint/performance/noImgElement: <explanation> */}
 									<img
 										alt={`${TileData.id}`}
-										className={cn("h-full w-full object-cover")}
+										className="pointer-events-none h-full w-full object-cover"
 										rel="preload"
 										src={`/tiles/${TileData.flagName.toLowerCase()}.png`}
 									/>
@@ -210,7 +210,7 @@ export default function Tile({
 							<div className="relative h-full w-full">
 								<Images
 									alt={`${TileData.name.toLowerCase()}-${TileData.id}`}
-									className="pixelated object-contain"
+									className="pixelated pointer-events-none object-contain"
 									fill
 									src={
 										TileData.name.toLowerCase() === "railway"
@@ -234,7 +234,7 @@ export default function Tile({
 							<div className="relative h-full w-full">
 								<Images
 									alt={`chest-${TileData.id}`}
-									className="pixelated object-contain"
+									className="pixelated pointer-events-none object-contain"
 									fill
 									src={`/Images/chest.svg`}
 								/>
@@ -252,7 +252,7 @@ export default function Tile({
 							<div className="relative h-full w-full">
 								<Images
 									alt={`police-${TileData.id}`}
-									className="pixelated object-contain"
+									className="pixelated pointer-events-none object-contain"
 									fill
 									src={`/Images/police.png`}
 								/>
