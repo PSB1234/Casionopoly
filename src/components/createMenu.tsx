@@ -24,6 +24,7 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/8bit/tabs";
 import { generateColorPair } from "@/lib/random_color";
 import { generatePassword } from "@/lib/random_password_generator";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
@@ -164,39 +165,20 @@ export default function CreateMenu({
 									data-invalid={fieldState.invalid}
 								>
 									<FieldLabel htmlFor={field.name}>Choose Room Type</FieldLabel>
-									<div
-										{...field}
-										aria-invalid={fieldState.invalid}
-										className="relative flex w-full flex-row justify-between border-foreground border-y-6 p-1"
-										id={field.name}
+									<Tabs
+										className="w-full mt-2"
+										onValueChange={field.onChange}
+										value={field.value}
 									>
-										<button
-											className={cn(
-												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-												roomType === "public" && "bg-primary text-white",
-											)}
-											disabled={isLoading}
-											onClick={() => field.onChange("public")}
-											type="button"
-										>
-											Public
-										</button>
-										<button
-											className={cn(
-												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-												roomType === "private" && "bg-primary text-white",
-											)}
-											disabled={isLoading}
-											onClick={() => field.onChange("private")}
-											type="button"
-										>
-											Private
-										</button>
-										<div
-											aria-hidden="true"
-											className="pointer-events-none absolute inset-0 -mx-1.5 border-foreground border-x-6"
-										/>
-									</div>
+										<TabsList className="flex w-full bg-card p-1">
+											<TabsTrigger className="flex-1 font-jaro text-lg" value="public">
+												Public
+											</TabsTrigger>
+											<TabsTrigger className="flex-1 font-jaro text-lg" value="private">
+												Private
+											</TabsTrigger>
+										</TabsList>
+									</Tabs>
 									{fieldState.invalid && (
 										<FieldError>{fieldState.error?.message}</FieldError>
 									)}
@@ -245,11 +227,12 @@ export default function CreateMenu({
 						)}
 					</FieldGroup>
 				</form>
-				<DialogFooter className="gap-4">
-					<Button disabled={isLoading} onClick={form.handleSubmit(onSubmit)}>
+				<DialogFooter className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-4">
+					<Button className="w-full sm:w-auto" disabled={isLoading} onClick={form.handleSubmit(onSubmit)}>
 						{isLoading ? "Creating..." : "Create"}
 					</Button>
 					<Button
+						className="w-full sm:w-auto"
 						disabled={isLoading}
 						onClick={() => setOptionsOpenAction(false)}
 						variant="outline"

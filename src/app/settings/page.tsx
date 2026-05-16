@@ -25,6 +25,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/8bit/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/8bit/tabs";
 import { MUSIC_TRACKS, useMusicStore } from "@/store/music_store";
 
 export default function MusicPage() {
@@ -140,97 +141,108 @@ export default function MusicPage() {
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center gap-8 p-4">
 			<Card className="w-full max-w-4xl" font="retro">
-				{" "}
 				<CardHeader>
-					<CardTitle className="text-center">Basic</CardTitle>
+					<CardTitle className="text-center font-jaro text-3xl">Settings</CardTitle>
 				</CardHeader>
-				<CardContent className="space-y-4">
-					<form
-						className="flex flex-col gap-2"
-						onSubmit={form.handleSubmit(onSubmit)}
-					>
-						<Controller
-							control={form.control}
-							name="name"
-							render={({ field, fieldState }) => (
-								<Field data-invalid={fieldState.invalid}>
-									<FieldLabel>Your Name</FieldLabel>
-									<div className="flex w-full flex-row items-center justify-center gap-6">
-										<Input
-											{...field}
-											aria-invalid={fieldState.invalid}
-											className="flex-1"
-											id={field.name}
-											maxLength={20}
-											placeholder="Enter new name"
-										/>
-										<Button
-											disabled={
-												isSaving ||
-												!field.value.trim() ||
-												field.value.trim() === username
-											}
-											type="submit"
-										>
-											Save
-										</Button>
-									</div>
-									<FieldError errors={[fieldState.error]} />
-								</Field>
-							)}
-						/>
-					</form>
-				</CardContent>
-			</Card>
-			<Card className="w-full max-w-4xl" font="retro">
-				<CardHeader>
-					<CardTitle className="text-center">MUSIC</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					<p className="text-center text-muted-foreground text-sm">
-						Select default music for the game
-					</p>
-
-					<div>
-						{MUSIC_TRACKS.map((track, index) => (
-							<div
-								className="flex items-center justify-between rounded-lg p-3"
-								key={track.id}
+				<CardContent className="space-y-6">
+					<Tabs defaultValue="basic">
+						<TabsList className="flex !h-auto w-full flex-wrap gap-1 bg-muted/50 p-1">
+							<TabsTrigger className="font-jaro text-base md:text-lg !h-auto py-2" value="basic">
+								Basic
+							</TabsTrigger>
+							<TabsTrigger className="font-jaro text-base md:text-lg !h-auto py-2" value="music">
+								Music
+							</TabsTrigger>
+						</TabsList>
+						
+						<TabsContent value="basic" className="pt-6">
+							<form
+								className="flex flex-col gap-2"
+								onSubmit={form.handleSubmit(onSubmit)}
 							>
-								<div className="flex flex-col">
-									<span className="font-medium">{track.name}</span>
-									{track.artist && (
-										<span className="text-muted-foreground text-xs">
-											{track.artist}
-										</span>
+								<Controller
+									control={form.control}
+									name="name"
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid}>
+											<FieldLabel>Your Name</FieldLabel>
+											<div className="flex w-full flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+												<Input
+													{...field}
+													aria-invalid={fieldState.invalid}
+													className="flex-1 w-full"
+													id={field.name}
+													maxLength={20}
+													placeholder="Enter new name"
+												/>
+												<Button
+													className="w-full md:w-auto"
+													disabled={
+														isSaving ||
+														!field.value.trim() ||
+														field.value.trim() === username
+													}
+													type="submit"
+												>
+													Save
+												</Button>
+											</div>
+											<FieldError errors={[fieldState.error]} />
+										</Field>
 									)}
-									{selectedTrackIndex === index && (
-										<span className="text-xs text-yellow-500">Default</span>
-									)}
-								</div>
+								/>
+							</form>
+						</TabsContent>
 
-								<div className="flex gap-6">
-									<Button
-										onClick={() => handlePreview(index)}
-										size="sm"
-										variant={previewingIndex === index ? "default" : "outline"}
+						<TabsContent value="music" className="pt-6">
+							<p className="text-center text-muted-foreground text-sm mb-4">
+								Select default music for the game
+							</p>
+
+							<div className="space-y-2">
+								{MUSIC_TRACKS.map((track, index) => (
+									<div
+										className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 rounded-lg p-3"
+										key={track.id}
 									>
-										{previewingIndex === index ? "Stop" : "Preview"}
-									</Button>
-									<Button
-										disabled={previewingIndex === index}
-										onClick={() => handleSelect(index)}
-										size="sm"
-										variant={
-											selectedTrackIndex === index ? "default" : "outline"
-										}
-									>
-										{selectedTrackIndex === index ? "Selected" : "Select"}
-									</Button>
-								</div>
+										<div className="flex flex-col items-center md:items-start">
+											<span className="font-medium text-center md:text-left">{track.name}</span>
+											{track.artist && (
+												<span className="text-muted-foreground text-xs text-center md:text-left">
+													{track.artist}
+												</span>
+											)}
+											{selectedTrackIndex === index && (
+												<span className="text-xs text-yellow-500 mt-1">Default</span>
+											)}
+										</div>
+
+										<div className="flex flex-col md:flex-row gap-4 md:gap-6 w-full md:w-auto">
+											<Button
+												className="w-full md:w-auto"
+												onClick={() => handlePreview(index)}
+												size="sm"
+												variant={previewingIndex === index ? "default" : "outline"}
+											>
+												{previewingIndex === index ? "Stop" : "Preview"}
+											</Button>
+											<Button
+												className="w-full md:w-auto"
+												disabled={previewingIndex === index}
+												onClick={() => handleSelect(index)}
+												size="sm"
+												variant={
+													selectedTrackIndex === index ? "default" : "outline"
+												}
+											>
+												{selectedTrackIndex === index ? "Selected" : "Select"}
+											</Button>
+										</div>
+									</div>
+								))}
 							</div>
-						))}
-					</div>
+						</TabsContent>
+					</Tabs>
 
 					<Button className="w-full" onClick={handleBack} variant="outline">
 						Back to Home

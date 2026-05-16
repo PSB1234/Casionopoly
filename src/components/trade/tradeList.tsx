@@ -79,7 +79,7 @@ export default function TradeList({
 				</li>
 				{ourProperties.map((property) => (
 					<li
-						className="my-2 flex w-full flex-row justify-between"
+						className="my-2 flex w-full flex-row items-center justify-start gap-4 text-left"
 						key={property.id}
 					>
 						<Checkbox
@@ -88,7 +88,7 @@ export default function TradeList({
 								handlePropertyChange(property.id, checked === true)
 							}
 						/>
-						<p>{getNameOfPropertyById(property.id)}</p>
+						<p className="flex-1 break-words">{getNameOfPropertyById(property.id)}</p>
 					</li>
 				))}
 			</ul>

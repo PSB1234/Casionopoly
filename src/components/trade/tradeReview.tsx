@@ -66,12 +66,12 @@ export default function TradeReview({
 					</ul>
 				</div>
 
-				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={handleSubmit(false)}>
+				<AlertDialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-4">
+					<AlertDialogCancel className="w-full sm:w-auto mt-0">Cancel</AlertDialogCancel>
+					<AlertDialogAction className="w-full sm:w-auto bg-red-500 hover:bg-red-600" onClick={handleSubmit(false)}>
 						Reject
 					</AlertDialogAction>
-					<AlertDialogAction onClick={handleSubmit(true)}>
+					<AlertDialogAction className="w-full sm:w-auto" onClick={handleSubmit(true)}>
 						Continue
 					</AlertDialogAction>
 				</AlertDialogFooter>

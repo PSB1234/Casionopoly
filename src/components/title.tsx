@@ -4,16 +4,16 @@ type TitleProps = {
 
 const sizeMap = {
 	sm: {
-		h1: "text-3xl",
-		h2: "text-lg",
+		h1: "text-3xl md:text-4xl",
+		h2: "text-lg md:text-xl",
 	},
 	lg: {
-		h1: "text-6xl",
-		h2: "text-2xl",
+		h1: "text-5xl md:text-6xl",
+		h2: "text-xl md:text-2xl",
 	},
 	xl: {
-		h1: "text-8xl",
-		h2: "text-4xl",
+		h1: "text-6xl md:text-8xl",
+		h2: "text-2xl md:text-4xl",
 	},
 };
 

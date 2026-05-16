@@ -57,10 +57,10 @@ export default function HowToPlay() {
 				</CardHeader>
 				<CardContent>
 					<Tabs className="mt-6" defaultValue="objective">
-						<TabsList className="flex h-auto w-full flex-wrap gap-1 bg-muted/50 p-1">
+						<TabsList className="flex !h-auto w-full flex-wrap gap-1 bg-muted/50 p-1">
 							{gameRules.map((rule) => (
 								<TabsTrigger
-									className="font-jaro text-md"
+									className="font-jaro text-base md:text-lg !h-auto py-2"
 									key={rule.id}
 									value={rule.id}
 								>
@@ -71,12 +71,12 @@ export default function HowToPlay() {
 
 						{gameRules.map((rule) => (
 							<TabsContent key={rule.id} value={rule.id}>
-								<div className="flex flex-col items-center gap-8 border-border/50 pt-6 md:flex-row">
+								<div className="flex flex-col items-center gap-6 md:gap-8 border-border/50 pt-4 md:pt-6 md:flex-row">
 									<div className="flex-1 space-y-2 text-left">
-										<h3 className="font-jaro text-2xl text-primary">
+										<h3 className="font-jaro text-xl md:text-2xl text-primary">
 											{rule.label}
 										</h3>
-										<p className="text-lg text-muted-foreground leading-relaxed">
+										<p className="text-base md:text-lg text-muted-foreground leading-relaxed">
 											{rule.content}
 										</p>
 									</div>

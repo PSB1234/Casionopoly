@@ -122,7 +122,7 @@ export default function ResultPage() {
 			<div className="z-10 flex w-full max-w-2xl flex-col items-center gap-6">
 				<h1
 					className={cn(
-						"retro text-center text-6xl [-webkit-text-stroke:2px_white] md:text-8xl",
+						"retro text-center text-5xl [-webkit-text-stroke:2px_white] md:text-8xl",
 						isWinner ? "text-green-400" : "text-red-500",
 					)}
 				>
@@ -171,7 +171,7 @@ export default function ResultPage() {
 													</span>
 												</div>
 											</div>
-											<div className="flex shrink-0 items-center gap-4">
+											<div className="flex shrink-0 flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
 												<span className="retro text-green-400">
 													₹{data.player.money}
 												</span>
