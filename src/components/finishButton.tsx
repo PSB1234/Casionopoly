@@ -11,8 +11,8 @@ export default function FinishButton({ game_id }: { game_id: string }) {
 
 	return (
 		<Button
-			onClick={handleFinish}
 			className="bg-red-600 hover:bg-red-700"
+			onClick={handleFinish}
 			size="sm"
 		>
 			Finish

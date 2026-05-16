@@ -15,7 +15,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "./ui/8bit/alert-dialog";
+} from "../ui/8bit/alert-dialog";
 
 export default function BankruptcyChoice({
 	userId,
@@ -59,7 +59,7 @@ export default function BankruptcyChoice({
 			setDialogMode(null);
 			setHasSeenBrokeAlert(false);
 		}
-	}, [currentMoney, hasSeenBrokeAlert, players.length, handleSurrender]);
+	}, [currentMoney, hasSeenBrokeAlert, players.length]);
 
 	const onGameOverOk = useCallback(() => {
 		handleSurrender();

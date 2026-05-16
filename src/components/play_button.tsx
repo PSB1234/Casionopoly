@@ -13,9 +13,9 @@ import { toast } from "@/components/ui/8bit/toast";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
 import type {
+	ChestResolutionReason,
 	ChestResolutionResult,
 	ChestSpinOutcome,
-	ChestResolutionReason,
 } from "@/lib/type";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
@@ -166,8 +166,8 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 				setDiceValue(diceRoll);
 
 				setIsRolling(false);
-		}, 1000);
-	};
+			}, 1000);
+		};
 		const playerMoveListener = (position: number, player_id: string) => {
 			moveTimeout = setTimeout(() => {
 				updatePlayer(player_id, { position });
@@ -301,8 +301,8 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 				</DialogContent>
 			</Dialog>
 			<ChestUi
-				onResolve={handleChestResolve}
 				onOpenChange={setIsChestOpen}
+				onResolve={handleChestResolve}
 				open={isChestOpen}
 			/>
 			<div

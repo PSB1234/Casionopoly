@@ -10,4 +10,4 @@ const ChatSchema = z.object({
 });
 const roomKeyDataSchema = z.string();
 
-export { createRoomSchema, roomKeyDataSchema, ChatSchema };
+export { ChatSchema, createRoomSchema, roomKeyDataSchema };

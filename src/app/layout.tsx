@@ -1,4 +1,4 @@
-import Background from "@/components/background";
+import Background from "@/components/background/background";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import LoadingProvider from "@/components/provider/loading_provider";
@@ -9,7 +9,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Geist, Jaro } from "next/font/google";
 import localFont from "next/font/local";
-import BackgroundMusic from "@/components/background-music";
+import BackgroundMusic from "@/components/music/background-music";
 import { AudioProvider } from "@/components/provider/audio_provider";
 
 export const metadata: Metadata = {

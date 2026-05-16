@@ -213,8 +213,8 @@ export default function CreateMenu({
 									<Input
 										{...form.register("password")}
 										aria-invalid={!!form.formState.errors.password}
-										id="password"
 										disabled={isLoading}
+										id="password"
 										placeholder="Enter password"
 									/>
 									<Button

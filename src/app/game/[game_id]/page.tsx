@@ -1,18 +1,18 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Bankruptcy from "@/components/bankruptcy";
-import BankruptcyChoice from "@/components/bankruptcyChoice";
-import Board from "@/components/board";
-import Chat from "@/components/chat";
+import Bankruptcy from "@/components/bankruptcy/bankruptcy";
+import BankruptcyChoice from "@/components/bankruptcy/bankruptcyChoice";
+import Board from "@/components/board/board";
+import GhostBoard from "@/components/board/ghost-board";
+import Chat from "@/components/chat/chat";
 import FinishButton from "@/components/finishButton";
-import GhostBoard from "@/components/ghost-board";
 import InactivityWarning from "@/components/inactivity-warning";
 import Kick from "@/components/kick";
 import Playerlist from "@/components/playerlist";
 import Properties from "@/components/properties";
-import Trade from "@/components/trade";
-import TradeDisplay from "@/components/tradeDisplay";
+import Trade from "@/components/trade/trade";
+import TradeDisplay from "@/components/trade/tradeDisplay";
 import { Button } from "@/components/ui/8bit/button";
 import {
 	Dialog,
@@ -31,6 +31,7 @@ export default function Game() {
 	const router = useRouter();
 	const [isTradeListOpen, setIsTradeListOpen] = useState<boolean>(false);
 	const [isPropertyListOpen, setIsPropertyListOpen] = useState<boolean>(false);
+	const [hasGameStarted, setHasGameStarted] = useState<boolean>(false);
 
 	const { game_id } = useParams<{ game_id: string }>();
 	const { socket, connectSocket } = useSocketStore();
@@ -91,16 +92,21 @@ export default function Game() {
 		};
 	}, [socket, game_id, router]);
 
+	useEffect(() => {
+		if (players.length > 1) {
+			setHasGameStarted(true);
+		}
+	}, [players.length]);
+
 	// Check if current player won or bankrupt
 	useEffect(() => {
 		if (players.length === 0 || hasFinished) return;
-		if (players.length <= 1 ) {
+		if (hasGameStarted && players.length <= 1) {
 			setHasFinished(true);
 		}
-	}, [players, hasFinished, setHasFinished]);
+	}, [players.length, hasFinished, setHasFinished, hasGameStarted]);
 
 	const isGameFinished = hasFinished;
-
 
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden p-5 lg:h-screen lg:flex-row lg:overflow-hidden">
@@ -115,7 +121,7 @@ export default function Game() {
 
 			{/* Middle Column: Board (Desktop Middle, Mobile Top after Header) */}
 			<div className="order-2 flex w-full items-center justify-center p-0 lg:order-2 lg:h-full lg:max-h-screen lg:flex-1 lg:p-5">
-				<div className="relative aspect-square h-auto w-full max-w-full p-2 lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-[400px] lg:p-5 xl:min-w-[500px]">
+				<div className="relative aspect-square h-auto w-full max-w-full p-2 lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-100 lg:p-5 xl:min-w-125">
 					<Board game_id={game_id} />
 					<div className="pointer-events-none absolute inset-0">
 						<GhostBoard PlayerList={players} />
@@ -124,7 +130,7 @@ export default function Game() {
 			</div>
 
 			{/* Desktop Left Column Container */}
-			<div className="order-3 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-1 lg:h-full lg:max-h-screen lg:w-[280px] lg:py-5 xl:w-[350px]">
+			<div className="order-3 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-1 lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
 				{/* <div className="hidden shrink-0 flex-row items-center justify-between lg:flex">
 					<Logo />
 					<Sounds />
@@ -207,7 +213,7 @@ export default function Game() {
 			</div>
 
 			{/* Desktop Right Column: Playerlist, Kick, Bankruptcy, Properties (Hidden on Mobile) */}
-			<div className="order-4 hidden h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-3 lg:flex lg:h-full lg:max-h-screen lg:w-[280px] lg:py-5 xl:w-[350px]">
+			<div className="order-4 hidden h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-3 lg:flex lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
 				<Playerlist PlayerList={players} />
 				<div className="flex shrink-0 justify-between">
 					{isGameFinished ? (

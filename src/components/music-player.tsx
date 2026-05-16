@@ -22,8 +22,8 @@ export default function VolumeControl() {
 							? "/icons/sound-on-solid-foreground.svg"
 							: "/icons/sound-mute-solid-foreground.svg"
 					}
-					width={30}
 					style={{ width: 30, height: 36 }}
+					width={30}
 				/>
 			</button>
 		</div>

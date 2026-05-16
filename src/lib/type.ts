@@ -1,5 +1,5 @@
 import type z from "zod";
-import type { TradeData } from "@/components/tradeList";
+import type { TradeData } from "@/components/trade/tradeList";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import type { createRoomSchema } from "@/lib/zod";
 
@@ -184,6 +184,23 @@ export type Player = {
     leader: boolean;
     behindBars: boolean;
 };
+
+export type PlayerStats = {
+    moneyEarned: number;
+    moneySpent: number;
+    tradesCompleted: number;
+    propertiesBought: number;
+    propertiesSold: number;
+};
+
+export type PlayerStatus = "playing" | "bankrupt" | "surrendered" | "left" | "winner";
+
+export type PlayerSnapshot = {
+    player: Player;
+    stats: PlayerStats;
+    status: PlayerStatus;
+};
+
 export type PropertySchema = {
     id: number;
     rank: number;

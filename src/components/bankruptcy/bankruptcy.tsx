@@ -1,28 +1,29 @@
 import { useRouter } from "next/navigation";
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
 } from "@/components/ui/8bit/alert-dialog";
 import { Button } from "@/components/ui/8bit/button";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
-import { toast } from "./ui/8bit/toast";
+import { toast } from "../ui/8bit/toast";
 export default function Bankruptcy({ roomKey }: { roomKey: string }) {
 	const router = useRouter();
 	const { socket, emitEvent } = useSocketStore();
-	const { userId } = useGameStore();
+	const { userId, setHasFinished } = useGameStore();
 	const handleContinue = () => {
 		if (socket) {
+			setHasFinished(true);
 			emitEvent(SOCKET_EVENTS.LEAVE_GAME, userId, roomKey);
-			router.replace("/");
+			router.replace(`/game/${roomKey}/result`);
 		} else {
 			toast("Error", {
 				description: "Socket not connected",

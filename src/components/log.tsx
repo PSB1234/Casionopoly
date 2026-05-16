@@ -26,10 +26,10 @@ export default function Log() {
 		if (!viewport) return;
 
 		viewport.scrollTop = viewport.scrollHeight;
-	}, [logs.length]);
+	}, []);
 
 	return (
-		<div className="h-[22cqmin] min-h-24 md:min-h-36 w-full max-h-[50cqmin] md:max-h-56 overflow-hidden bg-card/95 p-1 md:p-2 rounded-sm md:rounded-none">
+		<div className="h-[22cqmin] max-h-[50cqmin] min-h-24 w-full overflow-hidden rounded-sm bg-card/95 p-1 md:max-h-56 md:min-h-36 md:rounded-none md:p-2">
 			<ScrollArea className="h-full w-full p-2" ref={scrollAreaRef}>
 				{logs.length === 0 ? (
 					<p className="text-muted-foreground text-xs sm:text-sm">

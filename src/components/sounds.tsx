@@ -16,8 +16,8 @@ export default function Sounds() {
 						hidden={!isSoundOn}
 						onClick={handleSoundToggle}
 						src={"/icons/sound-on-solid-foreground.svg"}
-						width={30}
 						style={{ width: 30, height: 36 }}
+						width={30}
 					/>
 				</h1>
 				<div className="pointer-events-none absolute top-2 left-2 select-none">
@@ -28,8 +28,8 @@ export default function Sounds() {
 						hidden={!isSoundOn}
 						onClick={handleSoundToggle}
 						src={"/icons/sound-on-solid.svg"}
-						width={30}
 						style={{ width: 30, height: 36 }}
+						width={30}
 					/>
 				</div>
 			</div>
@@ -42,8 +42,8 @@ export default function Sounds() {
 						hidden={isSoundOn}
 						onClick={handleSoundToggle}
 						src={"/icons/sound-mute-solid-foreground.svg"}
-						width={30}
 						style={{ width: 30, height: 36 }}
+						width={30}
 					/>
 				</h1>
 				<div className="pointer-events-none absolute top-2 left-2 select-none">
@@ -54,8 +54,8 @@ export default function Sounds() {
 						hidden={isSoundOn}
 						onClick={handleSoundToggle}
 						src={"/icons/sound-mute-solid.svg"}
-						width={30}
 						style={{ width: 30, height: 36 }}
+						width={30}
 					/>
 				</div>
 			</div>

@@ -1,3 +1,5 @@
+import { TradeInteraction } from "@/components/trade/tradeInteraction";
+import type { TradeData } from "@/components/trade/tradeList";
 import { Button } from "@/components/ui/8bit/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
 import {
@@ -11,8 +13,6 @@ import {
 import { ItemSeparator } from "@/components/ui/8bit/item";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
-import { TradeInteraction } from "./tradeInteraction";
-import type { TradeData } from "./tradeList";
 
 export default function Trade({ roomKey }: { roomKey: string }) {
 	const { socket } = useSocketStore();

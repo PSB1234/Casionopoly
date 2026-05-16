@@ -1,8 +1,8 @@
-import Tile from "@/components/tile";
+import Tile from "@/components/board/tile";
 import TileDataJson from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
-import Log from "./log";
-import PlayButton from "./play_button";
+import Log from "../log";
+import PlayButton from "../play_button";
 
 // Helper function to get grid position for each tile
 const getTilePosition = (index: number) => {

@@ -1,7 +1,7 @@
+import PlayerSprite from "@/components/board/player_sprite";
 import TileDataJson from "@/lib/tiledata";
 import type { Player } from "@/lib/type";
 import { cn } from "@/lib/utils";
-import PlayerSprite from "./player_sprite";
 
 const PLAYER_SLOT_POSITIONS = [
 	"top-[20%] left-[20%]",

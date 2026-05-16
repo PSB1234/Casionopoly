@@ -1,4 +1,5 @@
 import { Activity } from "react";
+import Upgrade from "@/components/board/upgrade";
 import {
 	Item,
 	ItemContent,
@@ -7,7 +8,6 @@ import {
 	ItemTitle,
 } from "@/components/ui/8bit/item";
 import { ScrollArea } from "@/components/ui/8bit/scroll-area";
-import Upgrade from "@/components/upgrade";
 import TileDataJson, { getNameOfPropertyById } from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";

@@ -1,4 +1,3 @@
-"use client";
 import {
 	Card,
 	CardContent,
@@ -10,7 +9,7 @@ export default function CreditsLicensesPage() {
 	return (
 		<main className="flex min-h-screen flex-col items-center gap-12 px-4 pt-24 pb-12 text-white">
 			<div className="w-full max-w-4xl">
-				<Card className="">
+				<Card>
 					<CardHeader className="text-center">
 						<CardTitle className="font-jaro text-3xl text-yellow-200">
 							Credits & Licenses

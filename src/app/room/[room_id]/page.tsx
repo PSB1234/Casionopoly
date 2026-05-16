@@ -138,7 +138,7 @@ export default function Room() {
 				<Timer seconds={timerSeconds} />
 			</div>
 
-			<Card className="w-full p-5 md:col-span-3 md:row-span-6 md:h-full">
+			<Card className="w-full p-5">
 				<CardTitle>Players:</CardTitle>
 				<CardContent>
 					<ul>

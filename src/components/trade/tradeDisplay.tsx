@@ -1,17 +1,15 @@
-import type { tradeDisplaySchema } from "@/lib/type";
-import { cn } from "@/lib/utils";
-import TradeReview from "./tradeReview";
-import { Card, CardContent, CardHeader } from "./ui/8bit/card";
+import TradeReview from "@/components/trade/tradeReview";
+import { Card, CardContent } from "@/components/ui/8bit/card";
 import {
 	Item,
-	ItemActions,
 	ItemContent,
 	ItemFooter,
 	ItemGroup,
 	ItemSeparator,
 	ItemTitle,
-} from "./ui/8bit/item";
-import { ScrollArea } from "./ui/8bit/scroll-area";
+} from "@/components/ui/8bit/item";
+import { ScrollArea } from "@/components/ui/8bit/scroll-area";
+import type { tradeDisplaySchema } from "@/lib/type";
 
 export default function TradeDisplay({
 	userId,
@@ -37,9 +35,9 @@ export default function TradeDisplay({
 	}
 
 	return (
-		<Card className="flex flex-1 min-h-0 flex-col">
+		<Card className="flex min-h-0 flex-1 flex-col">
 			<CardContent className="min-h-0 flex-1">
-				<ScrollArea className="max-h-[65vh] lg:h-full w-full">
+				<ScrollArea className="max-h-[65vh] w-full lg:h-full">
 					<ItemGroup>
 						{trades.map((trade, index) => {
 							// Assuming tradeSchema has offer/request objects similar to TradeData
@@ -50,7 +48,7 @@ export default function TradeDisplay({
 									: "Offer";
 
 							return (
-								<div key={`${trade.fromPlayerId}-${trade.toPlayerId}-${index}`}>
+								<div key={`${trade.fromPlayerId}-${trade.toPlayerId}`}>
 									<Item variant="default">
 										<ItemContent>
 											<ItemTitle className="flex-wrap text-sm">
@@ -62,7 +60,7 @@ export default function TradeDisplay({
 													{getUsernameById(trade.toPlayerId)}
 												</span>
 											</ItemTitle>
-											<div className="mt-1 break-words text-muted-foreground text-xs">
+											<div className="wrap-break-word mt-1 text-muted-foreground text-xs">
 												Status: {offerSummary}
 											</div>
 										</ItemContent>

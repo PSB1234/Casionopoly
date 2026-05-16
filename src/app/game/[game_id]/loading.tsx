@@ -18,7 +18,7 @@ export default function Loading() {
 
 			{/* Middle Column - Board */}
 			<div className="my-4 max-h-fit max-w-3xl">
-				<Skeleton className="h-[600px] w-[600px]" />
+				<Skeleton className="h-150 w-150" />
 			</div>
 
 			{/* Right Column */}

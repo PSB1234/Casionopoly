@@ -12,12 +12,10 @@ export interface TradeData {
 }
 
 export default function TradeList({
-	userId,
 	player,
 	data,
 	onDataChange,
 }: {
-	userId: string;
 	player: Player;
 	data: TradeData;
 	onDataChange: (data: TradeData) => void;

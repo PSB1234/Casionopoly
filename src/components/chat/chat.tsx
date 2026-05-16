@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type z from "zod";
+import Message from "@/components/chat/message";
 import { Button } from "@/components/ui/8bit/button";
 import {
 	Card,
@@ -12,13 +13,12 @@ import {
 	CardTitle,
 } from "@/components/ui/8bit/card";
 import { Input } from "@/components/ui/8bit/input";
+import { ScrollArea } from "@/components/ui/8bit/scroll-area";
 import { Field } from "@/components/ui/field";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { ChatSchema } from "@/lib/zod";
 import { useChatStore } from "@/store/chat_store";
 import useSocketStore from "@/store/socket_store";
-import Message from "./message";
-import { ScrollArea } from "./ui/8bit/scroll-area";
 
 export default function Chat() {
 	const { socket, emitEvent } = useSocketStore();
@@ -26,7 +26,6 @@ export default function Chat() {
 	const { game_id } = useParams<{ game_id: string }>();
 	const { setMessages, setHistory } = useChatStore();
 	const messages = useChatStore((state) => state.messagesList);
-
 
 	const form = useForm<z.infer<typeof ChatSchema>>({
 		resolver: zodResolver(ChatSchema),
@@ -67,12 +66,11 @@ export default function Chat() {
 		<Card className="flex h-full min-h-0 flex-col lg:flex-1">
 			<CardHeader className="flex flex-row items-center justify-between gap-3">
 				<CardTitle>Chat</CardTitle>
-				
 			</CardHeader>
 			<CardContent className="flex min-h-0 flex-1 flex-col">
 				<Card className="flex min-h-0 flex-1 flex-col">
 					<CardContent className="flex min-h-0 flex-1 flex-col">
-						<ScrollArea className="flex-1 w-full h-full min-h-48 lg:min-h-0">
+						<ScrollArea className="h-full min-h-48 w-full flex-1 lg:min-h-0">
 							{messages.map((msg, index) => (
 								<Message
 									key={`${msg}${
@@ -89,7 +87,7 @@ export default function Chat() {
 			</CardContent>
 			<CardFooter>
 				<form
-					className="flex w-full flex-col gap-3 "
+					className="flex w-full flex-col gap-3"
 					onSubmit={form.handleSubmit(onSubmit)}
 				>
 					<Controller

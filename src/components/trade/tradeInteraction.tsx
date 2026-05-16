@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Separator } from "@/components/ui/8bit/separator";
-import type { Player } from "@/lib/type";
-import TradeList, { type TradeData } from "./tradeList";
-import { Button } from "./ui/8bit/button";
+import TradeList, { type TradeData } from "@/components/trade/tradeList";
+import { Button } from "@/components/ui/8bit/button";
 import {
 	Dialog,
 	DialogContent,
@@ -10,8 +8,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "./ui/8bit/dialog";
-import { Field } from "./ui/field";
+} from "@/components/ui/8bit/dialog";
+import { Separator } from "@/components/ui/8bit/separator";
+import { Field } from "@/components/ui/field";
+import type { Player } from "@/lib/type";
 
 export function TradeInteraction({
 	currentUser,
@@ -37,7 +37,7 @@ export function TradeInteraction({
 			<DialogTrigger asChild>
 				<Button variant={"destructive"}>Trade</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="max-w-[95vw] sm:max-w-4xl">
 				<DialogHeader>
 					<DialogTitle>Trade with {targetPlayer.username}</DialogTitle>
 					<DialogDescription>
@@ -52,7 +52,6 @@ export function TradeInteraction({
 								data={myOffer}
 								onDataChange={setMyOffer}
 								player={currentUser}
-								userId={currentUser.id}
 							/>
 						</Field>
 						<Separator orientation="vertical" />
@@ -61,7 +60,6 @@ export function TradeInteraction({
 								data={theirOffer}
 								onDataChange={setTheirOffer}
 								player={targetPlayer}
-								userId={targetPlayer.id}
 							/>
 						</Field>
 					</div>

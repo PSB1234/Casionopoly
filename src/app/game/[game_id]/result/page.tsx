@@ -1,15 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAudio } from "@/components/provider/audio_provider";
 import { Button } from "@/components/ui/8bit/button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/8bit/card";
-import Leaderboard from "@/components/ui/8bit/leaderboard";
+import { Card, CardContent } from "@/components/ui/8bit/card";
+import type { Player, PlayerStats } from "@/lib/type";
+import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";
 
 const VICTORY_SFX =
@@ -17,19 +13,76 @@ const VICTORY_SFX =
 const GAME_OVER_SFX =
 	"/music/soundeffects/game/freesound_community-game-over-38511.mp3";
 
-
 export default function ResultPage() {
 	const router = useRouter();
 
-	const { players, userId, getPlayersMoney } = useGameStore();
-	const { audioRef, isSoundOn } = useAudio();
+	const { players, userId, playerStats, playerSnapshots, hasFinished } =
+		useGameStore();
+	const { audioRef, isSoundOn, setMusicSuppressed } = useAudio();
 
-	const sortedPlayers = useMemo(() => {
-		return [...players].sort((a, b) => a.rank - b.rank);
-	}, [players]);
+	const [expandedPlayers, setExpandedPlayers] = useState<
+		Record<string, boolean>
+	>({
+		[userId]: true,
+	});
 
-	const winner = sortedPlayers[0];
-	const isWinner = winner?.id === userId;
+	const toggleExpand = (id: string) => {
+		setExpandedPlayers((prev) => ({ ...prev, [id]: !prev[id] }));
+	};
+
+	const allPlayersData = useMemo(() => {
+		const dataMap = new Map<
+			string,
+			{ player: Player; stats: PlayerStats; status: string }
+		>();
+
+		// Add snapshots (players who left/bankrupted)
+		Object.values(playerSnapshots).forEach((snap) => {
+			dataMap.set(snap.player.id, {
+				player: snap.player,
+				stats: snap.stats,
+				status: snap.status,
+			});
+		});
+
+		// Add current active players
+		players.forEach((p) => {
+			const stats = playerStats[p.id] || {
+				moneyEarned: 0,
+				moneySpent: 0,
+				propertiesBought: 0,
+				propertiesSold: 0,
+				tradesCompleted: 0,
+			};
+			dataMap.set(p.id, {
+				player: p,
+				stats,
+				status: hasFinished ? "winner" : p.money <= 0 ? "bankrupt" : "playing",
+			});
+		});
+
+		// Sort by money descending
+		const list = Array.from(dataMap.values()).sort(
+			(a, b) => b.player.money - a.player.money,
+		);
+
+		// If game is finished and someone has more money, make them the winner
+		const topPlayer = list[0];
+		if (topPlayer && hasFinished) {
+			topPlayer.status = "winner";
+		}
+
+		return list;
+	}, [players, playerSnapshots, playerStats, hasFinished]);
+
+	const winnerData =
+		allPlayersData.find((d) => d.status === "winner") || allPlayersData[0];
+	const isWinner = winnerData?.player.id === userId;
+
+	useEffect(() => {
+		setMusicSuppressed(true);
+		return () => setMusicSuppressed(false);
+	}, [setMusicSuppressed]);
 
 	useEffect(() => {
 		audioRef.current?.pause();
@@ -40,61 +93,154 @@ export default function ResultPage() {
 		}
 	}, [isWinner, audioRef, isSoundOn]);
 
-	const leaderboardPlayers = useMemo(() => {
-		return sortedPlayers.map((player) => ({
-			id: player.id,
-			name: player.username,
-			score: getPlayersMoney(player.id),
-			isCurrentPlayer: player.id === userId,
-			avatarFallback: player.username.charAt(0).toUpperCase(),
-		}));
-	}, [sortedPlayers, userId, getPlayersMoney]);
-
 	const handlePlayAgain = () => {
-		router.push("/searchRoom");
+		router.replace("/searchRoom");
 	};
 
 	const handleBackToHome = () => {
-		router.push("/");
+		router.replace("/");
 	};
 
 	return (
-		<div className="flex min-h-screen flex-col items-center justify-center gap-8 p-4">
-			<Card className="w-full max-w-md" font="retro">
-				<CardHeader>
-					<CardTitle className="text-center text-2xl">
-						{isWinner ? "VICTORY!" : "DEFEAT!"}
-					</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-6">
-					<p className="retro text-center text-muted-foreground text-sm">
-						{isWinner
-							? "Congratulations! You are the winner!"
-							: `Winner: ${winner?.username ?? "Unknown"}`}
-					</p>
+		<div
+			className={cn(
+				"relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden p-4",
+			)}
+		>
+			<div
+				className={cn(
+					"pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay",
+				)}
+			/>
 
-						<Leaderboard
-							maxPlayers={10}
-							players={leaderboardPlayers}
-							showAvatar={false}
-							showRank={true}
-							title="FINAL STANDINGS"
-						/>
+			<div className="z-10 flex w-full max-w-2xl flex-col items-center gap-6">
+				<h1
+					className={cn(
+						"retro text-center text-6xl [-webkit-text-stroke:2px_white] md:text-8xl",
+						isWinner ? "text-green-400" : "text-red-500",
+					)}
+				>
+					{isWinner ? "VICTORY" : "DEFEAT"}
+				</h1>
 
-					<div className="flex flex-col gap-6">
-						<Button className="w-full" onClick={handlePlayAgain}>
-							Play Again
-						</Button>
-						<Button
-							className="w-full"
-							onClick={handleBackToHome}
-							variant="outline"
-						>
-							Back to Home
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
+				<Card className="w-full max-w-md" font="retro">
+					<CardContent className="space-y-6 pt-6">
+						<div className="flex flex-col gap-4">
+							<h2 className="retro text-center text-2xl text-white">
+								Result
+							</h2>
+							{allPlayersData.map((data, index) => {
+								const isExpanded = expandedPlayers[data.player.id];
+								const isCurrent = data.player.id === userId;
+								return (
+									<div
+										className="relative flex flex-col gap-2 border-white border-y-4 bg-black/40 p-3"
+										key={data.player.id}
+									>
+										<div className="flex items-center justify-between gap-2">
+											<div className="flex min-w-0 flex-1 items-center gap-3">
+												<div className="retro shrink-0 text-lg text-white/50">
+													#{index + 1}
+												</div>
+												<div className="flex min-w-0 flex-col">
+													<span
+														className={cn(
+															"retro break-all text-lg",
+															isCurrent ? "text-yellow-400" : "text-white",
+														)}
+													>
+														{data.player.username}
+													</span>
+													<span
+														className={cn(
+															"text-xs uppercase",
+															data.status === "winner"
+																? "text-green-400"
+																: data.status === "bankrupt" ||
+																		data.status === "surrendered"
+																	? "text-red-400"
+																	: "text-gray-400",
+														)}
+													>
+														{data.status}
+													</span>
+												</div>
+											</div>
+											<div className="flex shrink-0 items-center gap-4">
+												<span className="retro text-green-400">
+													₹{data.player.money}
+												</span>
+												<Button
+													className="h-8 px-2 text-xs"
+													onClick={() => toggleExpand(data.player.id)}
+													size="sm"
+													variant="outline"
+												>
+													{isExpanded ? "HIDE" : "EXPAND"}
+												</Button>
+											</div>
+										</div>
+
+										{isExpanded && (
+											<div className="mt-3 grid grid-cols-2 gap-2 rounded bg-black/60 p-3 text-white/80 text-xs">
+												<div className="flex justify-between">
+													<span className="text-white/50">Earned:</span>
+													<span className="text-green-400">
+														+₹{data.stats.moneyEarned}
+													</span>
+												</div>
+												<div className="flex justify-between">
+													<span className="text-white/50">Spent:</span>
+													<span className="text-red-400">
+														-₹{data.stats.moneySpent}
+													</span>
+												</div>
+												<div className="flex justify-between">
+													<span className="text-white/50">Props Bought:</span>
+													<span className="text-white">
+														{data.stats.propertiesBought}
+													</span>
+												</div>
+												<div className="flex justify-between">
+													<span className="text-white/50">Props Traded:</span>
+													<span className="text-white">
+														{data.stats.propertiesSold}
+													</span>
+												</div>
+												<div className="col-span-2 flex justify-between border-white/10 border-t pt-2">
+													<span className="text-white/50">
+														Trades Completed:
+													</span>
+													<span className="text-white">
+														{data.stats.tradesCompleted}
+													</span>
+												</div>
+											</div>
+										)}
+										<div className="pointer-events-none absolute inset-0 -mx-1 border-white border-x-4" />
+									</div>
+								);
+							})}
+						</div>
+
+						<div className="mt-8 flex flex-col gap-4">
+							<Button
+								className={"w-full py-6 text-lg"}
+								onClick={handlePlayAgain}
+							>
+								PLAY AGAIN
+							</Button>
+							<Button
+								className="w-full py-6 text-lg"
+								onClick={handleBackToHome}
+								variant="outline"
+							>
+								BACK TO HOME
+							</Button>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 		</div>
 	);
 }

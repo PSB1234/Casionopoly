@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io-client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { TradeData } from "@/components/tradeList";
+import type { TradeData } from "@/components/trade/tradeList";
 import { toast } from "@/components/ui/8bit/toast";
 import { generateColorPair } from "@/lib/random_color";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
@@ -10,6 +10,8 @@ import type {
 	ClientToServerEvents,
 	MoneyUpdatePayload,
 	Player,
+	PlayerSnapshot,
+	PlayerStats,
 	PropertySchema,
 	ServerToClientEvents,
 	tradeDisplaySchema,
@@ -76,6 +78,8 @@ export interface GameStoreState {
 	isTradeDialogOpen: boolean;
 	isNavigating: boolean;
 	hasFinished: boolean;
+	playerStats: Record<string, PlayerStats>;
+	playerSnapshots: Record<string, PlayerSnapshot>;
 }
 
 export interface GameStoreActions {
@@ -144,6 +148,11 @@ export interface GameStoreActions {
 	setHasFinished: (hasFinished: boolean) => void;
 	addLog: (message: string) => void;
 	clearLogs: () => void;
+	updatePlayerStats: (playerId: string, updates: Partial<PlayerStats>) => void;
+	savePlayerSnapshot: (
+		playerId: string,
+		status: PlayerSnapshot["status"],
+	) => void;
 }
 
 export type GameStore = GameStoreState & GameStoreActions;
@@ -167,6 +176,8 @@ export const useGameStore = create<GameStore>()(
 			isTradeDialogOpen: false,
 			isNavigating: false,
 			hasFinished: false,
+			playerStats: {},
+			playerSnapshots: {},
 			initializeSocket: (
 				roomKey: string,
 				socket: Socket<ServerToClientEvents, ClientToServerEvents> | null,
@@ -223,7 +234,13 @@ export const useGameStore = create<GameStore>()(
 					});
 				};
 				const handlePlayerLeft = (playerId: string) => {
-					const leavingPlayer = get().players.find((player) => player.id === playerId);
+					const leavingPlayer = get().players.find(
+						(player) => player.id === playerId,
+					);
+					if (leavingPlayer) {
+						const status = leavingPlayer.money <= 0 ? "bankrupt" : "left";
+						get().savePlayerSnapshot(playerId, status);
+					}
 					if (get().userId === playerId) {
 						get().addLog("You were removed from the game.");
 						window.location.href = "/";
@@ -253,6 +270,18 @@ export const useGameStore = create<GameStore>()(
 
 				const handlePropertyBought = (propertyId: number, userId: string) => {
 					get().addProperty(userId, propertyId);
+
+					const currentStats = get().playerStats[userId] || {
+						moneyEarned: 0,
+						moneySpent: 0,
+						tradesCompleted: 0,
+						propertiesBought: 0,
+						propertiesSold: 0,
+					};
+					get().updatePlayerStats(userId, {
+						propertiesBought: currentStats.propertiesBought + 1,
+					});
+
 					const username = get().getUsernameById(userId) ?? "A player";
 					const propertyName =
 						TileDataJson.find((tile) => tile.id === propertyId)?.name ??
@@ -268,7 +297,9 @@ export const useGameStore = create<GameStore>()(
 
 					if (shouldSkipLog) return;
 
-					const nextPlayer = get().players.find((player) => player.rank === turn);
+					const nextPlayer = get().players.find(
+						(player) => player.rank === turn,
+					);
 					if (nextPlayer) {
 						get().addLog(`Turn: ${nextPlayer.username}.`);
 						set({ lastTurnLog: turn });
@@ -281,6 +312,23 @@ export const useGameStore = create<GameStore>()(
 							p.id === payload.userId ? { ...p, money: payload.newBalance } : p,
 						),
 					}));
+
+					const currentStats = get().playerStats[payload.userId] || {
+						moneyEarned: 0,
+						moneySpent: 0,
+						tradesCompleted: 0,
+						propertiesBought: 0,
+						propertiesSold: 0,
+					};
+					if (payload.delta > 0) {
+						get().updatePlayerStats(payload.userId, {
+							moneyEarned: currentStats.moneyEarned + payload.delta,
+						});
+					} else if (payload.delta < 0) {
+						get().updatePlayerStats(payload.userId, {
+							moneySpent: currentStats.moneySpent + Math.abs(payload.delta),
+						});
+					}
 
 					if (payload.delta === 0) return;
 
@@ -367,6 +415,9 @@ export const useGameStore = create<GameStore>()(
 				const handleReceiveConfirmTradeOffer = (
 					fromPlayer: string,
 					toPlayer: string,
+					roomKey: string,
+					tradeData: { offer: TradeData; request: TradeData },
+					accepted: boolean,
 				) => {
 					set((state) => {
 						const trade = state.trade.find(
@@ -381,6 +432,37 @@ export const useGameStore = create<GameStore>()(
 							),
 						};
 					});
+
+					if (accepted) {
+						const fromStats = get().playerStats[fromPlayer] || {
+							moneyEarned: 0,
+							moneySpent: 0,
+							tradesCompleted: 0,
+							propertiesBought: 0,
+							propertiesSold: 0,
+						};
+						const toStats = get().playerStats[toPlayer] || {
+							moneyEarned: 0,
+							moneySpent: 0,
+							tradesCompleted: 0,
+							propertiesBought: 0,
+							propertiesSold: 0,
+						};
+
+						const fromGiven = tradeData.offer.properties.length;
+						const toGiven = tradeData.request.properties.length;
+
+						get().updatePlayerStats(fromPlayer, {
+							tradesCompleted: fromStats.tradesCompleted + 1,
+							propertiesSold: fromStats.propertiesSold + fromGiven,
+							propertiesBought: fromStats.propertiesBought + toGiven,
+						});
+						get().updatePlayerStats(toPlayer, {
+							tradesCompleted: toStats.tradesCompleted + 1,
+							propertiesSold: toStats.propertiesSold + toGiven,
+							propertiesBought: toStats.propertiesBought + fromGiven,
+						});
+					}
 				};
 				const handleUpgradeProperty = (
 					propertyId: number,
@@ -481,7 +563,10 @@ export const useGameStore = create<GameStore>()(
 					socket.off(SOCKET_EVENTS.GAME_LOOP, handleGameLoop);
 					socket.off(SOCKET_EVENTS.PLAYER_LEFT, handlePlayerLeft);
 					socket.off(SOCKET_EVENTS.RECEIVE_MONEY, handleReceiveMoney);
-					socket.off(SOCKET_EVENTS.RECEIVE_MONEY_UPDATE, handleReceiveMoneyUpdate);
+					socket.off(
+						SOCKET_EVENTS.RECEIVE_MONEY_UPDATE,
+						handleReceiveMoneyUpdate,
+					);
 					socket.off(SOCKET_EVENTS.PROPERTY_BOUGHT, handlePropertyBought);
 					socket.off(SOCKET_EVENTS.RECEIVE_TURN, handleReceiveTurn);
 					socket.off(
@@ -534,6 +619,51 @@ export const useGameStore = create<GameStore>()(
 						player.id === id ? { ...player, ...updates } : player,
 					),
 				}));
+			},
+			updatePlayerStats: (playerId: string, updates: Partial<PlayerStats>) => {
+				set((state) => {
+					const currentStats = state.playerStats[playerId] || {
+						moneyEarned: 0,
+						moneySpent: 0,
+						tradesCompleted: 0,
+						propertiesBought: 0,
+						propertiesSold: 0,
+					};
+					return {
+						playerStats: {
+							...state.playerStats,
+							[playerId]: { ...currentStats, ...updates },
+						},
+					};
+				});
+			},
+			savePlayerSnapshot: (
+				playerId: string,
+				status: PlayerSnapshot["status"],
+			) => {
+				set((state) => {
+					const player = state.players.find((p) => p.id === playerId);
+					if (!player) return state;
+
+					const currentStats = state.playerStats[playerId] || {
+						moneyEarned: 0,
+						moneySpent: 0,
+						tradesCompleted: 0,
+						propertiesBought: 0,
+						propertiesSold: 0,
+					};
+
+					return {
+						playerSnapshots: {
+							...state.playerSnapshots,
+							[playerId]: {
+								player: { ...player },
+								stats: currentStats,
+								status,
+							},
+						},
+					};
+				});
 			},
 			getPlayerCount: () => get().players.length,
 			getPlayersMoney: (playerId: string) => {

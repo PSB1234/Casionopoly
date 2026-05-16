@@ -92,17 +92,9 @@ export default function BackgroundMusic({ delayMs = 2000 }: BackgroundMusicProps
 		audio.currentTime = 0;
 	}, []);
 
-	useEffect(() => {
-		const handleInteraction = () => {
-			if (pathname === "/" && pendingPlayRef.current && !isSoundOn) {
-				pendingPlayRef.current = false;
-				toggleSound();
-			}
-		};
 
-		document.addEventListener("click", handleInteraction);
-		return () => document.removeEventListener("click", handleInteraction);
-	}, [pathname, isSoundOn, toggleSound]);
+
+	const { isMusicSuppressed } = useAudio();
 
 	useEffect(() => {
 		const audio = new Audio();
@@ -132,7 +124,19 @@ export default function BackgroundMusic({ delayMs = 2000 }: BackgroundMusicProps
 			stopPreview(audio);
 			audioRef.current = null;
 		};
-	}, [selectedTrackIndex, previewingIndex, playTrack, playPreview, stopPreview, delayMs]);
+	}, [selectedTrackIndex, previewingIndex, playTrack, playPreview, stopPreview, delayMs, audioRef, isSoundOn]);
+
+	useEffect(() => {
+		if (audioRef.current) {
+			if (isMusicSuppressed) {
+				audioRef.current.pause();
+			} else if (isSoundOn) {
+				audioRef.current.play().catch(() => {});
+			} else {
+				audioRef.current.pause();
+			}
+		}
+	}, [isMusicSuppressed, isSoundOn, audioRef]);
 
 	return null;
 }
