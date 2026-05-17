@@ -123,10 +123,19 @@ export default function Background() {
 			{/* Backup/Fallback Image - Always render behind */}
 			<Image
 				alt="Night City Backup"
-				className="absolute top-0 left-0 h-full w-full"
+				className="absolute top-0 left-0 h-full w-full hidden md:block"
 				fill
 				quality={100}
 				src="/Images/back.webp"
+				style={{ imageRendering: "pixelated" }}
+				unoptimized
+			/>
+			<Image
+				alt="Night City Backup Mobile"
+				className="absolute top-0 left-0 h-full w-full block md:hidden"
+				fill
+				quality={100}
+				src="/Images/back_mobile.webp"
 				style={{ imageRendering: "pixelated" }}
 				unoptimized
 			/>
@@ -142,7 +151,7 @@ export default function Background() {
 					>
 						<Image
 							alt="Background Back Layer"
-							className="absolute top-0 left-0 h-full w-full"
+							className="absolute top-0 left-0 h-full w-full hidden md:block"
 							fill
 							priority
 							quality={100}
@@ -150,11 +159,21 @@ export default function Background() {
 							style={{ imageRendering: "pixelated" }}
 							unoptimized
 						/>
+						<Image
+							alt="Background Back Layer Mobile"
+							className="absolute top-0 left-0 h-full w-full block md:hidden"
+							fill
+							priority
+							quality={100}
+							src="/Images/back_mobile.webp"
+							style={{ imageRendering: "pixelated" }}
+							unoptimized
+						/>
 					</div>
 
 					{/* Layer 2: Buildings */}
 					<div
-						className="absolute inset-0 transition-transform duration-200 ease-out"
+						className="absolute inset-0 hidden md:block transition-transform duration-200 ease-out"
 						style={{
 							transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -15}px) scale(1.02)`,
 						}}
@@ -183,7 +202,7 @@ export default function Background() {
 
 					{/* Layer 3: Front */}
 					<div
-						className="absolute inset-0 transition-transform duration-200 ease-out"
+						className="absolute inset-0 hidden md:block transition-transform duration-200 ease-out"
 						style={{
 							transform: `translate(${mousePos.x * -30}px, ${mousePos.y * -30}px) scale(1.02)`,
 						}}
