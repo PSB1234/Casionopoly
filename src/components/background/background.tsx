@@ -123,7 +123,7 @@ export default function Background() {
 			{/* Backup/Fallback Image - Always render behind */}
 			<Image
 				alt="Night City Backup"
-				className="absolute top-0 left-0 h-full w-full"
+				className="absolute top-0 left-0 h-full w-full object-cover"
 				fill
 				quality={100}
 				src="/Images/back.webp"
@@ -141,7 +141,7 @@ export default function Background() {
 					>
 						<Image
 							alt="Background Back Layer"
-							className="absolute top-0 left-0 h-full w-full "
+							className="absolute top-0 left-0 h-full w-full object-cover"
 							fill
 							priority
 							quality={100}
@@ -161,7 +161,7 @@ export default function Background() {
 					>
 						<Image
 							alt="Buildings Shadow"
-							className="absolute top-0 left-0 h-full w-full translate-x-[4px] translate-y-[4px] brightness-0 md:translate-x-[8px] md:translate-y-[8px]"
+							className="absolute top-0 left-0 h-full w-full object-cover translate-x-[4px] translate-y-[4px] brightness-0 md:translate-x-[8px] md:translate-y-[8px]"
 							fill
 							priority
 							quality={100}
@@ -171,7 +171,7 @@ export default function Background() {
 						/>
 						<Image
 							alt="Buildings Layer"
-							className="absolute top-0 left-0 h-full w-full"
+							className="absolute top-0 left-0 h-full w-full object-cover"
 							fill
 							priority
 							quality={100}
@@ -190,7 +190,7 @@ export default function Background() {
 					>
 						<Image
 							alt="Front Shadow"
-							className="absolute top-0 left-0 h-full w-full translate-x-[4px] translate-y-[4px] brightness-0 md:translate-x-[8px] md:translate-y-[8px]"
+							className="absolute top-0 left-0 h-full w-full object-cover translate-x-[4px] translate-y-[4px] brightness-0 md:translate-x-[8px] md:translate-y-[8px]"
 							fill
 							priority
 							quality={100}
@@ -200,7 +200,7 @@ export default function Background() {
 						/>
 						<Image
 							alt="Front Layer"
-							className="absolute top-0 left-0 h-full w-full"
+							className="absolute top-0 left-0 h-full w-full object-cover"
 							fill
 							priority
 							quality={100}
