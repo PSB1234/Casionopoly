@@ -37,7 +37,7 @@ export default function Navbar() {
 			</Activity>
 			<Activity mode={!isHomepage ? "hidden" : "visible"}>
 				<h3 className="w-full font-jaro text-2xl text-[#fff085]">
-					Hello, {username}
+					Hello {username ? ",":""} {username}
 				</h3>
 			</Activity>
 			<VolumeControl />

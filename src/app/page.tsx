@@ -14,10 +14,11 @@ export default function HomePage() {
 	return (
 		<main className="flex min-h-screen flex-col items-center gap-8 md:gap-12 overflow-x-hidden overflow-y-auto px-4 pt-16 md:pt-24 pb-12 text-white">
 			<TitleWithSubtitle size="xl" />
-			<MainMenu />
 			<div className="w-full max-w-sm">
 				<ChangeName />
 			</div>
+			<MainMenu />
+			
 			<HowToPlay />
 		</main>
 	);
