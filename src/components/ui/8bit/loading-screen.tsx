@@ -4,10 +4,10 @@ export default function LoadingScreen() {
 			<div className="absolute inset-0 bg-background" />
 			<div className="relative">
 				<h1 className="relative z-10 font-bold font-jaro text-5xl md:text-9xl text-yellow-200">
-					Industrial.io
+					Casionopoly
 				</h1>
 				<div className="pointer-events-none absolute top-1 left-1 md:top-2 md:left-2 select-none font-bold font-jaro text-5xl md:text-9xl text-black">
-					Industrial.io
+					Casionopoly
 				</div>
 			</div>
 			<div className="relative">

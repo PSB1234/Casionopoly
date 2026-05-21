@@ -142,7 +142,16 @@ export function SearchRoomClient({
 										className="m-5 flex w-full justify-between"
 										key={roomData.roomKey}
 									>
-										<h3>{roomData.name}</h3>
+										<h3 className="flex items-center">
+											{roomData.name}
+											<span className={`ml-3 text-xs px-2 py-0.5 rounded ${
+												roomData.isPrivate 
+													? "bg-red-500/20 text-red-300" 
+													: "bg-green-500/20 text-green-300"
+											}`}>
+												{roomData.isPrivate ? " Private" : " Public"}
+											</span>
+										</h3>
 										<Button onClick={() => onSubmit(roomData)}>Join</Button>
 									</li>
 								))}

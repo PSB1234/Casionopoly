@@ -53,15 +53,15 @@ export default function TradeReview({
 				</AlertDialogHeader>
 
 				<div>
-					<div>Amount offered: ${tradeDisplay.offeredProperties.amount}</div>
+					<div>Amount offered: <span className="text-yellow-200">${tradeDisplay.offeredProperties.amount}</span></div>
 					<h3>Offered Properties:</h3>
 					<ul>
 						{tradeDisplay.offeredProperties.properties.length > 0 ? (
 							tradeDisplay.offeredProperties.properties.map((propId) => (
-								<li key={propId}>{getNameOfPropertyById(propId)}</li>
+								<li className="text-green-500" key={propId}>{getNameOfPropertyById(propId)}</li>
 							))
 						) : (
-							<li>No properties offered.</li>
+							<li className="text-red-500">No properties offered.</li>
 						)}
 					</ul>
 				</div>

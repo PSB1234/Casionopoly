@@ -1,6 +1,6 @@
-import { Avatar, AvatarFallback } from "@/components/ui/8bit/avatar";
 import { Card, CardContent, CardTitle } from "@/components/ui/8bit/card";
 import type { Player } from "@/lib/type";
+import PlayerSprite from "@/components/board/player_sprite";
 
 export default function PlayerList({ PlayerList }: { PlayerList: Player[] }) {
 	return (
@@ -17,16 +17,12 @@ export default function PlayerList({ PlayerList }: { PlayerList: Player[] }) {
 						className="flex flex-row items-center justify-between gap-4"
 						key={player.id}
 					>
-						<Avatar>
-							<AvatarFallback>
-								{player.username.slice(0, 2).toUpperCase()}
-							</AvatarFallback>
-						</Avatar>
-						<div className="flex w-full min-w-0 justify-between gap-2">
-							<p className="truncate text-xs">
-								{player.rank}.{player.username}
+						<div className="size-15"><PlayerSprite color={player.color} /></div>
+						<div className="flex w-full min-w-0 justify-between gap-2 font-sans text-white">
+							<p className="truncate text-sm font-bold">
+								{player.username}
 							</p>
-							<p className="shrink-0 text-xs opacity-75">${player.money}</p>
+							<p className="shrink-0 text-xs font-bold">${player.money}</p>
 						</div>
 					</div>
 				))}

@@ -233,9 +233,9 @@ export default function ChestUi({
 		<Dialog onOpenChange={onOpenChange} open={open}>
 			<DialogContent showCloseButton={false}>
 				<DialogHeader>
-					<DialogTitle>Chest Reward Machine</DialogTitle>
+					<DialogTitle>Casino Reward Machine</DialogTitle>
 					<DialogDescription>
-						Spin all three reels and stop to claim your chest reward.
+						Spin all three reels and stop to claim your reward.
 					</DialogDescription>
 				</DialogHeader>
 

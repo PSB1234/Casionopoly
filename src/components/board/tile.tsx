@@ -135,7 +135,7 @@ export default function Tile({
 										/>
 									)}
 								</div>
-								<p className="break-all text-center font-medium text-[25cqmin] leading-tight lg:text-sm">
+								<p className="break-all text-center font-medium text-[25cqmin] leading-tight lg:text-sm" style={{color:ownerColor}}>
 									{displayTileName.toLowerCase()}
 								</p>
 								{TileData.price && (
@@ -152,8 +152,9 @@ export default function Tile({
 									"flex h-full w-full flex-col items-center gap-[2cqh]",
 								)}
 							>
-								<p className="break-all text-center font-extralight text-[25cqmin] leading-tight lg:text-sm">
+								<p className="break-all text-center font-extralight text-[25cqmin] leading-tight lg:text-sm" style={{color:ownerColor}}>
 									{displayTileName.toLowerCase()}
+
 								</p>
 								{TileData.price && (
 									<p className="text-center font-bold text-[25cqmin] text-yellow-400 lg:text-sm">

@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
 					</CardHeader>
 					<CardContent className="space-y-4 text-center">
 						<p className="text-lg text-muted-foreground leading-relaxed">
-							Welcome to Industrial.io. This Privacy Policy explains how we
+							Welcome to Casionopoly. This Privacy Policy explains how we
 							collect, use, and protect your information when you use our
 							website.
 						</p>
@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
 						</h2>
 						<p className="text-lg text-muted-foreground leading-relaxed">
 							We do not collect any personal information when you play
-							Industrial.io. Any game state is temporarily handled via sessions
+							casionopoly. Any game state is temporarily handled via sessions
 							or web sockets.
 						</p>
 						<h2 className="mt-6 font-jaro text-2xl text-yellow-200">Cookies</h2>

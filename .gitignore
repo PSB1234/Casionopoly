@@ -21,8 +21,7 @@ next-env.d.ts
 
 # production
 /build
-/src/app/sitemap.ts
-/src/app/robots.ts
+
 # misc
 .DS_Store
 *.pem

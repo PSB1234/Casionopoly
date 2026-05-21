@@ -22,12 +22,12 @@ export default function Title({ size = "lg" }: TitleProps) {
 	return (
 		<div className="relative">
 			<h1 className={`relative z-10 font-bold font-jaro ${h1} text-yellow-200`}>
-				Industrial.io
+				Casionopoly
 			</h1>
 			<div
 				className={`pointer-events-none absolute top-1 left-1 select-none font-bold font-jaro ${h1} text-black`}
 			>
-				Industrial.io
+				Casionopoly
 			</div>
 		</div>
 	);
@@ -48,12 +48,12 @@ export function TitleWithSubtitle({
 				<h1
 					className={`relative z-10 font-bold font-jaro ${h1} text-yellow-200`}
 				>
-					Industrial.io
+					Casionopoly
 				</h1>
 				<div
 					className={`pointer-events-none absolute top-1 left-1 select-none font-bold font-jaro ${h1} text-black`}
 				>
-					Industrial.io
+					Casionopoly
 				</div>
 			</div>
 			{subtitle && (

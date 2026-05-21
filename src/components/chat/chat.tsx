@@ -18,6 +18,7 @@ import { Field } from "@/components/ui/field";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { ChatSchema } from "@/lib/zod";
 import { useChatStore } from "@/store/chat_store";
+import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
 
 export default function Chat() {
@@ -26,6 +27,7 @@ export default function Chat() {
 	const { game_id } = useParams<{ game_id: string }>();
 	const { setMessages, setHistory } = useChatStore();
 	const messages = useChatStore((state) => state.messagesList);
+	const currentUser = useGameStore((state) => state.username);
 
 	const form = useForm<z.infer<typeof ChatSchema>>({
 		resolver: zodResolver(ChatSchema),
@@ -73,12 +75,13 @@ export default function Chat() {
 						<ScrollArea className="h-full min-h-48 w-full flex-1 lg:min-h-0">
 							{messages.map((msg, index) => (
 								<Message
-									key={`${msg}${
+									key={`${msg.name}-${
 										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 										index
 									}`}
 									message={msg.messages}
 									name={msg.name}
+									isOwn={msg.name === currentUser}
 								/>
 							))}
 						</ScrollArea>

@@ -1,9 +1,9 @@
 
-# Industrial.io
+# Casionopoly
 
 > A retro-styled, real-time multiplayer implementation of the classic property trading board game.
 
-Industrial.io is a modern web-based board game inspired by Monopoly.
+Casionopoly is a modern web-based board game inspired by Monopoly.
 
 ## Features
 - **Real-time Multiplayer**: Play with friends seamlessly using WebSocket connections.

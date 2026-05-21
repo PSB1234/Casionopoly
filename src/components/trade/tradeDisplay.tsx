@@ -49,7 +49,7 @@ export default function TradeDisplay({
 									className="w-full bg-black/20"
 									key={`${trade.fromPlayerId}-${trade.toPlayerId}`}
 								>
-									<CardContent>
+									<CardContent >
 										<Item variant="default">
 											<ItemContent>
 												<ItemTitle className="flex-wrap text-sm">

@@ -35,7 +35,7 @@ export function TradeInteraction({
 			<DialogTrigger asChild>
 				<Button variant={"destructive"}>Trade</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="max-w-4xl w-[90vw]">
 				<DialogHeader>
 					<DialogTitle>Trade with {targetPlayer.username}</DialogTitle>
 					<DialogDescription>
@@ -44,7 +44,7 @@ export function TradeInteraction({
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col gap-6 mt-2">
-					<div className="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-8 w-full">
+					<div className="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-10 w-full">
 						<div className="w-full md:flex-1">
 							<TradeList
 								data={myOffer}

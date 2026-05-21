@@ -14,14 +14,14 @@ import { AudioProvider } from "@/components/provider/audio_provider";
 
 export const metadata: Metadata = {
 	title: {
-		default: "Industrial.io | The Ultimate 8-Bit Board Game Experience",
-		template: "%s | Industrial.io",
+		default: "casionopoly | The Ultimate 8-Bit Board Game Experience",
+		template: "%s | casionopoly",
 	},
-	description: "Dive into Industrial.io, a multiplayer board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!",
-	keywords: ["monopoly", "board game", "multiplayer", "8-bit", "retro", "trading", "property game", "industrial.io"],
-	authors: [{ name: "Prathamesh" }],
-	creator: "Industrial.io Team",
-	publisher: "Industrial.io",
+	description: "Dive into casionopoly, a multiplayer board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!",
+	keywords: ["monopoly", "board game", "multiplayer", "8-bit", "retro", "trading", "property game", "casionopoly","casionopoly.me"],
+	authors: [{ name: "Oshino" }],
+	creator: "Oshino Team",
+	publisher: "Oshino",
 	icons: [
 		{ rel: "icon", url: "/app_icons/favicon.ico" },
 		{ rel: "apple-touch-icon", url: "/app_icons/apple-touch-icon.png" }
@@ -29,24 +29,24 @@ export const metadata: Metadata = {
 	openGraph: {
 		type: "website",
 		locale: "en_US",
-		// url: "https://industrial.io",
-		title: "Industrial.io | The Ultimate 8-Bit Board Experience",
-		description: "Dive into Industrial.io, a multiplayer Board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!",
-		siteName: "Industrial.io",
+		url: "https://casionopoly.me",
+		title: "casionopoly | The Ultimate 8-Bit Board Experience",
+		description: "Dive into casionopoly, a multiplayer Board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!",
+		siteName: "casionopoly",
 		images: [
 			{
-				url: "/app_icons/og-image.png", // Assuming an og-image will be placed here
+				url: "/app_icons/og-image.webp",
 				width: 1200,
 				height: 630,
-				alt: "Industrial.io Gameplay",
+				alt: "casionopoly Gameplay",
 			},
 		],
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Industrial.io | The Ultimate 8-Bit Board Experience",
-		description: "Dive into Industrial.io, a multiplayer Board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!",
-		images: ["/app_icons/og-image.png"],
+		title: "casionopoly | The Ultimate 8-Bit Board Experience",
+		description: "Dive into casionopoly, a multiplayer Board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!",
+		images: ["/app_icons/og-image.webp"],
 	},
 	robots: {
 		index: true,
