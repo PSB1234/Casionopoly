@@ -13,6 +13,7 @@ import BackgroundMusic from "@/components/music/background-music";
 import { AudioProvider } from "@/components/provider/audio_provider";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://casionopoly.me"),
 	title: {
 		default: "Casionopoly | The Ultimate 8-Bit Board Game Experience",
 		template: "%s | Casionopoly",

@@ -133,9 +133,7 @@ export function Leaderboard({
 
 									<div className="flex items-center gap-2">
 										<span
-											className={cn(
-												"retro font-bold text-xs md:text-sm"
-											)}
+											className="retro font-bold text-xs md:text-sm"
 										>
 											{formatScore(player.score)}
 										</span>
@@ -151,7 +149,7 @@ export function Leaderboard({
 				{sortedPlayers.length > 0 && (
 					<div className="mt-4 pt-4">
 						<p
-							className={cn("retro text-center text-muted-foreground text-xs")}
+							className="retro text-center text-muted-foreground text-xs"
 						>
 							Showing top {Math.min(sortedPlayers.length, maxPlayers)} players
 						</p>

@@ -122,7 +122,7 @@ export default function GhostBoard({ PlayerList }: { PlayerList: Player[] }) {
 										)}
 									</div>
 									<div
-										className={cn("relative mt-auto flex h-[65%] w-[65%] p-0")}
+										className="relative mt-auto flex h-[65%] w-[65%] p-0"
 									>
 										{renderPlayersInSlots(
 											PlayerList.filter(

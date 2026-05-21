@@ -124,7 +124,7 @@ export default function Tile({
 								)}
 							>
 								<div
-									className={cn("relative flex h-full w-full justify-center")}
+									className="relative flex h-full w-full justify-center"
 								>
 									{rank > 0 && rank <= 5 && (
 										<Images
