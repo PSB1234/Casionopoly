@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Game',
-	description: 'Play casionopoly, the multiplayer Board 8-bit game. Strategize, trade, and dominate the board.',
+	description: 'Play Casionopoly, the multiplayer Board 8-bit game. Strategize, trade, and dominate the board.',
 	openGraph: {
-		title: 'Game | casionopoly',
-		description: 'Play casionopoly, the multiplayer Board 8-bit game. Strategize, trade, and dominate the board.',
+		title: 'Game | Casionopoly',
+		description: 'Play Casionopoly, the multiplayer Board 8-bit game. Strategize, trade, and dominate the board.',
 	},
 };
 

@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'casionopoly',
-    short_name: 'casionopoly',
-    description: 'Dive into casionopoly, a multiplayer Board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!',
+    name: 'Casionopoly',
+    short_name: 'Casionopoly',
+    description: 'Dive into Casionopoly, a multiplayer Board game with a retro 8-bit aesthetic. Trade, build, and conquer the board with your friends!',
     start_url: '/',
     display: 'standalone',
     background_color: '#281E50',

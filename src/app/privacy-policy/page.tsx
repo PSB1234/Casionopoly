@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
 						</h2>
 						<p className="text-lg text-muted-foreground leading-relaxed">
 							We do not collect any personal information when you play
-							casionopoly. Any game state is temporarily handled via sessions
+							Casionopoly. Any game state is temporarily handled via sessions
 							or web sockets.
 						</p>
 						<h2 className="mt-6 font-jaro text-2xl text-yellow-200">Cookies</h2>
