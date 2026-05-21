@@ -70,7 +70,7 @@ export default function CreateMenu({
 			const formattedValues = createRoomSchema.safeParse(values);
 			if (!formattedValues.success) {
 				setIsLoading(false);
-				console.error("Validation errors:", formattedValues.error.errors);
+				console.error("Validation errors:", formattedValues.error.issues);
 				toast("Validation failed. Please check your inputs.", {
 					description: undefined,
 				});
