@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Activity, useEffect, useState } from "react";
 import { Button } from "@/components/ui/8bit/button";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import TileDataJson from "@/lib/tiledata";
@@ -169,12 +169,13 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 				}}
 			/>
 			<div className="flex flex-row gap-4">
-				{isMyTurn && !hasRolled && (
+				<Activity mode={isMyTurn && !hasRolled ? "visible" :"hidden"}>			
 					<Button disabled={isRolling || buyProperty} onClick={onPlayClick}>
 						Play
 					</Button>
-				)}
-				{endTurnBtn && (
+				</Activity>
+		
+				<Activity mode={endTurnBtn ? "visible" :"hidden"}>				
 					<Button
 						disabled={!endTurnFree}
 						onClick={onEndTurnClick}
@@ -182,18 +183,22 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					>
 						End Turn
 					</Button>
-				)}
-				{buyProperty && (
+			</Activity>
+				<Activity mode={buyProperty ? "visible":"hidden"}>	
 					<Button onClick={onBuyClick} variant="secondary">
 						Buy
 					</Button>
-				)}
+				</Activity>
+				
+			
 			</div>
-			{!isMyTurn && (
+			<Activity mode={!isMyTurn ?"visible":"hidden"}>	
 				<div className="text-center text-neutral-500 text-sm">
 					{players.find((p) => p.rank === turn)?.username}'s is playing
 				</div>
-			)}
+			</Activity> 
+			
+
 		</>
 	);
 }

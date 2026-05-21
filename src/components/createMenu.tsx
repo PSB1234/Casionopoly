@@ -170,8 +170,9 @@ export default function CreateMenu({
 										id={field.name}
 									>
 										<button
+											disabled={isLoading}
 											className={cn(
-												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground",
+												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
 												roomType === "public" && "bg-primary text-white",
 											)}
 											onClick={() => field.onChange("public")}
@@ -180,8 +181,9 @@ export default function CreateMenu({
 											Public
 										</button>
 										<button
+											disabled={isLoading}
 											className={cn(
-												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground",
+												"flex w-full flex-row items-center justify-center p-2 text-center text-muted-foreground outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
 												roomType === "private" && "bg-primary text-white",
 											)}
 											onClick={() => field.onChange("private")}
@@ -204,6 +206,7 @@ export default function CreateMenu({
 							<Field
 								className="p-4"
 								data-invalid={!!form.formState.errors.password}
+								
 							>
 								<FieldLabel htmlFor="password">Password</FieldLabel>
 								<div className="flex w-full flex-row items-center justify-between gap-2">

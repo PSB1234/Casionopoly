@@ -73,7 +73,8 @@ export default function Chat() {
 						<ScrollArea className="h-full">
 							{messages.map((msg, index) => (
 								<Message
-									key={`${msg}${index}`}
+									key={`${msg}${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+index}`}
 									message={msg.messages}
 									name={msg.name}
 								/>
