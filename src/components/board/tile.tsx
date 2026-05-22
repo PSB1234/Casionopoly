@@ -1,4 +1,5 @@
 import Images from "next/image";
+import { useState, useRef, useEffect } from "react";
 import type { TileDataSchema } from "@/lib/type";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";
@@ -21,6 +22,46 @@ export default function Tile({
 	const ownerColor = isOwned ? getColorByPropertyIndex(TileData.id) : undefined;
 	const rank = getRankOfProperty(TileData.id);
 	const displayTileName = TileData.type === "chance" ? "Casino" : TileData.name;
+
+	const [showTooltip, setShowTooltip] = useState(false);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+	const handlePointerEnter = (e: React.PointerEvent) => {
+		if (e.pointerType === "mouse") {
+			setShowTooltip(true);
+		}
+	};
+
+	const handlePointerLeave = (e: React.PointerEvent) => {
+		if (e.pointerType === "mouse") {
+			setShowTooltip(false);
+		} else if (e.pointerType === "touch") {
+			if (timerRef.current) clearTimeout(timerRef.current);
+			setShowTooltip(false);
+		}
+	};
+
+	const handlePointerDown = (e: React.PointerEvent) => {
+		if (e.pointerType === "touch") {
+			if (timerRef.current) clearTimeout(timerRef.current);
+			timerRef.current = setTimeout(() => {
+				setShowTooltip(true);
+			}, 2000);
+		}
+	};
+
+	const handlePointerUp = (e: React.PointerEvent) => {
+		if (e.pointerType === "touch") {
+			if (timerRef.current) clearTimeout(timerRef.current);
+			setShowTooltip(false);
+		}
+	};
+
+	useEffect(() => {
+		return () => {
+			if (timerRef.current) clearTimeout(timerRef.current);
+		};
+	}, []);
 
 	// Determine side
 	const isTop = TileData.id >= 1 && TileData.id <= 7;
@@ -57,14 +98,43 @@ export default function Tile({
 		textDirectionClass = "items-center justify-center";
 	}
 
+	let tooltipClass = "";
+	if (isTop) {
+		tooltipClass = "top-full left-1/2 -translate-x-1/2 mt-2";
+	} else if (isBottom) {
+		tooltipClass = "bottom-full left-1/2 -translate-x-1/2 mb-2";
+	} else if (isLeft) {
+		tooltipClass = "left-full top-1/2 -translate-y-1/2 ml-2";
+	} else if (isRight) {
+		tooltipClass = "right-full top-1/2 -translate-y-1/2 mr-2";
+	} else {
+		if (TileData.id === 0) tooltipClass = "top-full left-full mt-2 ml-2";
+		else if (TileData.id === 8) tooltipClass = "top-full right-full mt-2 mr-2";
+		else if (TileData.id === 16) tooltipClass = "bottom-full right-full mb-2 mr-2";
+		else if (TileData.id === 24) tooltipClass = "bottom-full left-full mb-2 ml-2";
+	}
+
 	return (
 		<div
 			className={cn(
-				"@container-[size] pointer-events-none relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2",
+				"@container-[size] select-none relative flex h-full min-h-0 w-full min-w-0 flex-row justify-between border-foreground border-y-2",
 				className,
 			)}
 			style={{ borderColor: ownerColor }}
+			onPointerEnter={handlePointerEnter}
+			onPointerLeave={handlePointerLeave}
+			onPointerDown={handlePointerDown}
+			onPointerUp={handlePointerUp}
+			onPointerCancel={handlePointerUp}
+			onContextMenu={(e) => {
+				if (showTooltip) e.preventDefault();
+			}}
 		>
+			{showTooltip && (
+				<div className={cn("absolute z-[100] rounded-md bg-black/90 px-3 py-1.5 text-sm text-white shadow-lg pointer-events-none w-max border border-white/20", tooltipClass)}>
+					{displayTileName}
+				</div>
+			)}
 			{TileData.type === "jail" ? (
 				<div className="m-0 flex h-full w-full flex-col justify-between text-clip p-0">
 					<p className="px-[5cqmin] pt-[2cqmin] text-[12cqmin] leading-tight lg:px-4 lg:pt-1 lg:text-xs">
