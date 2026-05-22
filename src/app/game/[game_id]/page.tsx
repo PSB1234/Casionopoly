@@ -26,6 +26,7 @@ import { env } from "@/env";
 import { SOCKET_EVENTS } from "@/lib/socket_events";
 import { useGameStore } from "@/store/game_store";
 import useSocketStore from "@/store/socket_store";
+import AuctionDialog from "@/components/board/auction-dialog";
 
 export default function Game() {
 	const router = useRouter();
@@ -44,7 +45,12 @@ export default function Game() {
 		setIsNavigating,
 		hasFinished,
 		setHasFinished,
+		trade,
 	} = useGameStore();
+
+	const pendingTradesCount = trade.filter(
+		(t) => t.toPlayerId === userId && t.status === "pending"
+	).length;
 
 	useEffect(() => {
 		setIsNavigating(false);
@@ -109,7 +115,8 @@ export default function Game() {
 	}, [players.length, hasFinished, setHasFinished, hasGameStarted]);
 
 	return (
-		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden p-5 lg:h-screen lg:flex-row lg:overflow-hidden">
+		<div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden p-5 xl:h-screen xl:flex-row xl:overflow-hidden">
+			<AuctionDialog roomKey={game_id} />
 			<InactivityWarning roomKey={game_id} socket={socket} />
 			<BankruptcyChoice game_id={game_id} socket={socket} userId={userId} />
 
@@ -120,8 +127,8 @@ export default function Game() {
 			</div> */}
 
 			{/* Middle Column: Board (Desktop Middle, Mobile Top after Header) */}
-			<div className="order-2 flex w-full items-center justify-center p-0 lg:order-2 lg:h-full lg:max-h-screen lg:flex-1 lg:p-5">
-				<div className="relative aspect-square h-auto w-full max-w-full lg:h-[100cqmin] lg:w-[100cqmin] lg:min-w-100 lg:p-5 xl:min-w-125">
+			<div className="order-2 flex w-full items-center justify-center p-0 xl:order-2 xl:h-full xl:max-h-screen xl:flex-1 xl:p-5">
+				<div className="relative aspect-square h-auto w-full max-w-full xl:h-[100cqmin] xl:w-[100cqmin] xl:min-w-100 xl:p-5 2xl:min-w-125">
 					<Board game_id={game_id} />
 					<div className="pointer-events-none absolute inset-0">
 						<GhostBoard PlayerList={players} />
@@ -130,28 +137,37 @@ export default function Game() {
 			</div>
 
 			{/* Desktop Left Column Container */}
-			<div className="order-3 mt-2 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-1 lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
+			<div className="order-3 mt-2 flex h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm xl:order-1 xl:h-full xl:max-h-screen xl:w-70 xl:py-5 2xl:w-87.5">
 				{/* <div className="hidden shrink-0 flex-row items-center justify-between lg:flex">
 					<Logo />
 					<Sounds />
 				</div> */}
 
 				{/* Specific Mobile Order using inner flex-col */}
-				<div className="flex flex-col gap-5 lg:contents">
+				<div className="flex flex-col gap-5 xl:contents">
 					{/* 1. Player List (Mobile only here) */}
-					<div className="order-1 lg:hidden">
+					<div className="order-1 xl:hidden">
 						<Playerlist PlayerList={players} />
 					</div>
-					{/* 2. Action Buttons (Mobile only here) */}
-					<div className="order-2 flex shrink-0 flex-wrap justify-center gap-5 lg:hidden">
+					{/* 2. Trade */}
+					<div className="order-2 xl:order-3">
+						<Trade roomKey={game_id} />
+					</div>
+					{/* 3. Action Buttons (Mobile only here) */}
+					<div className="order-3 flex shrink-0 flex-wrap justify-center gap-5 xl:hidden">
 						<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>
 							<DialogTrigger asChild>
 								<Button
-									className="bg-orange-400 hover:bg-orange-600"
+									className="bg-orange-400 hover:bg-orange-600 relative"
 									size="sm"
 									type="button"
 								>
 									Trade List
+									{pendingTradesCount > 0 && (
+										<span className="absolute -top-2 -right-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+											{pendingTradesCount}
+										</span>
+									)}
 								</Button>
 							</DialogTrigger>
 							<DialogContent>
@@ -195,19 +211,15 @@ export default function Game() {
 							<Bankruptcy roomKey={game_id} />
 						</div>
 					</div>
-					{/* 3. Chat */}
-					<div className="order-3 min-h-0 lg:flex-1">
+					{/* 4. Chat */}
+					<div className="order-4 min-h-0 pb-10 xl:pb-0 xl:flex-1">
 						<Chat />
-					</div>
-					{/* 4. Trade */}
-					<div className="order-4 pb-10 lg:pb-0">
-						<Trade roomKey={game_id} />
 					</div>
 				</div>
 			</div>
 
 			{/* Desktop Right Column: Playerlist, Kick, Bankruptcy, Properties (Hidden on Mobile) */}
-			<div className="order-4 hidden h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm lg:order-3 lg:flex lg:h-full lg:max-h-screen lg:w-70 lg:py-5 xl:w-87.5">
+			<div className="order-4 hidden h-auto w-full min-w-0 flex-col gap-5 py-0 text-xs md:text-sm xl:order-3 xl:flex xl:h-full xl:max-h-screen xl:w-70 xl:py-5 2xl:w-87.5">
 				<Playerlist PlayerList={players} />
 				<div className="flex shrink-0 justify-between">
 					<Kick roomKey={game_id} />
@@ -217,11 +229,16 @@ export default function Game() {
 					<Dialog onOpenChange={setIsTradeListOpen} open={isTradeListOpen}>
 						<DialogTrigger asChild>
 							<Button
-								className="bg-orange-400 hover:bg-orange-600"
+								className="bg-orange-400 hover:bg-orange-600 relative"
 								size="sm"
 								type="button"
 							>
 								Trade List
+								{pendingTradesCount > 0 && (
+									<span className="absolute -top-2 -right-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+										{pendingTradesCount}
+									</span>
+								)}
 							</Button>
 						</DialogTrigger>
 						<DialogContent className="flex h-[85vh] min-h-0 max-w-4xl flex-col">

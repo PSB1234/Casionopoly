@@ -91,7 +91,16 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
 
 		socket.on(SOCKET_EVENTS.ERROR, (message: string) => {
 			console.warn("Socket error:", message);
-			toast("Error", { description: message });
+			let displayMessage = message;
+			try {
+				if (message.startsWith("[") || message.startsWith("{")) {
+					JSON.parse(message); // check if it's valid JSON
+					displayMessage = "An unexpected error occurred. Please try again.";
+				}
+			} catch (e) {
+				// Not JSON, keep original message
+			}
+			toast("Error", { description: displayMessage });
 		});
 	},
 	getSocket: () => {

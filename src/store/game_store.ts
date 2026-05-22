@@ -162,7 +162,7 @@ export const useGameStore = create<GameStore>()(
 		(set, get) => ({
 			players: [],
 			logs: [],
-			username: "",
+			username: `Guest_${Math.floor(Math.random() * 10000)}`,
 			userId: "",
 			currentRoomKey: "",
 			color: "",
@@ -410,6 +410,13 @@ export const useGameStore = create<GameStore>()(
 
 						return { trade: [...state.trade, newTrade] };
 					});
+
+					if (toPlayer === get().userId) {
+						const fromUsername = get().getUsernameById(fromPlayer) || "A player";
+						toast("New Trade Offer", {
+							description: `${fromUsername} has sent you a trade offer!`,
+						});
+					}
 				};
 
 				const handleReceiveConfirmTradeOffer = (
@@ -462,6 +469,33 @@ export const useGameStore = create<GameStore>()(
 							propertiesSold: toStats.propertiesSold + toGiven,
 							propertiesBought: toStats.propertiesBought + fromGiven,
 						});
+					}
+				};
+				const handlePropertySold = (
+					propertyId: number,
+					userid: string,
+					rank: number,
+				) => {
+					const state = get();
+					const player = state.players.find((p) => p.id === userid);
+					if (!player) return;
+
+					if (rank === -1) {
+						get().removeProperty(userid, propertyId);
+						const propertyName =
+							TileDataJson.find((tile) => tile.id === propertyId)?.name ??
+							`Property ${propertyId}`;
+						get().addLog(`${player.username} sold ${propertyName}.`);
+					} else {
+						get().updatePlayer(userid, {
+							properties: player.properties.map((prop) =>
+								prop.id === propertyId ? { ...prop, rank } : prop,
+							),
+						});
+						const propertyName =
+							TileDataJson.find((tile) => tile.id === propertyId)?.name ??
+							`Property ${propertyId}`;
+						get().addLog(`${player.username} downgraded ${propertyName} to level ${rank + 1}.`);
 					}
 				};
 				const handleUpgradeProperty = (
@@ -526,6 +560,8 @@ export const useGameStore = create<GameStore>()(
 				socket.off(SOCKET_EVENTS.YOUR_VOTES);
 				socket.off(SOCKET_EVENTS.RECEIVE_TRADE_OFFER);
 				socket.off(SOCKET_EVENTS.RECEIVE_CONFIRM_TRADE_OFFER);
+				socket.off(SOCKET_EVENTS.PROPERTY_UPGRADED);
+				socket.off(SOCKET_EVENTS.PROPERTY_SOLD);
 				socket.off(SOCKET_EVENTS.TIMER_TICK);
 				socket.off(SOCKET_EVENTS.TIMER_EXPIRED);
 				socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED);
@@ -548,6 +584,7 @@ export const useGameStore = create<GameStore>()(
 					handleReceiveConfirmTradeOffer,
 				);
 				socket.on(SOCKET_EVENTS.PROPERTY_UPGRADED, handleUpgradeProperty);
+				socket.on(SOCKET_EVENTS.PROPERTY_SOLD, handlePropertySold);
 				socket.on(SOCKET_EVENTS.TIMER_TICK, handleTimerTick);
 				socket.on(SOCKET_EVENTS.TIMER_EXPIRED, handleTimerExpired);
 				socket.on(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleRoomAutoDeleted);
@@ -584,6 +621,7 @@ export const useGameStore = create<GameStore>()(
 						handleReceiveConfirmTradeOffer,
 					);
 					socket.off(SOCKET_EVENTS.PROPERTY_UPGRADED, handleUpgradeProperty);
+					socket.off(SOCKET_EVENTS.PROPERTY_SOLD, handlePropertySold);
 					socket.off(SOCKET_EVENTS.TIMER_TICK, handleTimerTick);
 					socket.off(SOCKET_EVENTS.TIMER_EXPIRED, handleTimerExpired);
 					socket.off(SOCKET_EVENTS.ROOM_AUTO_DELETED, handleRoomAutoDeleted);

@@ -61,6 +61,8 @@ export default function ChestUi({
 		[],
 	]);
 
+	const [isSpinning, setIsSpinning] = useState(false);
+
 	function setSlotSymbolRef(reelIndex: number, symbolIndex: number) {
 		return (element: HTMLDivElement | null) => {
 			slotSymbolRefs.current[reelIndex] ??= [];
@@ -156,6 +158,7 @@ export default function ChestUi({
 	}
 
 	function startAllSlotsSpin() {
+		setIsSpinning(true);
 		startSlotOneSpin();
 		startSlotTwoSpin();
 		startSlotThreeSpin();
@@ -214,6 +217,7 @@ export default function ChestUi({
 	async function handleStopClick() {
 		if (isResolving) return;
 		stopAllSlotsSpin();
+		setIsSpinning(false);
 		setIsResolving(true);
 		try {
 			await onResolve({ reason: "stopped", spin: getSpinOutcome() });
@@ -337,6 +341,7 @@ export default function ChestUi({
 				</div>
 				<DialogFooter className="flex w-full gap-6">
 					<Button
+						className={!isSpinning ? "" : "hidden"}
 						disabled={isResolving}
 						onClick={startAllSlotsSpin}
 						type="button"
@@ -345,7 +350,8 @@ export default function ChestUi({
 						Start
 					</Button>
 					<Button
-						disabled={isResolving}
+						className={isSpinning ? "" : "hidden"}
+						disabled={isResolving || !isSpinning}
 						onClick={handleStopClick}
 						type="button"
 						variant="destructive"

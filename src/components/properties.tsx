@@ -1,5 +1,6 @@
 import { Activity } from "react";
 import Upgrade from "@/components/board/upgrade";
+import SellButton from "@/components/board/sell-button";
 import {
 	Item,
 	ItemContent,
@@ -12,6 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/8bit/t
 import TileDataJson, { getNameOfPropertyById } from "@/lib/tiledata";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/store/game_store";
+import useSocketStore from "@/store/socket_store";
+import { SOCKET_EVENTS } from "@/lib/socket_events";
 
 export default function Properties({
 	roomKey,
@@ -48,6 +51,7 @@ export default function Properties({
 					const properties = getProperty(player.id);
 					const isBankrupt = getPlayersMoney(player.id) <= 0;
 					const isCurrentUser = player.id === userId;
+					const hasJailCard = player.getOutOfJailCards > 0;
 					
 					return (
 						<TabsContent key={player.id} value={player.id} className="min-h-0 flex-1 flex-col data-[state=active]:flex mt-0 h-full">
@@ -55,12 +59,12 @@ export default function Properties({
 								className={cn(
 									"relative w-full border-foreground pr-2",
 									fullHeight ? "h-full" : "max-h-[55vh] lg:h-full",
-									!(properties.length === 0 || properties === undefined) &&
+									!(properties.length === 0 && !hasJailCard) &&
 										"border-y-6",
 								)}
 							>
 								<ItemGroup className="h-full w-full">
-									<Activity mode={properties.length === 0 ? "visible" : "hidden"}>
+									<Activity mode={properties.length === 0 && !hasJailCard ? "visible" : "hidden"}>
 										<Item variant="default">
 											<ItemContent>
 												<ItemTitle className="text-center text-neutral-500 text-sm">
@@ -68,6 +72,28 @@ export default function Properties({
 												</ItemTitle>
 											</ItemContent>
 										</Item>
+									</Activity>
+									<Activity mode={hasJailCard ? "visible" : "hidden"}>
+										<div className="h-full w-full">
+											<Item variant="default">
+												<ItemContent className="flex h-full w-full flex-row justify-between">
+													<ItemTitle>Get Out of Jail Card (x{player.getOutOfJailCards})</ItemTitle>
+													<Activity mode={isCurrentUser ? "visible" : "hidden"}>
+														<div className="flex flex-row gap-6 text-sm text-yellow-500">
+															<button 
+																className="cursor-pointer font-bold text-green-500 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+																onClick={() => {
+																	useSocketStore.getState().socket?.emit(SOCKET_EVENTS.ACTIVATE_JAIL_CARD, roomKey);
+																}}
+																disabled={!isMyTurn || isBankrupt || !player.behindBars}
+															>
+																L<span className="text-secondary">U</span> Activation
+															</button>
+														</div>
+													</Activity>
+												</ItemContent>
+											</Item>
+										</div>
 									</Activity>
 									<Activity mode={properties.length > 0 ? "visible" : "hidden"}>
 										{properties.map((property, index) => (
@@ -82,19 +108,27 @@ export default function Properties({
 																	: "hidden"
 															}
 														>
-															<Upgrade
-																disabled={
-																	!isMyTurn ||
-																	isBankrupt ||
-																	!checkIfPropertyGroupIsOwnedByPlayer(
-																		userId,
-																		property.id,
-																	)
-																}
-																playerId={userId}
-																propertyIndex={property.id}
-																roomKey={roomKey}
-															/>
+															<div className="flex flex-row gap-6">
+																<Upgrade
+																	disabled={
+																		!isMyTurn ||
+																		isBankrupt ||
+																		!checkIfPropertyGroupIsOwnedByPlayer(
+																			userId,
+																			property.id,
+																		)
+																	}
+																	playerId={userId}
+																	propertyIndex={property.id}
+																	roomKey={roomKey}
+																/>
+																<SellButton
+																	disabled={!isMyTurn || isBankrupt}
+																	playerId={userId}
+																	propertyIndex={property.id}
+																	roomKey={roomKey}
+																/>
+															</div>
 														</Activity>
 													</ItemContent>
 												</Item>

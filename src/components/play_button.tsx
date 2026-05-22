@@ -94,6 +94,13 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 			"buy-property",
 		);
 	};
+	const onAuctionClick = () => {
+		setBuyProperty(false);
+		setEndTurnFree(true);
+		const tile = TileDataJson[position];
+		if (!tile) return;
+		emitEvent(SOCKET_EVENTS.START_AUCTION, tile.id, userId, game_id);
+	};
 	const onEndTurnClick = () => {
 		setIsEndingTurn(true);
 		setAwaitingTurnResolution(true);
@@ -314,7 +321,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					imageRendering: "pixelated",
 				}}
 			/>
-			<div className="flex flex-row gap-[4cqmin]">
+			<div className="flex flex-col lg:flex-row items-center gap-[4cqmin]">
 				<Activity mode={isMyTurn && !hasRolled ? "visible" : "hidden"}>
 					<Button
 						className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
@@ -325,7 +332,7 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					</Button>
 				</Activity>
 
-				<Activity mode={endTurnBtn ? "visible" : "hidden"}>
+				<Activity mode={endTurnBtn && !buyProperty ? "visible" : "hidden"}>
 					<Button
 						className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
 						disabled={!endTurnFree || isEndingTurn || isBankrupt}
@@ -336,14 +343,23 @@ export default function PlayButton({ game_id }: { game_id: string }) {
 					</Button>
 				</Activity>
 				<Activity mode={buyProperty ? "visible" : "hidden"}>
-					<Button
-						className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
-						disabled={isBankrupt}
-						onClick={onBuyClick}
-						variant="secondary"
-					>
-						Buy
-					</Button>
+					<div className="flex flex-col lg:flex-row gap-[4cqmin]">
+						<Button
+							className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin]"
+							disabled={isBankrupt}
+							onClick={onBuyClick}
+							variant="secondary"
+						>
+							Buy
+						</Button>
+						<Button
+							className="h-auto px-[3cqmin] py-[2.5cqmin] text-[3cqmin] lg:px-[2cqmin] lg:py-[2cqmin] lg:text-[2.5cqmin] bg-yellow-500 hover:bg-yellow-600"
+							disabled={isBankrupt}
+							onClick={onAuctionClick}
+						>
+							Auction
+						</Button>
+					</div>
 				</Activity>
 			</div>
 			<Activity mode={!isMyTurn ? "visible" : "hidden"}>

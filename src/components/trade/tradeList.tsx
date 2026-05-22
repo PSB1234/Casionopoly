@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from "../ui/8bit/card";
 export interface TradeData {
 	amount: number;
 	properties: number[];
+	getOutOfJailCards?: number;
 }
 
 export default function TradeList({
@@ -77,6 +78,27 @@ export default function TradeList({
 						value={[data.amount]}
 					/>
 				</li>
+				{player.getOutOfJailCards > 0 && (
+					<li className="my-2">
+						<p>Get Out of Jail Cards (Max: {player.getOutOfJailCards}):</p>
+						<div className="mb-3">
+							<Input
+								disabled={player.getOutOfJailCards <= 0}
+								onChange={(e) => {
+									const val = parseInt(e.target.value, 10) || 0;
+									if (val >= 0 && val <= player.getOutOfJailCards) {
+										onDataChange({ ...data, getOutOfJailCards: val });
+									}
+								}}
+								placeholder="Quantity"
+								type="number"
+								value={data.getOutOfJailCards || 0}
+								max={player.getOutOfJailCards}
+								min={0}
+							/>
+						</div>
+					</li>
+				)}
 				{ourProperties.map((property) => (
 					<li
 						className="my-2 flex w-full flex-row items-center justify-start gap-4 text-left"

@@ -69,28 +69,30 @@ export default function Chat() {
 			<CardHeader className="flex flex-row items-center justify-between gap-3">
 				<CardTitle>Chat</CardTitle>
 			</CardHeader>
-			<CardContent className="flex min-h-0 flex-1 flex-col">
-				<Card className="flex min-h-0 flex-1 flex-col">
-					<CardContent className="flex min-h-0 flex-1 flex-col">
+			<CardContent className="flex min-h-0 flex-1 flex-col p-0">
+				<Card className="flex min-h-0 flex-1 flex-col border-x-0 shadow-none">
+					<CardContent className="flex min-h-0 flex-1 flex-col p-0">
 						<ScrollArea className="h-full min-h-48 w-full flex-1 lg:min-h-0">
-							{messages.map((msg, index) => (
-								<Message
-									key={`${msg.name}-${
-										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-										index
-									}`}
-									message={msg.messages}
-									name={msg.name}
-									isOwn={msg.name === currentUser}
-								/>
-							))}
+							<div className="flex flex-col p-4">
+								{messages.map((msg, index) => (
+									<Message
+										key={`${msg.name}-${
+											// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+											index
+										}`}
+										message={msg.messages}
+										name={msg.name}
+										isOwn={msg.name === currentUser}
+									/>
+								))}
+							</div>
 						</ScrollArea>
 					</CardContent>
 				</Card>
 			</CardContent>
 			<CardFooter>
 				<form
-					className="flex w-full flex-col gap-3"
+					className="flex w-full  flex-col gap-3"
 					onSubmit={form.handleSubmit(onSubmit)}
 				>
 					<Controller

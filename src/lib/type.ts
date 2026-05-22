@@ -61,6 +61,7 @@ export interface ServerToClientEvents {
 		votes: number,
 		voterId: string,
 	) => void;
+	[SOCKET_EVENTS.JAIL_CARD_ACTIVATED]: (userId: string) => void;
 
 	[SOCKET_EVENTS.YOUR_VOTES]: (votedPlayerIds: string[]) => void;
 	[SOCKET_EVENTS.TIMER_TICK]: (remainingSeconds: number) => void;
@@ -78,6 +79,27 @@ export interface ServerToClientEvents {
 		reason: ChestResolutionReason,
 		spin: ChestSpinOutcome | undefined,
 		ack: (result: ChestResolutionResult) => void,
+	) => void;
+	[SOCKET_EVENTS.PROPERTY_SOLD]: (
+		propertyId: number,
+		userid: string,
+		rank: number,
+	) => void;
+	[SOCKET_EVENTS.AUCTION_STARTED]: (
+		propId: number,
+		basePrice: number,
+		bid: number,
+		bidder: string | null,
+	) => void;
+	[SOCKET_EVENTS.AUCTION_UPDATED]: (
+		propId: number,
+		bid: number,
+		bidder: string | null,
+	) => void;
+	[SOCKET_EVENTS.AUCTION_ENDED]: (
+		propId: number,
+		winnerId: string,
+		winningBid: number,
 	) => void;
 	connect: () => void;
 	disconnect: (reason: string) => void;
@@ -165,6 +187,26 @@ export interface ClientToServerEvents {
 		spin: ChestSpinOutcome | undefined,
 		ack: (result: ChestResolutionResult) => void,
 	) => void;
+	[SOCKET_EVENTS.START_AUCTION]: (
+		propertyId: number,
+		userId: string,
+		roomKey: string,
+	) => void;
+	[SOCKET_EVENTS.PLACE_BID]: (
+		bidAmount: number,
+		userId: string,
+		roomKey: string,
+	) => void;
+	[SOCKET_EVENTS.SELL_PROPERTY]: (
+		propertyId: number,
+		userId: string,
+		roomKey: string,
+		refundAmount: number,
+	) => void;
+	[SOCKET_EVENTS.ACTIVATE_JAIL_CARD]: (
+		roomKey: string,
+		callback?: (success: boolean, message?: string) => void,
+	) => void;
 }
 
 export interface InterServerEvents {
@@ -187,6 +229,8 @@ export type Player = {
 	properties: PropertySchema[];
 	leader: boolean;
 	behindBars: boolean;
+	skipTurn: boolean;
+	getOutOfJailCards: number;
 };
 
 export type PlayerStats = {
@@ -225,15 +269,15 @@ export type TileDataSchema = {
 	flagName: string;
 	group: number;
 	type:
-		| "property"
-		| "Vacation"
-		| "go-to-jail"
-		| "jail"
-		| "freeParking"
-		| "start"
-		| "tax"
-		| "chance"
-		| "subProperty";
+	| "property"
+	| "Vacation"
+	| "go-to-jail"
+	| "jail"
+	| "freeParking"
+	| "start"
+	| "tax"
+	| "chance"
+	| "subProperty";
 	buyable?: boolean;
 	price?: number;
 	rent?: number[];
@@ -278,7 +322,8 @@ export type ChestEventId =
 	| "property-damage"
 	| "fraud-scandal"
 	| "market-crash"
-	| "investigation-jail";
+	| "investigation-jail"
+	| "get-out-of-jail";
 
 export type ChestResolutionResult = {
 	eventId: ChestEventId;

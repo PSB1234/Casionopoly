@@ -139,12 +139,12 @@ export function SearchRoomClient({
 							<ul>
 								{displayRooms.map((roomData: RoomData) => (
 									<li
-										className="m-5 flex w-full justify-between"
+										className="mb-4 flex w-full items-center justify-between gap-4 pr-2"
 										key={roomData.roomKey}
 									>
-										<h3 className="flex items-center">
-											{roomData.name}
-											<span className={`ml-3 text-xs px-2 py-0.5 rounded ${
+										<h3 className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-3">
+											<span className="truncate w-full text-left">{roomData.name}</span>
+											<span className={`shrink-0 text-[10px] sm:text-xs px-2 py-0.5 rounded ${
 												roomData.isPrivate 
 													? "bg-red-500/20 text-red-300" 
 													: "bg-green-500/20 text-green-300"
@@ -152,7 +152,7 @@ export function SearchRoomClient({
 												{roomData.isPrivate ? " Private" : " Public"}
 											</span>
 										</h3>
-										<Button onClick={() => onSubmit(roomData)}>Join</Button>
+										<Button className="shrink-0" onClick={() => onSubmit(roomData)}>Join</Button>
 									</li>
 								))}
 							</ul>
